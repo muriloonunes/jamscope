@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Now Playing</string>
+    <string name="welcome">Bem-vindo!</string>
+    <string name="login_please">Faça login no last.fm para continuar</string>
+    <string name="login">Login</string>
+    <string name="back">Voltar</string>
+    <string name="username">Nome de usuário</string>
+    <string name="password">Senha</string>
+    <string name="password_visibilty">Visibilidade da senha</string>
+    <string name="invalid_user_password">Usuário ou senha inválido!</string>
+    <string name="connection_error">Você não está conectado à internet</string>
+    <string name="unknown_error">Erro desconhecido! Por favor, reporte ou tente de novo mais tarde</string>
+    <string name="too_many_requests">Muitas solicitações! Tente novamente mais tarde</string>
+    <string name="server_error">Erro interno no servidor. Tente novamente mais tarde</string>
+    <string name="profile_pic_description">Foto de perfil de %1$s</string>
+    <string name="logout">Sair</string>
+    <string name="hello_string">Olá, %1$s!</string>
+</resources>
