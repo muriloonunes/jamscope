@@ -18,8 +18,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.murile.nowplaying.data.api.ApiRequest
 import com.murile.nowplaying.data.session.UserSessionManager
-import com.murile.nowplaying.ui.screen.FriendsTela
+import com.murile.nowplaying.ui.components.FRIENDS_ROUTE
+import com.murile.nowplaying.ui.components.LOGIN_ROUTE
 import com.murile.nowplaying.ui.screen.LoginScreen
+import com.murile.nowplaying.ui.screen.ProfileTela
 import com.murile.nowplaying.ui.theme.NowPlayingTheme
 import com.murile.nowplaying.ui.viewmodel.LoginViewModel
 import com.murile.nowplaying.ui.viewmodel.ProfileViewModel
@@ -76,15 +78,15 @@ class MainActivity : ComponentActivity() {
             navController = navController,
             startDestination = startDestination
         ) {
-            composable("home") {
+            composable(FRIENDS_ROUTE) {
                 val profileViewModel by viewModels<ProfileViewModel>()
-                FriendsTela(
+                ProfileTela(
                     userSessionManager = userSessionManager,
                     navController,
                     profileViewModel = profileViewModel
                 )
             }
-            composable("login") {
+            composable(LOGIN_ROUTE) {
                 val loginViewModel by viewModels<LoginViewModel>()
                 LoginScreen(
                     navController,

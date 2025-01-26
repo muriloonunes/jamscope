@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.murile.nowplaying.data.api.ApiRequest
 import com.murile.nowplaying.data.session.UserSessionManager
+import com.murile.nowplaying.ui.components.FRIENDS_ROUTE
+import com.murile.nowplaying.ui.components.LOGIN_ROUTE
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,7 +17,7 @@ import javax.inject.Inject
 class SplashViewModel @Inject constructor(
     private val userSessionManager: UserSessionManager,
     private val apiRequest: ApiRequest
-): ViewModel() {
+) : ViewModel() {
     private val _isLoading = MutableStateFlow(true)
     val isLoading get() = _isLoading.asStateFlow()
 
@@ -29,11 +31,11 @@ class SplashViewModel @Inject constructor(
 
             if (isLoggedIn) {
                 checkUser()
-                _startDestination.value = "home"
+                _startDestination.value = FRIENDS_ROUTE
                 _isLoading.value = false
             } else {
                 _isLoading.value = false
-                _startDestination.value = "login"
+                _startDestination.value = LOGIN_ROUTE
             }
         }
     }

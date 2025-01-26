@@ -43,6 +43,8 @@ import androidx.navigation.NavController
 import com.murile.nowplaying.R
 import com.murile.nowplaying.data.session.UserSessionManager
 import com.murile.nowplaying.ui.components.AutoFillRequestHandler
+import com.murile.nowplaying.ui.components.FRIENDS_ROUTE
+import com.murile.nowplaying.ui.components.LOGIN_ROUTE
 import com.murile.nowplaying.ui.components.connectNode
 import com.murile.nowplaying.ui.components.defaultFocusChangeAutoFill
 import com.murile.nowplaying.ui.viewmodel.LoginViewModel
@@ -64,119 +66,115 @@ fun LoginScreen(
 
     val coroutineScope = rememberCoroutineScope()
 
-    Scaffold(topBar = {}, content = { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(top = 16.dp)
-                .padding(paddingValues),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Top
-        ) {
-            val usernameFill = AutoFillRequestHandler(autofillTypes = listOf(
-                AutofillType.Username
-            ), onFill = {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(top = 48.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Top
+    ) {
+        val usernameFill = AutoFillRequestHandler(autofillTypes = listOf(
+            AutofillType.Username
+        ), onFill = {
+            loginViewModel.onUsernameChange(it)
+        })
+        val passwordFill = AutoFillRequestHandler(autofillTypes = listOf(
+            AutofillType.Password
+        ), onFill = {
+            loginViewModel.onPasswordChange(it)
+        })
+        Text(
+            text = stringResource(R.string.welcome),
+            fontSize = 20.sp,
+            modifier = Modifier.padding(bottom = 4.dp)
+        )
+        Text(
+            text = stringResource(R.string.login_please),
+            fontSize = 20.sp,
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+        OutlinedTextField(
+            value = username,
+            onValueChange = {
                 loginViewModel.onUsernameChange(it)
-            })
-            val passwordFill = AutoFillRequestHandler(autofillTypes = listOf(
-                AutofillType.Password
-            ), onFill = {
-                loginViewModel.onPasswordChange(it)
-            })
-            Text(
-                text = stringResource(R.string.welcome),
-                fontSize = 20.sp,
-                modifier = Modifier.padding(bottom = 4.dp)
-            )
-            Text(
-                text = stringResource(R.string.login_please),
-                fontSize = 20.sp,
-                modifier = Modifier.padding(bottom = 8.dp)
-            )
-
-            OutlinedTextField(
-                value = username,
-                onValueChange = {
-                    loginViewModel.onUsernameChange(it)
-                    if (it.isEmpty()) usernameFill.requestVerifyManual()
-                },
-                label = {
-                    Text(
-                        stringResource(R.string.username)
-                    )
-                },
-                keyboardOptions = KeyboardOptions(
-                    autoCorrectEnabled = false
-                ),
-                maxLines = 1,
-                modifier = Modifier
-                    .fillMaxWidth(0.8f)
-                    .connectNode(handler = usernameFill)
-                    .defaultFocusChangeAutoFill(handler = usernameFill)
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-
-            OutlinedTextField(value = password,
-                onValueChange = {
-                    loginViewModel.onPasswordChange(it)
-                    if (it.isEmpty()) passwordFill.requestVerifyManual()
-                },
-                label = {
-                    Text(
-                        stringResource(R.string.password)
-                    )
-                },
-                modifier = Modifier
-                    .fillMaxWidth(0.8f)
-                    .connectNode(handler = passwordFill)
-                    .defaultFocusChangeAutoFill(handler = passwordFill),
-                keyboardOptions = KeyboardOptions(
-                    autoCorrectEnabled = false, keyboardType = KeyboardType.Password
-                ),
-                maxLines = 1,
-                visualTransformation = if (passwordVisibility) {
-                    VisualTransformation.None
-                } else {
-                    PasswordVisualTransformation()
-                },
-                trailingIcon = {
-                    IconButton(onClick = { passwordVisibility = !passwordVisibility }) {
-                        Icon(
-                            imageVector = if (passwordVisibility) Icons.Rounded.VisibilityOff else Icons.Rounded.Visibility,
-                            contentDescription = stringResource(R.string.password_visibilty)
-                        )
-                    }
-                })
-            Spacer(modifier = Modifier.height(16.dp))
-
-            if (errorMessage.isNotEmpty()) {
+                if (it.isEmpty()) usernameFill.requestVerifyManual()
+            },
+            label = {
                 Text(
-                    text = errorMessage,
-                    color = Color.Red,
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(8.dp)
+                    stringResource(R.string.username)
                 )
-            }
-
-            if (loading) {
-                CircularProgressIndicator()
+            },
+            keyboardOptions = KeyboardOptions(
+                autoCorrectEnabled = false
+            ),
+            maxLines = 1,
+            modifier = Modifier
+                .fillMaxWidth(0.8f)
+                .connectNode(handler = usernameFill)
+                .defaultFocusChangeAutoFill(handler = usernameFill)
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        OutlinedTextField(value = password,
+            onValueChange = {
+                loginViewModel.onPasswordChange(it)
+                if (it.isEmpty()) passwordFill.requestVerifyManual()
+            },
+            label = {
+                Text(
+                    stringResource(R.string.password)
+                )
+            },
+            modifier = Modifier
+                .fillMaxWidth(0.8f)
+                .connectNode(handler = passwordFill)
+                .defaultFocusChangeAutoFill(handler = passwordFill),
+            keyboardOptions = KeyboardOptions(
+                autoCorrectEnabled = false, keyboardType = KeyboardType.Password
+            ),
+            maxLines = 1,
+            visualTransformation = if (passwordVisibility) {
+                VisualTransformation.None
             } else {
-                Button(enabled = username.isNotEmpty() && password.isNotEmpty(), onClick = {
-                    coroutineScope.launch { loginViewModel.login() }
-                }) {
-                    Text(
-                        text = stringResource(R.string.login)
+                PasswordVisualTransformation()
+            },
+            trailingIcon = {
+                IconButton(onClick = { passwordVisibility = !passwordVisibility }) {
+                    Icon(
+                        imageVector = if (passwordVisibility) Icons.Rounded.VisibilityOff else Icons.Rounded.Visibility,
+                        contentDescription = stringResource(R.string.password_visibilty)
                     )
                 }
+            })
+        Spacer(modifier = Modifier.height(16.dp))
+
+        if (errorMessage.isNotEmpty()) {
+            Text(
+                text = errorMessage,
+                color = Color.Red,
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(8.dp)
+            )
+        }
+
+        if (loading) {
+            CircularProgressIndicator()
+        } else {
+            Button(enabled = username.isNotEmpty() && password.isNotEmpty(), onClick = {
+                coroutineScope.launch { loginViewModel.login() }
+            }) {
+                Text(
+                    text = stringResource(R.string.login)
+                )
             }
-            if (userProfile != null) {
-                LaunchedEffect(userProfile) {
-                    userSessionManager.saveUserProfile(userProfile!!)
-                    navController.navigate("home") {
-                        popUpTo("login") { inclusive = true }
-                    }
+        }
+        if (userProfile != null) {
+            LaunchedEffect(userProfile) {
+                userSessionManager.saveUserProfile(userProfile!!)
+                navController.navigate(FRIENDS_ROUTE) {
+                    popUpTo(LOGIN_ROUTE) { inclusive = true }
                 }
             }
         }
-    })
+    }
+
 }

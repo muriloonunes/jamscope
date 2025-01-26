@@ -32,19 +32,6 @@ data class Session(
     val key: String,
 )
 
-// Custom Saver for Profile
-val ProfileSaver = Saver<Profile, String>(
-    save = { profile ->
-        // Convert Profile to a JSON string
-        Json.encodeToString(profile)
-    },
-    restore = { jsonString ->
-        // Convert JSON string back to Profile
-        Json.decodeFromString(jsonString)
-    }
-)
-
-
 @Serializable
 data class ApiResponse(
     val user: User
