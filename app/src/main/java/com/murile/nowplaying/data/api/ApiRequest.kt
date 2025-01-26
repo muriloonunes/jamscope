@@ -1,6 +1,5 @@
 package com.murile.nowplaying.data.api
 
-import android.content.Context
 import com.murile.nowplaying.data.api.Resource.Error
 import com.murile.nowplaying.data.api.Resource.Success
 import com.murile.nowplaying.data.model.ApiResponse
@@ -21,10 +20,15 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import java.nio.channels.UnresolvedAddressException
 import java.security.MessageDigest
+import javax.inject.Inject
 
-object ApiRequest {
-    private const val BASE_URL = "https://ws.audioscrobbler.com/2.0/?"
-    private const val FORMAT_JSON = "format=json"
+class ApiRequest @Inject constructor(
+    private val exceptions: Exceptions
+) {
+    companion object {
+        private const val BASE_URL = "https://ws.audioscrobbler.com/2.0/?"
+        private const val FORMAT_JSON = "format=json"
+    }
     private val json = Json { ignoreUnknownKeys = true }
 
     private fun generateApiSig(
@@ -48,7 +52,6 @@ object ApiRequest {
         username: String,
         password: String,
         method: String,
-        cont: Context
     ): Resource<Profile> {
         return try {
             val requestUrl = buildAuthUrl(username, password, method)
@@ -61,7 +64,7 @@ object ApiRequest {
                 }
             }
             if (!response.status.isSuccess()) {
-                val errorMessage = handleError(cont, response.status.value)
+                val errorMessage = handleError(response.status.value)
                 Error(errorMessage)
             } else {
                 val responseBodyString = response.bodyAsText()
@@ -74,10 +77,10 @@ object ApiRequest {
             }
         } catch (e: UnresolvedAddressException) {
             e.printStackTrace()
-            Error(handleError(cont, 666))
+            Error(handleError(666))
         } catch (e: Exception) {
             e.printStackTrace()
-            Error(handleError(cont, 0))
+            Error(handleError(0))
         }
     }
 
@@ -88,8 +91,8 @@ object ApiRequest {
         return "$BASE_URL$FORMAT_JSON&$urlParams"
     }
 
-    private fun handleError(cont: Context, statusCode: Int): String {
-        return Exceptions(cont).handleError(statusCode)
+    private fun handleError(statusCode: Int): String {
+        return exceptions.handleError(statusCode)
     }
 
     private suspend fun processSessionResponse(

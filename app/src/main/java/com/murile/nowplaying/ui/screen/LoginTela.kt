@@ -1,7 +1,5 @@
 package com.murile.nowplaying.ui.screen
 
-import UserSessionManager
-import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -34,7 +32,6 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.autofill.AutofillType
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -44,6 +41,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.murile.nowplaying.R
+import com.murile.nowplaying.data.session.UserSessionManager
 import com.murile.nowplaying.ui.components.AutoFillRequestHandler
 import com.murile.nowplaying.ui.components.connectNode
 import com.murile.nowplaying.ui.components.defaultFocusChangeAutoFill
@@ -54,7 +52,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun LoginScreen(
     navController: NavController,
-    loginViewModel: LoginViewModel = viewModel()
+    loginViewModel: LoginViewModel = viewModel(),
+    userSessionManager: UserSessionManager
 ) {
     val username by loginViewModel.username.collectAsState()
     val password by loginViewModel.password.collectAsState()
@@ -64,8 +63,6 @@ fun LoginScreen(
     val userProfile by loginViewModel.userProfile.collectAsState()
 
     val coroutineScope = rememberCoroutineScope()
-    val context: Context = LocalContext.current
-    val userSessionManager = UserSessionManager(context)
 
     Scaffold(topBar = {}, content = { paddingValues ->
         Column(
@@ -165,7 +162,7 @@ fun LoginScreen(
                 CircularProgressIndicator()
             } else {
                 Button(enabled = username.isNotEmpty() && password.isNotEmpty(), onClick = {
-                    coroutineScope.launch { loginViewModel.login(context) }
+                    coroutineScope.launch { loginViewModel.login() }
                 }) {
                     Text(
                         text = stringResource(R.string.login)
@@ -175,7 +172,9 @@ fun LoginScreen(
             if (userProfile != null) {
                 LaunchedEffect(userProfile) {
                     userSessionManager.saveUserProfile(userProfile!!)
-                    navController.navigate("home")
+                    navController.navigate("home") {
+                        popUpTo("login") { inclusive = true }
+                    }
                 }
             }
         }

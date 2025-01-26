@@ -1,6 +1,5 @@
 package com.murile.nowplaying.ui.screen
 
-import UserSessionManager
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -24,12 +23,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil3.ImageLoader
 import coil3.compose.AsyncImage
 import coil3.util.DebugLogger
 import com.murile.nowplaying.R
+import com.murile.nowplaying.data.session.UserSessionManager
 import com.murile.nowplaying.ui.viewmodel.ProfileViewModel
 import kotlinx.coroutines.runBlocking
 
@@ -37,12 +36,12 @@ import kotlinx.coroutines.runBlocking
 fun FriendsTela(
     userSessionManager: UserSessionManager,
     navController: NavController,
-    profileViewModel: ProfileViewModel = viewModel()
+    profileViewModel: ProfileViewModel
 ) {
     val context = LocalContext.current
     val userProfile by profileViewModel.userProfile.collectAsState()
     LaunchedEffect(Unit) {
-        profileViewModel.getProfile(context)
+        profileViewModel.getProfile()
     }
 
     val imageLoader = remember {
@@ -81,7 +80,7 @@ fun FriendsTela(
                     runBlocking {
                         userSessionManager.clearUserSession()
                         navController.navigate("login") {
-                            popUpTo("friends") { inclusive = true }
+                            popUpTo("home") { inclusive = true }
                         }
                     }
                 }) {

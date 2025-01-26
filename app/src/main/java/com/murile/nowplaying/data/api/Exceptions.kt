@@ -2,8 +2,9 @@ package com.murile.nowplaying.data.api
 
 import android.content.Context
 import com.murile.nowplaying.R
+import javax.inject.Inject
 
-class Exceptions(
+class Exceptions @Inject constructor(
     private val context: Context
 ) {
     fun handleError(code: Int): String {
