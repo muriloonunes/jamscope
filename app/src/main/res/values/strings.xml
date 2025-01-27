@@ -6,7 +6,7 @@
     <string name="back">Back</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
-    <string name="password_visibilty">Password Visibility</string>
+    <string name="password_visibilty">Password visibility</string>
     <string name="invalid_user_password">Invalid username or password</string>
     <string name="connection_error">You are not connected to the internet</string>
     <string name="unknown_error">Unknown error! Please report or try again later</string>
@@ -15,4 +15,8 @@
     <string name="profile_pic_description">%1$s\'s profile pic</string>
     <string name="logout">Logout</string>
     <string name="hello_string">Hello, %1$s!</string>
+    <string name="friends">Friends</string>
+    <string name="search">Search</string>
+    <string name="profile">Profile</string>
+    <string name="no_friends">You currently don\'t have any friend on last.fm!</string>
 </resources>

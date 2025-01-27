@@ -1,9 +1,7 @@
 package com.murile.nowplaying.data.model
 
-import androidx.compose.runtime.saveable.Saver
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
 
 @Serializable
 data class SessionResponse(
@@ -24,7 +22,8 @@ data class Profile(
     val session: Session,
     val subscriber: Int,
     var imageUrl: String? = null,
-    var profileUrl: String? = null
+    var profileUrl: String? = null,
+    var friends: List<User>? = null
 )
 
 @Serializable
@@ -38,7 +37,19 @@ data class ApiResponse(
 )
 
 @Serializable
+data class UserFriendsResponse(
+    val friends: Friends
+)
+
+@Serializable
+data class Friends(
+    val user: List<User>
+)
+
+
+@Serializable
 data class User(
+    val name: String? = null,
     val image: List<Image>,
     val url: String
 )

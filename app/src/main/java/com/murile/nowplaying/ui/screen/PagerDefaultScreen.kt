@@ -8,6 +8,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Group
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -22,38 +23,40 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
-import androidx.navigation.compose.currentBackStackEntryAsState
-import com.murile.nowplaying.data.session.UserSessionManager
+import com.murile.nowplaying.R
 import com.murile.nowplaying.ui.components.BottomNavigationItem
 import com.murile.nowplaying.ui.components.FRIENDS_SCREEN
 import com.murile.nowplaying.ui.components.PROFILE_SCREEN
 import com.murile.nowplaying.ui.components.SEARCH_SCREEN
+import com.murile.nowplaying.ui.viewmodel.FriendsViewModel
 import com.murile.nowplaying.ui.viewmodel.ProfileViewModel
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomePager(
     navController: NavController,
-    userSessionManager: UserSessionManager,
-    profileViewModel: ProfileViewModel
+    profileViewModel: ProfileViewModel,
+    friendsViewModel: FriendsViewModel
 ) {
     var selectedItemIndex by rememberSaveable { mutableStateOf(0) } //TODO: talvez colocar isso aqui em um viewmodel?
     val itensBarList = listOf(
         BottomNavigationItem(
-            "Friends",
+            stringResource(R.string.friends),
             Icons.Filled.Group,
             Icons.Default.Group,
             FRIENDS_SCREEN
         ),
         BottomNavigationItem(
-            "Search",
+            stringResource(R.string.search),
             Icons.Filled.Search,
             Icons.Default.Search,
             SEARCH_SCREEN
         ),
         BottomNavigationItem(
-            "Profile",
+            stringResource(R.string.profile),
             Icons.Filled.Person,
             Icons.Default.Person,
             PROFILE_SCREEN
@@ -98,10 +101,12 @@ fun HomePager(
                 .padding(innerPadding)
         ) { page ->
             when (page) {
-                0 -> Text("Friends")
+                0 -> FriendsTela(
+                    friendsViewModel = friendsViewModel
+                )
+
                 1 -> SearchTela()
                 2 -> ProfileTela(
-                    userSessionManager = userSessionManager,
                     navController = navController,
                     profileViewModel = profileViewModel
                 )

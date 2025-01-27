@@ -16,4 +16,8 @@
     <string name="profile_pic_description">Foto de perfil de %1$s</string>
     <string name="logout">Sair</string>
     <string name="hello_string">Olá, %1$s!</string>
+    <string name="friends">Amigos</string>
+    <string name="search">Buscar</string>
+    <string name="profile">Perfil</string>
+    <string name="no_friends">Você não possui amigos adicionados no last.fm!</string>
 </resources>

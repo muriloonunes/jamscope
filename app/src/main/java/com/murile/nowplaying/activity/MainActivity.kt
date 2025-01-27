@@ -30,6 +30,7 @@ import com.murile.nowplaying.ui.screen.LoginScreen
 import com.murile.nowplaying.ui.screen.ProfileTela
 import com.murile.nowplaying.ui.screen.SearchTela
 import com.murile.nowplaying.ui.theme.NowPlayingTheme
+import com.murile.nowplaying.ui.viewmodel.FriendsViewModel
 import com.murile.nowplaying.ui.viewmodel.LoginViewModel
 import com.murile.nowplaying.ui.viewmodel.ProfileViewModel
 import com.murile.nowplaying.ui.viewmodel.SplashViewModel
@@ -47,6 +48,8 @@ class MainActivity : ComponentActivity() {
     lateinit var apiRequest: ApiRequest
 
     private val splashViewModel by viewModels<SplashViewModel>()
+
+    private val friendsViewModel by viewModels<FriendsViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -105,8 +108,8 @@ class MainActivity : ComponentActivity() {
                 composable(FRIENDS_SCREEN) {
                     HomePager(
                         navController,
-                        userSessionManager,
-                        profileViewModel
+                        profileViewModel,
+                        friendsViewModel
                     )
                 }
                 composable(SEARCH_SCREEN) {
@@ -114,7 +117,6 @@ class MainActivity : ComponentActivity() {
                 }
                 composable(PROFILE_SCREEN) {
                     ProfileTela(
-                        userSessionManager = userSessionManager,
                         navController = navController,
                         profileViewModel = profileViewModel
                     )

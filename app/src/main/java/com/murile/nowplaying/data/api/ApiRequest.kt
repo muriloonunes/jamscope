@@ -7,6 +7,8 @@ import com.murile.nowplaying.data.model.Profile
 import com.murile.nowplaying.data.model.Session
 import com.murile.nowplaying.data.model.SessionResponse
 import com.murile.nowplaying.data.model.Token
+import com.murile.nowplaying.data.model.User
+import com.murile.nowplaying.data.model.UserFriendsResponse
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.headers
@@ -18,6 +20,9 @@ import io.ktor.http.isSuccess
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.intOrNull
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import java.nio.channels.UnresolvedAddressException
 import java.security.MessageDigest
 import javax.inject.Inject
@@ -29,6 +34,7 @@ class ApiRequest @Inject constructor(
         private const val BASE_URL = "https://ws.audioscrobbler.com/2.0/?"
         private const val FORMAT_JSON = "format=json"
     }
+
     private val json = Json { ignoreUnknownKeys = true }
 
     private fun generateApiSig(
@@ -95,24 +101,20 @@ class ApiRequest @Inject constructor(
         return exceptions.handleError(statusCode)
     }
 
-    private suspend fun processSessionResponse(
-        responseBodyString: String, password: String
-    ): Profile? {
+    private suspend fun processSessionResponse(responseBodyString: String, password: String): Profile? {
         return try {
-            withContext(Dispatchers.IO) {
-                val sessionResponse = json.decodeFromString<SessionResponse>(responseBodyString)
-
-                val profile = Profile(
-                    username = sessionResponse.session.name,
-                    subscriber = sessionResponse.session.subscriber,
-                    session = Session(key = sessionResponse.session.key),
-                    senha = password
-                )
-                val links = getUserInfo(profile.username)
-                profile.imageUrl = links[0]
-                profile.profileUrl = links[1]
-
-                profile
+            val sessionResponse = json.decodeFromString<SessionResponse>(responseBodyString)
+            Profile(
+                username = sessionResponse.session.name,
+                subscriber = sessionResponse.session.subscriber,
+                session = Session(key = sessionResponse.session.key),
+                senha = password,
+                imageUrl = "",
+                profileUrl = ""
+            ).apply {
+                val (image, url) = getUserInfo(username)
+                imageUrl = image
+                profileUrl = url
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -140,6 +142,46 @@ class ApiRequest @Inject constructor(
                 e.printStackTrace()
             }
             links
+        }
+    }
+
+    suspend fun getUserFriends(username: String): Resource<List<User>> {
+        return try {
+            val urlParametro =
+                "method=user.getfriends&user=$username&api_key=${Token.LAST_FM_API_KEY}"
+            val requestUrl = "$BASE_URL$FORMAT_JSON&$urlParametro"
+
+            val response = withContext(Dispatchers.IO) {
+                HttpClientProvider.client.post(requestUrl) {
+                    headers {
+                        append(
+                            HttpHeaders.ContentType,
+                            ContentType.Application.Json.toString()
+                        )
+                    }
+                }
+            }
+            if (!response.status.isSuccess()) {
+                val jsonResponse = Json.parseToJsonElement(response.bodyAsText()).jsonObject
+                val errorValue = jsonResponse["error"]?.jsonPrimitive?.intOrNull
+                Error(handleError(errorValue!!))
+            } else {
+                val userFriendsResponse = json.decodeFromString<UserFriendsResponse>(response.bodyAsText())
+                val users = userFriendsResponse.friends.user.map { friend ->
+                    User(
+                        name = friend.name,
+                        image = friend.image,
+                        url = friend.url
+                    )
+                }
+                Success(users)
+            }
+        } catch (e: UnresolvedAddressException) {
+            e.printStackTrace()
+            Error(handleError(666))
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Error("Failed to fetch user friends")
         }
     }
 }

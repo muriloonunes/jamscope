@@ -9,6 +9,7 @@ class Exceptions @Inject constructor(
 ) {
     fun handleError(code: Int): String {
         val errorMessage = when (code) {
+            6 -> context.getString(R.string.no_friends)
             403 -> context.getString(R.string.invalid_user_password)
             429 -> context.getString(R.string.too_many_requests)
             500 -> context.getString(R.string.server_error)
