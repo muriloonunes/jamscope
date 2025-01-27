@@ -16,12 +16,19 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navigation
 import com.murile.nowplaying.data.api.ApiRequest
 import com.murile.nowplaying.data.session.UserSessionManager
-import com.murile.nowplaying.ui.components.FRIENDS_ROUTE
+import com.murile.nowplaying.ui.components.APP_ROUTE
+import com.murile.nowplaying.ui.components.FRIENDS_SCREEN
 import com.murile.nowplaying.ui.components.LOGIN_ROUTE
+import com.murile.nowplaying.ui.components.LOGIN_SCREEN
+import com.murile.nowplaying.ui.components.PROFILE_SCREEN
+import com.murile.nowplaying.ui.components.SEARCH_SCREEN
+import com.murile.nowplaying.ui.screen.HomePager
 import com.murile.nowplaying.ui.screen.LoginScreen
 import com.murile.nowplaying.ui.screen.ProfileTela
+import com.murile.nowplaying.ui.screen.SearchTela
 import com.murile.nowplaying.ui.theme.NowPlayingTheme
 import com.murile.nowplaying.ui.viewmodel.LoginViewModel
 import com.murile.nowplaying.ui.viewmodel.ProfileViewModel
@@ -73,26 +80,45 @@ class MainActivity : ComponentActivity() {
         startDestination: String
     ) {
         val navController = rememberNavController()
-
+        val profileViewModel by viewModels<ProfileViewModel>()
         NavHost(
             navController = navController,
             startDestination = startDestination
         ) {
-            composable(FRIENDS_ROUTE) {
-                val profileViewModel by viewModels<ProfileViewModel>()
-                ProfileTela(
-                    userSessionManager = userSessionManager,
-                    navController,
-                    profileViewModel = profileViewModel
-                )
+            navigation(
+                startDestination = LOGIN_SCREEN,
+                route = LOGIN_ROUTE
+            ) {
+                composable(LOGIN_SCREEN) {
+                    val loginViewModel by viewModels<LoginViewModel>()
+                    LoginScreen(
+                        navController,
+                        loginViewModel = loginViewModel,
+                        userSessionManager = userSessionManager
+                    )
+                }
             }
-            composable(LOGIN_ROUTE) {
-                val loginViewModel by viewModels<LoginViewModel>()
-                LoginScreen(
-                    navController,
-                    loginViewModel = loginViewModel,
-                    userSessionManager = userSessionManager
-                )
+            navigation(
+                startDestination = FRIENDS_SCREEN,
+                route = APP_ROUTE
+            ) {
+                composable(FRIENDS_SCREEN) {
+                    HomePager(
+                        navController,
+                        userSessionManager,
+                        profileViewModel
+                    )
+                }
+                composable(SEARCH_SCREEN) {
+                    SearchTela()
+                }
+                composable(PROFILE_SCREEN) {
+                    ProfileTela(
+                        userSessionManager = userSessionManager,
+                        navController = navController,
+                        profileViewModel = profileViewModel
+                    )
+                }
             }
         }
     }

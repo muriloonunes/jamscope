@@ -2,7 +2,6 @@ package com.murile.nowplaying.ui.screen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -10,7 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -32,7 +30,7 @@ import coil3.compose.AsyncImage
 import coil3.util.DebugLogger
 import com.murile.nowplaying.R
 import com.murile.nowplaying.data.session.UserSessionManager
-import com.murile.nowplaying.ui.components.FRIENDS_ROUTE
+import com.murile.nowplaying.ui.components.APP_ROUTE
 import com.murile.nowplaying.ui.components.LOGIN_ROUTE
 import com.murile.nowplaying.ui.viewmodel.ProfileViewModel
 import kotlinx.coroutines.runBlocking
@@ -57,7 +55,7 @@ fun ProfileTela(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = 48.dp),
+            .padding(top = 4.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
@@ -84,7 +82,7 @@ fun ProfileTela(
                 runBlocking {
                     userSessionManager.clearUserSession()
                     navController.navigate(LOGIN_ROUTE) {
-                        popUpTo(FRIENDS_ROUTE) { inclusive = true }
+                        popUpTo(APP_ROUTE) { inclusive = true }
                     }
                 }
             }) {

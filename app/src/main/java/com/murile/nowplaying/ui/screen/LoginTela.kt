@@ -17,7 +17,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -42,8 +41,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.murile.nowplaying.R
 import com.murile.nowplaying.data.session.UserSessionManager
+import com.murile.nowplaying.ui.components.APP_ROUTE
 import com.murile.nowplaying.ui.components.AutoFillRequestHandler
-import com.murile.nowplaying.ui.components.FRIENDS_ROUTE
 import com.murile.nowplaying.ui.components.LOGIN_ROUTE
 import com.murile.nowplaying.ui.components.connectNode
 import com.murile.nowplaying.ui.components.defaultFocusChangeAutoFill
@@ -170,7 +169,7 @@ fun LoginScreen(
         if (userProfile != null) {
             LaunchedEffect(userProfile) {
                 userSessionManager.saveUserProfile(userProfile!!)
-                navController.navigate(FRIENDS_ROUTE) {
+                navController.navigate(APP_ROUTE) {
                     popUpTo(LOGIN_ROUTE) { inclusive = true }
                 }
             }
