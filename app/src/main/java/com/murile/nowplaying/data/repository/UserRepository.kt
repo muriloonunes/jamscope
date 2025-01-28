@@ -38,4 +38,8 @@ class UserRepository @Inject constructor(
     suspend fun getUserInfo(profile: Profile) {
         return apiRequest.getUserInfo(profile)
     }
+
+    suspend fun getRecentTracks(user: User) {
+        return apiRequest.getRecentTracks(user)
+    }
 }

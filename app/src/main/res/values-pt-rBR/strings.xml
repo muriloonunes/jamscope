@@ -20,4 +20,5 @@
     <string name="search">Buscar</string>
     <string name="profile">Perfil</string>
     <string name="no_friends">Você não possui amigos adicionados no last.fm!</string>
+    <string name="no_recent_tracks">Sem músicas recentes</string>
 </resources>

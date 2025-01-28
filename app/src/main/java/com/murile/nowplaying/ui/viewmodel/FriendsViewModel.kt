@@ -34,17 +34,21 @@ class FriendsViewModel @Inject constructor(
             val userProfile = userRepository.getUserProfile()
             when (val result = userRepository.getUserFriends(userProfile!!.username)) {
                 is Resource.Success -> {
-                    userProfile.friends = result.data
+                    val friends = result.data
+                    friends.forEach { friend ->
+                        userRepository.getRecentTracks(friend)
+                    }
+                    userProfile.friends = friends
                     userRepository.saveUserProfile(userProfile)
                     _userProfile.value = userProfile
+                    _isRefreshing.value = false
                 }
-
                 is Resource.Error -> {
                     _errorMessage.value = result.message
+                    _isRefreshing.value = false
                 }
             }
             lastUpdateTimestamp = System.currentTimeMillis()
-            _isRefreshing.value = false
         }
     }
 

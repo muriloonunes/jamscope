@@ -1,7 +1,9 @@
 package com.murile.nowplaying.data.model
 
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonIgnoreUnknownKeys
 
 @Serializable
 data class SessionResponse(
@@ -49,7 +51,6 @@ data class Friends(
     val user: List<User>
 )
 
-
 @Serializable
 data class User(
     val name: String? = null,
@@ -58,11 +59,57 @@ data class User(
     val country: String? = null,
     val realname: String = "",
     val subscriber: Int? = null,
-    val playcount: Long? = null
+    val playcount: Long? = null,
+    var recentTracks: RecentTracks? = null
 )
 
 @Serializable
 data class Image(
     val size: String,
     @SerialName("#text") val url: String
+)
+
+@Serializable
+data class RecentTracksResponse(
+    val recenttracks: RecentTracks
+)
+
+@Serializable
+data class RecentTracks(
+    val track: List<Track>
+)
+
+@Serializable
+data class Track(
+    val artist: Artist,
+    val image: List<Image>,
+    val album: Album,
+    val name: String,
+    @SerialName("date") val dateInfo: DateInfo? = null,
+    @SerialName("@attr") val nowPlayingAttr: NowPlayingAttr? = null
+)
+
+@OptIn(ExperimentalSerializationApi::class)
+@Serializable
+@JsonIgnoreUnknownKeys
+data class Artist(
+    @SerialName("#text") val name: String,
+)
+
+@OptIn(ExperimentalSerializationApi::class)
+@Serializable
+@JsonIgnoreUnknownKeys
+data class Album(
+    @SerialName("#text") val name: String,
+)
+
+@Serializable
+data class DateInfo(
+    @SerialName("uts") val timestamp: String,
+    @SerialName("#text") val formattedDate: String
+)
+
+@Serializable
+data class NowPlayingAttr(
+    val nowplaying: String
 )

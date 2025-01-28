@@ -29,11 +29,11 @@ class ProfileViewModel @Inject constructor(
             val userProfile = userRepository.getUserProfile()
             userRepository.getUserInfo(userProfile!!)
             _userProfile.value = userProfile
-        }
-        lastUpdateTimestamp = System.currentTimeMillis()
-        _isRefreshing.value = false
-    }
 
+            _isRefreshing.value = false
+            lastUpdateTimestamp = System.currentTimeMillis()
+        }
+    }
 
     fun logOutUser() {
         viewModelScope.launch {

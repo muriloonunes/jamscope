@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
@@ -21,7 +22,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -74,11 +77,13 @@ fun ProfileTela(
             userProfile?.let {
                 item {
                     AsyncImage(
-                        model = if (!imageError) it.imageUrl else R.drawable.profile_pic_placeholder,
+                        model = it.imageUrl,
                         contentDescription = stringResource(
                             R.string.profile_pic_description,
                             it.username
                         ),
+                        error = painterResource(R.drawable.profile_pic_placeholder) ,
+                        placeholder = ColorPainter(color = MaterialTheme.colorScheme.surfaceContainerHigh),
                         imageLoader = imageLoader,
                         onError = { imageError = true },
                         modifier = Modifier

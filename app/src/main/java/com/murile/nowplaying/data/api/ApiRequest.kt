@@ -4,6 +4,7 @@ import com.murile.nowplaying.data.api.Resource.Error
 import com.murile.nowplaying.data.api.Resource.Success
 import com.murile.nowplaying.data.model.ApiResponse
 import com.murile.nowplaying.data.model.Profile
+import com.murile.nowplaying.data.model.RecentTracksResponse
 import com.murile.nowplaying.data.model.Session
 import com.murile.nowplaying.data.model.SessionResponse
 import com.murile.nowplaying.data.model.Token
@@ -166,7 +167,7 @@ class ApiRequest @Inject constructor(
                 }
             }
             if (!response.status.isSuccess()) {
-                val jsonResponse = Json.parseToJsonElement(response.bodyAsText()).jsonObject
+                val jsonResponse = JSON.parseToJsonElement(response.bodyAsText()).jsonObject
                 val errorValue = jsonResponse["error"]?.jsonPrimitive?.intOrNull
                 Error(handleError(errorValue!!))
             } else {
@@ -190,6 +191,30 @@ class ApiRequest @Inject constructor(
         } catch (e: Exception) {
             e.printStackTrace()
             Error("Failed to fetch user friends")
+        }
+    }
+
+    suspend fun getRecentTracks(
+        user: User
+    ) {
+        val urlParametro =
+            "method=user.getrecenttracks&user=${user.name}&api_key=${Token.LAST_FM_API_KEY}&limit=5"
+        val requestUrl = "$BASE_URL$FORMAT_JSON&$urlParametro"
+        try {
+            val response = withContext(Dispatchers.IO) {
+                HttpClientProvider.client.post(requestUrl) {
+                    headers {
+                        append(
+                            HttpHeaders.ContentType,
+                            ContentType.Application.Json.toString()
+                        )
+                    }
+                }
+            }
+            val recentTracksResponse = JSON.decodeFromString<RecentTracksResponse>(response.bodyAsText())
+            user.recentTracks = recentTracksResponse.recenttracks
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 }
