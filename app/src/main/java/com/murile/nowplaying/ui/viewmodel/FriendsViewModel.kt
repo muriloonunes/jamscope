@@ -2,10 +2,9 @@ package com.murile.nowplaying.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.murile.nowplaying.data.api.ApiRequest
 import com.murile.nowplaying.data.api.Resource
 import com.murile.nowplaying.data.model.Profile
-import com.murile.nowplaying.data.session.UserSessionManager
+import com.murile.nowplaying.data.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,8 +14,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FriendsViewModel @Inject constructor(
-    val userSessionManager: UserSessionManager,
-    private val apiRequest: ApiRequest
+    private val userRepository: UserRepository
 ) : ViewModel() {
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing get() = _isRefreshing.asStateFlow()
@@ -33,13 +31,14 @@ class FriendsViewModel @Inject constructor(
         _isRefreshing.value = true
         _errorMessage.value = ""
         viewModelScope.launch {
-            val userProfile = userSessionManager.getUserProfile()
-            when (val result = apiRequest.getUserFriends(userProfile!!.username)) {
+            val userProfile = userRepository.getUserProfile()
+            when (val result = userRepository.getUserFriends(userProfile!!.username)) {
                 is Resource.Success -> {
                     userProfile.friends = result.data
-                    userSessionManager.saveUserProfile(userProfile)
+                    userRepository.saveUserProfile(userProfile)
                     _userProfile.value = userProfile
                 }
+
                 is Resource.Error -> {
                     _errorMessage.value = result.message
                 }
@@ -51,5 +50,9 @@ class FriendsViewModel @Inject constructor(
 
     fun shouldRefresh(): Boolean {
         return System.currentTimeMillis() - lastUpdateTimestamp > 15000000 // 2 min e meio em milisegundos
+    }
+
+    fun resetLastUpdateTimestamp() {
+        lastUpdateTimestamp = 0L
     }
 }

@@ -1,12 +1,14 @@
 package com.murile.nowplaying.di
 
 import android.app.Application
-import com.murile.nowplaying.data.session.UserSessionManager
+import com.murile.nowplaying.data.session.DataStoreManager
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
+import com.murile.nowplaying.data.api.ApiRequest
 import com.murile.nowplaying.data.api.Exceptions
+import com.murile.nowplaying.data.repository.UserRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -28,8 +30,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideUserDataStore(dataStore: DataStore<Preferences>): UserSessionManager {
-        return UserSessionManager(dataStore)
+    fun provideDataStoreManager(dataStore: DataStore<Preferences>): DataStoreManager {
+        return DataStoreManager(dataStore)
     }
 
     @Provides
@@ -42,5 +44,17 @@ object AppModule {
     @Singleton
     fun provideContext(application: Application): Context {
         return application.applicationContext
+    }
+
+    @Provides
+    @Singleton
+    fun provideApiRequest(exceptions: Exceptions): ApiRequest {
+        return ApiRequest(exceptions)
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserRepository(dataStoreManager: DataStoreManager, apiRequest: ApiRequest): UserRepository {
+        return UserRepository(apiRequest, dataStoreManager)
     }
 }

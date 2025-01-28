@@ -104,11 +104,11 @@ fun HomePager(
                 0 -> FriendsTela(
                     friendsViewModel = friendsViewModel
                 )
-
                 1 -> SearchTela()
                 2 -> ProfileTela(
                     navController = navController,
-                    profileViewModel = profileViewModel
+                    profileViewModel = profileViewModel,
+                    friendsViewModel = friendsViewModel
                 )
             }
         }

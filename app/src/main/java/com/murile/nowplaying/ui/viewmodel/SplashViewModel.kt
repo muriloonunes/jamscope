@@ -2,7 +2,7 @@ package com.murile.nowplaying.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.murile.nowplaying.data.session.UserSessionManager
+import com.murile.nowplaying.data.repository.UserRepository
 import com.murile.nowplaying.ui.components.APP_ROUTE
 import com.murile.nowplaying.ui.components.LOGIN_ROUTE
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SplashViewModel @Inject constructor(
-    private val userSessionManager: UserSessionManager
+    private val userRepository: UserRepository
 ) : ViewModel() {
     private val _isLoading = MutableStateFlow(true)
     val isLoading get() = _isLoading.asStateFlow()
@@ -23,7 +23,7 @@ class SplashViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            val isLoggedIn = userSessionManager.isUserLoggedIn()
+            val isLoggedIn = userRepository.isUserLoggedIn()
             if (isLoggedIn) {
                 _startDestination.value = APP_ROUTE
                 _isLoading.value = false

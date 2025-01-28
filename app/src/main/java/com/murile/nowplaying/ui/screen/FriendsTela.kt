@@ -44,13 +44,13 @@ fun FriendsTela(
             modifier = Modifier
                 .fillMaxSize(),
             verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             userProfile?.friends?.let { friends ->
                 items(friends.size) { index ->
                     ListItem(
                         headlineContent = {
-                            Text("Friend: ${friends[index].name}")
+                            Text("Friend: ${friends[index]}")
                         }
                     )
                 }

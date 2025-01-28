@@ -33,9 +33,9 @@ class ApiRequest @Inject constructor(
     companion object {
         private const val BASE_URL = "https://ws.audioscrobbler.com/2.0/?"
         private const val FORMAT_JSON = "format=json"
+        private const val DEFAULT_PROFILE_IMAGE = "https://lastfm.freetls.fastly.net/i/u/64s/2a96cbd8b46e442fc41c2b86b821562f.png"
+        private val JSON = Json { ignoreUnknownKeys = true }
     }
-
-    private val json = Json { ignoreUnknownKeys = true }
 
     private fun generateApiSig(
         username: String, password: String
@@ -103,19 +103,17 @@ class ApiRequest @Inject constructor(
 
     private suspend fun processSessionResponse(responseBodyString: String, password: String): Profile? {
         return try {
-            val sessionResponse = json.decodeFromString<SessionResponse>(responseBodyString)
-            Profile(
+            val sessionResponse = JSON.decodeFromString<SessionResponse>(responseBodyString)
+            val profile = Profile(
                 username = sessionResponse.session.name,
                 subscriber = sessionResponse.session.subscriber,
                 session = Session(key = sessionResponse.session.key),
                 senha = password,
                 imageUrl = "",
                 profileUrl = ""
-            ).apply {
-                val (image, url) = getUserInfo(username)
-                imageUrl = image
-                profileUrl = url
-            }
+            )
+            getUserInfo(profile)
+            profile
         } catch (e: Exception) {
             e.printStackTrace()
             null
@@ -123,25 +121,32 @@ class ApiRequest @Inject constructor(
     }
 
     suspend fun getUserInfo(
-        username: String
-    ): Array<String> {
-        return withContext(Dispatchers.IO) {
-            val urlParametro = "method=user.getinfo&user=$username&api_key=${Token.LAST_FM_API_KEY}"
+        profile: Profile
+    ) {
+         withContext(Dispatchers.IO) {
+            val urlParametro = "method=user.getinfo&user=${profile.username}&api_key=${Token.LAST_FM_API_KEY}"
             val requestUrl = "$BASE_URL$FORMAT_JSON&$urlParametro"
 
-            val links = arrayOf("", "")
             try {
                 val response: ApiResponse = HttpClientProvider.client.get(requestUrl).body()
-                val largeImageUrl = response.user.image.find { it.size == "large" }?.url
+                val largeImageUrl = response.user.image.find { it.size == "large" }?.url ?: DEFAULT_PROFILE_IMAGE
                 val profileUrl = response.user.url
-                links[0] = largeImageUrl
-                    ?: "https://lastfm.freetls.fastly.net/i/u/64s/2a96cbd8b46e442fc41c2b86b821562f.png"
-                links[1] = profileUrl
+                val country = response.user.country
+                val realname = response.user.realname
+                val playcount = response.user.playcount
+                val subscriber = response.user.subscriber
 
+                profile.imageUrl = largeImageUrl
+                profile.profileUrl = profileUrl
+                profile.country = if (country=="None") "" else country
+                profile.realname = realname.ifEmpty { "" }
+                profile.playcount = playcount
+                if (subscriber != null) {
+                    profile.subscriber = subscriber
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
             }
-            links
         }
     }
 
@@ -150,7 +155,6 @@ class ApiRequest @Inject constructor(
             val urlParametro =
                 "method=user.getfriends&user=$username&api_key=${Token.LAST_FM_API_KEY}"
             val requestUrl = "$BASE_URL$FORMAT_JSON&$urlParametro"
-
             val response = withContext(Dispatchers.IO) {
                 HttpClientProvider.client.post(requestUrl) {
                     headers {
@@ -166,12 +170,16 @@ class ApiRequest @Inject constructor(
                 val errorValue = jsonResponse["error"]?.jsonPrimitive?.intOrNull
                 Error(handleError(errorValue!!))
             } else {
-                val userFriendsResponse = json.decodeFromString<UserFriendsResponse>(response.bodyAsText())
+                val userFriendsResponse = JSON.decodeFromString<UserFriendsResponse>(response.bodyAsText())
                 val users = userFriendsResponse.friends.user.map { friend ->
                     User(
                         name = friend.name,
                         image = friend.image,
-                        url = friend.url
+                        url = friend.url,
+                        realname = friend.realname,
+                        country = friend.country,
+                        playcount = friend.playcount,
+                        subscriber = friend.subscriber
                     )
                 }
                 Success(users)

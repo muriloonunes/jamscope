@@ -20,10 +20,13 @@ data class Profile(
     val username: String,
     val senha: String,
     val session: Session,
-    val subscriber: Int,
+    var subscriber: Int,
     var imageUrl: String? = null,
     var profileUrl: String? = null,
-    var friends: List<User>? = null
+    var friends: List<User>? = null,
+    var country: String? = null,
+    var realname: String = "",
+    var playcount: Long? = null
 )
 
 @Serializable
@@ -51,7 +54,11 @@ data class Friends(
 data class User(
     val name: String? = null,
     val image: List<Image>,
-    val url: String
+    val url: String,
+    val country: String? = null,
+    val realname: String = "",
+    val subscriber: Int? = null,
+    val playcount: Long? = null
 )
 
 @Serializable

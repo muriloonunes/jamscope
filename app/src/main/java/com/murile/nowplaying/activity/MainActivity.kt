@@ -17,8 +17,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
-import com.murile.nowplaying.data.api.ApiRequest
-import com.murile.nowplaying.data.session.UserSessionManager
+import com.murile.nowplaying.data.api.HttpClientProvider
+import com.murile.nowplaying.data.session.DataStoreManager
 import com.murile.nowplaying.ui.components.APP_ROUTE
 import com.murile.nowplaying.ui.components.FRIENDS_SCREEN
 import com.murile.nowplaying.ui.components.LOGIN_ROUTE
@@ -41,11 +41,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    @Inject
-    lateinit var userSessionManager: UserSessionManager
-
-    @Inject
-    lateinit var apiRequest: ApiRequest
+    @Inject lateinit var dataStoreManager: DataStoreManager
 
     private val splashViewModel by viewModels<SplashViewModel>()
 
@@ -62,6 +58,11 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        HttpClientProvider.close()
     }
 
     private fun setupSplashScreen() {
@@ -97,7 +98,7 @@ class MainActivity : ComponentActivity() {
                     LoginScreen(
                         navController,
                         loginViewModel = loginViewModel,
-                        userSessionManager = userSessionManager
+                        dataStoreManager = dataStoreManager
                     )
                 }
             }
@@ -118,7 +119,8 @@ class MainActivity : ComponentActivity() {
                 composable(PROFILE_SCREEN) {
                     ProfileTela(
                         navController = navController,
-                        profileViewModel = profileViewModel
+                        profileViewModel = profileViewModel,
+                        friendsViewModel = friendsViewModel
                     )
                 }
             }

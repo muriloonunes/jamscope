@@ -40,7 +40,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.murile.nowplaying.R
-import com.murile.nowplaying.data.session.UserSessionManager
+import com.murile.nowplaying.data.session.DataStoreManager
 import com.murile.nowplaying.ui.components.APP_ROUTE
 import com.murile.nowplaying.ui.components.AutoFillRequestHandler
 import com.murile.nowplaying.ui.components.LOGIN_ROUTE
@@ -54,7 +54,7 @@ import kotlinx.coroutines.launch
 fun LoginScreen(
     navController: NavController,
     loginViewModel: LoginViewModel = viewModel(),
-    userSessionManager: UserSessionManager
+    dataStoreManager: DataStoreManager
 ) {
     val username by loginViewModel.username.collectAsState()
     val password by loginViewModel.password.collectAsState()
@@ -168,7 +168,7 @@ fun LoginScreen(
         }
         if (userProfile != null) {
             LaunchedEffect(userProfile) {
-                userSessionManager.saveUserProfile(userProfile!!)
+                dataStoreManager.saveUserProfile(userProfile!!)
                 navController.navigate(APP_ROUTE) {
                     popUpTo(LOGIN_ROUTE) { inclusive = true }
                 }

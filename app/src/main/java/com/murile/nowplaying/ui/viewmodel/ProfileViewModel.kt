@@ -2,9 +2,8 @@ package com.murile.nowplaying.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.murile.nowplaying.data.api.ApiRequest
 import com.murile.nowplaying.data.model.Profile
-import com.murile.nowplaying.data.session.UserSessionManager
+import com.murile.nowplaying.data.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,8 +13,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
-    val userSessionManager: UserSessionManager,
-    private val apiRequest: ApiRequest
+    private val userRepository: UserRepository
 ) : ViewModel() {
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing get() = _isRefreshing.asStateFlow()
@@ -28,28 +26,27 @@ class ProfileViewModel @Inject constructor(
     fun onRefresh() {
         _isRefreshing.value = true
         viewModelScope.launch {
-            userSessionManager.getUserProfile()?.let { userProfile ->
-                val links: Array<String> = apiRequest.getUserInfo(userProfile.username)
-                val newProfilePic = links[0]
-                if (newProfilePic != userProfile.imageUrl) {
-                    val updatedProfile = userProfile.copy(imageUrl = newProfilePic)
-                    userSessionManager.saveUserProfile(updatedProfile)
-                    _userProfile.value = updatedProfile
-                } else {
-                    _userProfile.value = userProfile
-                }
-            }
-            _isRefreshing.value = false
+            val userProfile = userRepository.getUserProfile()
+            userRepository.getUserInfo(userProfile!!)
+            _userProfile.value = userProfile
         }
+        lastUpdateTimestamp = System.currentTimeMillis()
+        _isRefreshing.value = false
     }
+
 
     fun logOutUser() {
         viewModelScope.launch {
-            userSessionManager.clearUserSession()
+            userRepository.clearUserSession()
         }
+        resetLastUpdateTimestamp()
     }
 
     fun shouldRefresh(): Boolean {
         return System.currentTimeMillis() - lastUpdateTimestamp > 15000000 // 2 min e meio em milisegundos
+    }
+
+    private fun resetLastUpdateTimestamp() {
+        lastUpdateTimestamp = 0L
     }
 }

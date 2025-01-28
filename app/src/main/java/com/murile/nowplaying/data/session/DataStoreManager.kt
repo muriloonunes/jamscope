@@ -13,7 +13,7 @@ object PreferencesKeys {
     val PROFILE_JSON = stringPreferencesKey("profile_json")
 }
 
-class UserSessionManager @Inject constructor(
+class DataStoreManager @Inject constructor(
     private val dataStore: DataStore<Preferences>
 ) {
     suspend fun saveUserProfile(profile: Profile) {
