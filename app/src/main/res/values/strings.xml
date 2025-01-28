@@ -20,4 +20,6 @@
     <string name="profile">Profile</string>
     <string name="no_friends">You currently don\'t have any friend on last.fm!</string>
     <string name="no_recent_tracks">No recent tracks</string>
+    <string name="unknown_album">Unknown album</string>
+    <string name="loadin">Loading…</string>
 </resources>

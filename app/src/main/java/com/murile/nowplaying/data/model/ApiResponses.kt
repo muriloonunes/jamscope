@@ -60,7 +60,8 @@ data class User(
     val realname: String = "",
     val subscriber: Int? = null,
     val playcount: Long? = null,
-    var recentTracks: RecentTracks? = null
+    var recentTracks: RecentTracks? = null,
+    var lastTracksFetchTime: Long? = null
 )
 
 @Serializable

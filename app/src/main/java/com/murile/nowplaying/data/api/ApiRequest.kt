@@ -1,5 +1,6 @@
 package com.murile.nowplaying.data.api
 
+import android.util.Log
 import com.murile.nowplaying.data.api.Resource.Error
 import com.murile.nowplaying.data.api.Resource.Success
 import com.murile.nowplaying.data.model.ApiResponse
@@ -167,6 +168,7 @@ class ApiRequest @Inject constructor(
                 }
             }
             if (!response.status.isSuccess()) {
+                Log.i("getUserFriends", "Error: ${response.bodyAsText()}")
                 val jsonResponse = JSON.parseToJsonElement(response.bodyAsText()).jsonObject
                 val errorValue = jsonResponse["error"]?.jsonPrimitive?.intOrNull
                 Error(handleError(errorValue!!))
