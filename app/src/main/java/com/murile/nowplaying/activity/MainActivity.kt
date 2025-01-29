@@ -17,7 +17,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
-import com.murile.nowplaying.data.api.HttpClientProvider
 import com.murile.nowplaying.data.session.DataStoreManager
 import com.murile.nowplaying.ui.components.APP_ROUTE
 import com.murile.nowplaying.ui.components.FRIENDS_SCREEN
@@ -58,11 +57,6 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        HttpClientProvider.close()
     }
 
     private fun setupSplashScreen() {

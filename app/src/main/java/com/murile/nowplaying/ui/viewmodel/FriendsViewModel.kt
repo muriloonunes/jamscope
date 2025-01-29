@@ -7,6 +7,7 @@ import com.murile.nowplaying.data.model.RecentTracks
 import com.murile.nowplaying.data.model.User
 import com.murile.nowplaying.data.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -40,6 +41,7 @@ class FriendsViewModel @Inject constructor(
         _errorMessage.value = ""
         viewModelScope.launch {
             val userProfile = userRepository.getUserProfile()
+            delay(1000)
             when (val result = userRepository.getUserFriends(userProfile!!.username)) {
                 is Resource.Success -> {
                     val friends = result.data
@@ -62,10 +64,6 @@ class FriendsViewModel @Inject constructor(
         viewModelScope.launch {
             friends.forEach { friend ->
                 userRepository.getRecentTracks(friend)
-//                friend.recentTracks?.track?.forEach { track ->
-//                    val dateInfo = track.dateInfo
-//                    println("Track: ${track.name}, Date Info: ${dateInfo?.formattedDate}")
-//                }
                 _recentTracksMap.update { oldMap ->
                     oldMap + (friend.url to friend.recentTracks)
                 }

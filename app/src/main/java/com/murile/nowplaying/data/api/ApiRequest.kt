@@ -27,6 +27,9 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import java.nio.channels.UnresolvedAddressException
 import java.security.MessageDigest
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 class ApiRequest @Inject constructor(
@@ -214,6 +217,14 @@ class ApiRequest @Inject constructor(
                 }
             }
             val recentTracksResponse = JSON.decodeFromString<RecentTracksResponse>(response.bodyAsText())
+            recentTracksResponse.recenttracks.track.forEach { track ->
+                track.dateInfo?.let { dateInfo ->
+                    val localDateTime = LocalDateTime.parse(dateInfo.formattedDate, DateTimeFormatter.ofPattern("dd MMM yyyy, HH:mm"))
+                    val zonedDateTime = localDateTime.atZone(ZoneId.of("UTC")).withZoneSameInstant(ZoneId.systemDefault())
+                    val isoFormattedDate = zonedDateTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
+                    dateInfo.formattedDate = isoFormattedDate
+                }
+            }
             user.recentTracks = recentTracksResponse.recenttracks
         } catch (e: Exception) {
             e.printStackTrace()

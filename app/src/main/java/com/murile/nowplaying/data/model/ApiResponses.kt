@@ -107,7 +107,7 @@ data class Album(
 @Serializable
 data class DateInfo(
     @SerialName("uts") val timestamp: String,
-    @SerialName("#text") val formattedDate: String
+    @SerialName("#text") var formattedDate: String
 )
 
 @Serializable

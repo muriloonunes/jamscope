@@ -23,4 +23,10 @@
     <string name="no_recent_tracks">Sem músicas recentes</string>
     <string name="unknown_album">Álbum desconhecido</string>
     <string name="loadin">Carregando…</string>
+    <string name="minutes_ago">Há %d minutos</string>
+    <string name="one_hour_ago">Há 1 hora</string>
+    <string name="hours_ago">Há %d horas</string>
+    <string name="one_day_ago">Há 1 dia</string>
+    <string name="days_ago">Há %d dias</string>
+    <string name="now_playing">Ouvindo agora</string>
 </resources>
