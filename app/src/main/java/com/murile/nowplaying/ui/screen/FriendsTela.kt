@@ -1,7 +1,6 @@
 package com.murile.nowplaying.ui.screen
 
 import androidx.compose.foundation.basicMarquee
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.murile.nowplaying.R
+import com.murile.nowplaying.data.model.RecentTracks
 import com.murile.nowplaying.data.model.User
 import com.murile.nowplaying.ui.viewmodel.FriendsViewModel
 
@@ -45,8 +46,9 @@ fun FriendsTela(
     friendsViewModel: FriendsViewModel
 ) {
     val refreshing by friendsViewModel.isRefreshing.collectAsStateWithLifecycle()
-    val userProfile by friendsViewModel.userProfile.collectAsStateWithLifecycle()
     val errorMessage by friendsViewModel.errorMessage.collectAsStateWithLifecycle()
+    val recentTracksMap by friendsViewModel.recentTracksMap.collectAsStateWithLifecycle()
+    val friends by friendsViewModel.friends.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
         if (friendsViewModel.shouldRefresh()) {
@@ -66,11 +68,11 @@ fun FriendsTela(
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            userProfile?.friends?.let { friends ->
-                items(friends.size) { index ->
-                    val friend = friends[index]
-                    FriendCard(friend)
-                }
+            items(friends) { friend ->
+                FriendCard(
+                    friend = friend,
+                    recentTracks = recentTracksMap[friend.url]
+                )
             }
             item {
                 if (errorMessage.isNotEmpty()) {
@@ -83,19 +85,14 @@ fun FriendsTela(
                 }
             }
         }
-
     }
 }
 
 @Composable
 fun FriendCard(
-    friend: User
+    friend: User,
+    recentTracks: RecentTracks?
 ) {
-//    var size by remember { mutableStateOf(IntSize.Zero) }
-//    LaunchedEffect(size) {
-//        Log.i("FriendCard", "Size: $size")
-//    }
-
     Card(
         modifier = Modifier
             .padding(8.dp)
@@ -127,7 +124,7 @@ fun FriendCard(
                         .size(50.dp)
                         .fillMaxSize(0.3f)
                 )
-                friend.realname.ifEmpty { friend.name }?.let { it ->
+                friend.realname.ifEmpty { friend.name }?.let {
                     Text(
                         text = it,
                         style = MaterialTheme.typography.bodySmall.copy(
@@ -149,13 +146,12 @@ fun FriendCard(
             Column(
                 horizontalAlignment = Alignment.Start
             ) {
-                friend.recentTracks?.track?.firstOrNull()?.let { track ->
+                recentTracks?.track?.firstOrNull()?.let { track ->
                     Text(
                         text = track.name,
                         style = MaterialTheme.typography.titleLarge,
                         maxLines = 1,
                         modifier = Modifier
-                            .border(5.dp, color = Color.Red)
                             .width(750.dp)
                             .basicMarquee()
                     )
