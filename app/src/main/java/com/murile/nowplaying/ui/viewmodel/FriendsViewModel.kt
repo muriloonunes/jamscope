@@ -1,11 +1,13 @@
 package com.murile.nowplaying.ui.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.murile.nowplaying.data.api.Resource
 import com.murile.nowplaying.data.model.RecentTracks
+import com.murile.nowplaying.data.model.Resource
 import com.murile.nowplaying.data.model.User
 import com.murile.nowplaying.data.repository.UserRepository
+import com.murile.nowplaying.util.SortingType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,8 +15,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.time.LocalTime
-import java.time.ZoneOffset
 import javax.inject.Inject
 
 
@@ -34,18 +34,24 @@ class FriendsViewModel @Inject constructor(
     private val _recentTracksMap = MutableStateFlow<Map<String, RecentTracks?>>(emptyMap())
     val recentTracksMap: StateFlow<Map<String, RecentTracks?>> = _recentTracksMap
 
+    private val _sortingType = MutableStateFlow(SortingType.RECENTLY_PLAYED)
+    val sortingType: StateFlow<SortingType> = _sortingType
+
     private var lastUpdateTimestamp: Long = 0L
 
     fun onRefresh() {
+        if (_isRefreshing.value) {
+            return
+        }
         _isRefreshing.value = true
         _errorMessage.value = ""
         viewModelScope.launch {
             val userProfile = userRepository.getUserProfile()
+            Log.i("FriendsViewModel", "onRefresh: $userProfile")
             delay(1000)
             when (val result = userRepository.getUserFriends(userProfile!!.username)) {
                 is Resource.Success -> {
                     val friends = result.data
-                    userProfile.friends = friends
                     userRepository.saveUserProfile(userProfile)
                     _friends.value = friends
                     _isRefreshing.value = false
@@ -68,7 +74,26 @@ class FriendsViewModel @Inject constructor(
                     oldMap + (friend.url to friend.recentTracks)
                 }
             }
+//            sortFriendsList()
         }
+    }
+
+    private fun sortFriendsList() {
+        val friends = _friends.value
+        viewModelScope.launch {
+            val sortedFriends = when (_sortingType.value) {
+                SortingType.DEFAULT -> friends
+                SortingType.ALPHABETICAL -> friends.sortedBy { it.name!!.lowercase() }
+                SortingType.RECENTLY_PLAYED -> friends.sortedWith(compareByDescending<User> { it.recentTracks?.track?.firstOrNull()?.dateInfo == null }
+                    .thenByDescending { it.recentTracks?.track?.firstOrNull()?.dateInfo?.formattedDate })
+            }
+            _friends.value = sortedFriends
+        }
+    }
+
+    fun onSortingTypeChanged(sortingType: SortingType) {
+        _sortingType.value = sortingType
+        sortFriendsList()
     }
 
     fun shouldRefresh(): Boolean {
@@ -77,20 +102,5 @@ class FriendsViewModel @Inject constructor(
 
     fun resetLastUpdateTimestamp() {
         lastUpdateTimestamp = 0L
-    }
-}
-
-internal object Main {
-    @JvmStatic
-    fun main(args: Array<String>) {
-        val sampleTime = "12:30"
-        val offsetTime = LocalTime.parse(sampleTime)
-            .atOffset(ZoneOffset.UTC)
-            .withOffsetSameInstant(ZoneOffset.of("+03:00"))
-        println(offsetTime)
-
-        // Getting LocalTine from OffsetTime
-        val result = offsetTime.toLocalTime()
-        println(result)
     }
 }

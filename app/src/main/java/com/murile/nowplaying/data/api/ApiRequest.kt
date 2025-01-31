@@ -1,11 +1,12 @@
 package com.murile.nowplaying.data.api
 
 import android.util.Log
-import com.murile.nowplaying.data.api.Resource.Error
-import com.murile.nowplaying.data.api.Resource.Success
 import com.murile.nowplaying.data.model.ApiResponse
 import com.murile.nowplaying.data.model.Profile
 import com.murile.nowplaying.data.model.RecentTracksResponse
+import com.murile.nowplaying.data.model.Resource
+import com.murile.nowplaying.data.model.Resource.Error
+import com.murile.nowplaying.data.model.Resource.Success
 import com.murile.nowplaying.data.model.Session
 import com.murile.nowplaying.data.model.SessionResponse
 import com.murile.nowplaying.data.model.Token

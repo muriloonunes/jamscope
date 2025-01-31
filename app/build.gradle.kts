@@ -15,8 +15,8 @@ android {
         applicationId = "com.murile.nowplaying"
         minSdk = 26
         targetSdk = 35
-        versionCode = 3
-        versionName = "0.3"
+        versionCode = 4
+        versionName = "0.5"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -43,51 +43,72 @@ android {
 }
 
 dependencies {
-    implementation(libs.androidx.runtime.livedata)
+    // Android Core
+    implementation(libs.androidx.core)
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.core.splashscreen)
+    implementation(libs.androidx.datastore.preferences)
+
+    // Android Lifecycle
+    implementation(libs.androidx.runtime.livedata)
     implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+
+    // Android UI
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
+    implementation(libs.androidx.activity.compose)
+
+    // Material
     implementation(libs.androidx.material3)
-    implementation(libs.androidx.espresso.core)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.ui.test.junit4)
-    debugImplementation(libs.androidx.ui.tooling)
-    debugImplementation(libs.androidx.ui.test.manifest)
-    implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.material)
     implementation(libs.androidx.material.icons.extended)
-    implementation(libs.androidx.core.splashscreen)
-    implementation(libs.androidx.datastore.preferences)
+
+    // Navigation
     implementation(libs.androidx.navigation.compose)
+
+    // Multiplatform Settings
     implementation(libs.multiplatform.settings)
     implementation(libs.multiplatform.settings.coroutines)
+
+    // JSON Serialization
     implementation(libs.kotlinx.serialization.json)
+
+    // Image Loading
     implementation(libs.coil.compose)
+    implementation(libs.coil)
+    implementation(libs.coil.network.okhttp)
+
+    // Ktor Network
     implementation(libs.ktor.client.core)
     implementation(libs.ktor.client.cio)
     implementation(libs.ktor.client.json)
     implementation(libs.ktor.client.serialization)
     implementation(libs.ktor.client.content.negotiation)
     implementation(libs.ktor.serialization.kotlinx.json)
-    implementation(libs.coil)
-    implementation(libs.coil.network.okhttp)
     implementation(libs.ktor.server.content.negotiation)
-    implementation(libs.androidx.core)
 
-    //viewmodel compose
-    implementation(libs.androidx.lifecycle.viewmodel.compose)
-    //hilt
-    implementation("com.google.dagger:hilt-android:2.51.1")
-    kapt("com.google.dagger:hilt-android-compiler:2.51.1")
-    kapt("androidx.hilt:hilt-compiler:1.2.0")
-    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
+    // Hilt (Dependency Injection)
+    implementation(libs.hilt.android)
+    implementation(libs.androidx.hilt.navigation.compose)
+    kapt(libs.hilt.android.compiler)
+    kapt(libs.androidx.hilt.compiler)
+
+    // Tests
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(libs.androidx.ui.test.junit4)
+    androidTestImplementation(libs.androidx.ui.test.junit4.android)
+    debugImplementation(libs.androidx.ui.tooling)
+    debugImplementation(libs.androidx.ui.test.manifest)
+
+    //Lottie animations
+    implementation(libs.dotlottie.android.v062)
+    implementation(libs.lottie.compose)
 }
 
 kapt {

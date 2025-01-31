@@ -1,7 +1,7 @@
 package com.murile.nowplaying.data.repository
 
 import com.murile.nowplaying.data.api.ApiRequest
-import com.murile.nowplaying.data.api.Resource
+import com.murile.nowplaying.data.model.Resource
 import com.murile.nowplaying.data.model.Profile
 import com.murile.nowplaying.data.model.User
 import com.murile.nowplaying.data.session.DataStoreManager

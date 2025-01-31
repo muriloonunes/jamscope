@@ -2,6 +2,7 @@ package com.murile.nowplaying.ui.screen
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
@@ -18,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -62,6 +64,7 @@ fun HomePager(
             PROFILE_SCREEN
         )
     )
+    val listStates = remember { List(itensBarList.size) { LazyListState() } }
     val pagerState = rememberPagerState(initialPage = 0) { 3 }
     val coroutineScope = rememberCoroutineScope()
 
@@ -80,6 +83,10 @@ fun HomePager(
                         selectedItemIndex = index
                         coroutineScope.launch {
                             pagerState.animateScrollToPage(index)
+
+                            if (index == 0 || index == 2) {
+                                listStates[index].animateScrollToItem(0)
+                            }
                         }
                     },
                     icon = {
@@ -102,7 +109,8 @@ fun HomePager(
         ) { page ->
             when (page) {
                 0 -> FriendsTela(
-                    friendsViewModel = friendsViewModel
+                    friendsViewModel = friendsViewModel,
+                    listStates = listStates[page]
                 )
                 1 -> SearchTela()
                 2 -> ProfileTela(

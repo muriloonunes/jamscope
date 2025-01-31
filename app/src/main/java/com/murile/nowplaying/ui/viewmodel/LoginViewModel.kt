@@ -2,7 +2,7 @@ package com.murile.nowplaying.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.murile.nowplaying.data.api.Resource
+import com.murile.nowplaying.data.model.Resource
 import com.murile.nowplaying.data.model.Profile
 import com.murile.nowplaying.data.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel

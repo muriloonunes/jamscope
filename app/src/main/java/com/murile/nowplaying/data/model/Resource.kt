@@ -1,4 +1,4 @@
-package com.murile.nowplaying.data.api
+package com.murile.nowplaying.data.model
 
 sealed class Resource<T> {
     data class Success<T>(val data: T) : Resource<T>()
