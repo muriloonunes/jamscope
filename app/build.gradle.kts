@@ -15,8 +15,8 @@ android {
         applicationId = "com.murile.nowplaying"
         minSdk = 26
         targetSdk = 35
-        versionCode = 4
-        versionName = "0.5"
+        versionCode = 6
+        versionName = "0.6"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

@@ -1,4 +1,4 @@
-package com.murile.nowplaying.ui.components
+package com.murile.nowplaying.util
 
 import android.view.autofill.AutofillManager
 import androidx.compose.runtime.Composable
@@ -36,7 +36,7 @@ fun Modifier.defaultFocusChangeAutoFill(handler: AutoFillHandler): Modifier {
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun AutoFillRequestHandler(
+fun autoFillRequestHandler(
     autofillTypes: List<AutofillType> = listOf(),
     onFill: (String) -> Unit,
 ): AutoFillHandler {

@@ -5,6 +5,7 @@ import com.murile.nowplaying.data.model.Resource
 import com.murile.nowplaying.data.model.Profile
 import com.murile.nowplaying.data.model.User
 import com.murile.nowplaying.data.session.DataStoreManager
+import com.murile.nowplaying.util.SortingType
 import javax.inject.Inject
 
 class UserRepository @Inject constructor(
@@ -41,5 +42,13 @@ class UserRepository @Inject constructor(
 
     suspend fun getRecentTracks(user: User) {
         return apiRequest.getRecentTracks(user)
+    }
+
+    suspend fun saveSortingType(sortingType: SortingType) {
+        dataStoreManager.saveSortingType(sortingType)
+    }
+
+    suspend fun getSortingType(): SortingType {
+        return dataStoreManager.getSortingType()
     }
 }

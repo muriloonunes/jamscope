@@ -3,14 +3,18 @@ package com.murile.nowplaying.data.session
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.murile.nowplaying.data.model.Profile
+import com.murile.nowplaying.util.SortingType
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 object PreferencesKeys {
     val PROFILE_JSON = stringPreferencesKey("profile_json")
+    val SORTING_TYPE = intPreferencesKey("sorting_type")
 }
 
 class DataStoreManager @Inject constructor(
@@ -41,6 +45,24 @@ class DataStoreManager @Inject constructor(
     suspend fun clearUserSession() {
         dataStore.edit { preferences ->
             preferences.remove(PreferencesKeys.PROFILE_JSON)
+            preferences.remove(PreferencesKeys.SORTING_TYPE)
         }
+    }
+
+    suspend fun saveSortingType(sortingType: SortingType) {
+        dataStore.edit { preferences ->
+            preferences[PreferencesKeys.SORTING_TYPE] = sortingType.ordinal
+        }
+    }
+
+    suspend fun getSortingType(): SortingType {
+        return dataStore.data.map { preferences ->
+            val ordinal = preferences[PreferencesKeys.SORTING_TYPE] ?: SortingType.DEFAULT.ordinal
+            try {
+                SortingType.entries[ordinal]
+            } catch (e: IndexOutOfBoundsException) {
+                SortingType.DEFAULT
+            }
+        }.first()
     }
 }

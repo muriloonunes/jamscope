@@ -30,7 +30,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.autofill.AutofillType
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -42,10 +41,10 @@ import androidx.navigation.NavController
 import com.murile.nowplaying.R
 import com.murile.nowplaying.data.session.DataStoreManager
 import com.murile.nowplaying.ui.components.APP_ROUTE
-import com.murile.nowplaying.ui.components.AutoFillRequestHandler
+import com.murile.nowplaying.util.autoFillRequestHandler
 import com.murile.nowplaying.ui.components.LOGIN_ROUTE
-import com.murile.nowplaying.ui.components.connectNode
-import com.murile.nowplaying.ui.components.defaultFocusChangeAutoFill
+import com.murile.nowplaying.util.connectNode
+import com.murile.nowplaying.util.defaultFocusChangeAutoFill
 import com.murile.nowplaying.ui.viewmodel.LoginViewModel
 import kotlinx.coroutines.launch
 
@@ -72,12 +71,12 @@ fun LoginScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
-        val usernameFill = AutoFillRequestHandler(autofillTypes = listOf(
+        val usernameFill = autoFillRequestHandler(autofillTypes = listOf(
             AutofillType.Username
         ), onFill = {
             loginViewModel.onUsernameChange(it)
         })
-        val passwordFill = AutoFillRequestHandler(autofillTypes = listOf(
+        val passwordFill = autoFillRequestHandler(autofillTypes = listOf(
             AutofillType.Password
         ), onFill = {
             loginViewModel.onPasswordChange(it)

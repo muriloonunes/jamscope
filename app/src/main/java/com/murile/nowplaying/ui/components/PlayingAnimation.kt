@@ -16,12 +16,12 @@ import com.lottiefiles.dotlottie.core.compose.ui.DotLottieAnimation
 import com.lottiefiles.dotlottie.core.util.DotLottieSource
 
 @Composable
-fun AnimateListening() {
+fun NowPlayingAnimation() {
     var animationLink by remember { mutableStateOf("") }
-    if (isSystemInDarkTheme()) {
-        animationLink = "https://lottie.host/92b7a9c6-c3c0-446c-9cb6-34b09ae76738/wAmR8oO4I6.lottie"
+    animationLink = if (isSystemInDarkTheme()) {
+        "https://lottie.host/92b7a9c6-c3c0-446c-9cb6-34b09ae76738/wAmR8oO4I6.lottie"
     } else {
-        animationLink = "https://lottie.host/d399d4b2-8a4d-42b2-b607-a97adc69f352/SHKlLek83X.lottie"
+        "https://lottie.host/d399d4b2-8a4d-42b2-b607-a97adc69f352/SHKlLek83X.lottie"
     }
     DotLottieAnimation(
         source = DotLottieSource.Url(animationLink),
