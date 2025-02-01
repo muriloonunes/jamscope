@@ -18,7 +18,7 @@
     <string name="friends">Friends</string>
     <string name="search">Search</string>
     <string name="profile">Profile</string>
-    <string name="no_friends">You currently don\'t have any friend on last.fm!</string>
+    <string name="no_friends">You currently don\'t have any friend on last.fm!\nNote: this is usually a last.fm error. Refreshing the page should fix it</string>
     <string name="no_recent_tracks">No recent tracks</string>
     <string name="unknown_album">Unknown album</string>
     <string name="minutes_ago">%d minutes ago</string>

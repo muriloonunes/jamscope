@@ -15,7 +15,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -41,11 +40,12 @@ import androidx.navigation.NavController
 import com.murile.nowplaying.R
 import com.murile.nowplaying.data.session.DataStoreManager
 import com.murile.nowplaying.ui.components.APP_ROUTE
-import com.murile.nowplaying.util.autoFillRequestHandler
 import com.murile.nowplaying.ui.components.LOGIN_ROUTE
+import com.murile.nowplaying.ui.components.ShowErrorMessage
+import com.murile.nowplaying.ui.viewmodel.LoginViewModel
+import com.murile.nowplaying.util.autoFillRequestHandler
 import com.murile.nowplaying.util.connectNode
 import com.murile.nowplaying.util.defaultFocusChangeAutoFill
-import com.murile.nowplaying.ui.viewmodel.LoginViewModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -146,12 +146,7 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         if (errorMessage.isNotEmpty()) {
-            Text(
-                text = errorMessage,
-                color = MaterialTheme.colorScheme.error,
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(8.dp)
-            )
+            ShowErrorMessage(errorMessage)
         }
 
         if (loading) {

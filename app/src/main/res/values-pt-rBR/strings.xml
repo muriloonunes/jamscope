@@ -19,7 +19,7 @@
     <string name="friends">Amigos</string>
     <string name="search">Buscar</string>
     <string name="profile">Perfil</string>
-    <string name="no_friends">Você não possui amigos adicionados no last.fm!</string>
+    <string name="no_friends">Você não possui amigos adicionados no last.fm!\nObs: geralmente, isso é um erro do last.fm. Recarregar a página deve resolvê-lo</string>
     <string name="no_recent_tracks">Sem músicas recentes</string>
     <string name="unknown_album">Álbum desconhecido</string>
     <string name="minutes_ago">Há %d minutos</string>

@@ -50,7 +50,7 @@ fun FriendCard(
     friendsViewModel: FriendsViewModel
 ) {
     val backgroundColor =
-        friendsViewModel.getSecondaryContainerColor(friend.name, isSystemInDarkTheme())
+        friendsViewModel.getSecondaryContainerColor(friend.url, isSystemInDarkTheme())
 
     ElevatedCard(
         modifier = modifier
@@ -91,7 +91,6 @@ fun FriendCard(
                                     .width(750.dp)
                                     .basicMarquee()
                             )
-
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween

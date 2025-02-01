@@ -5,7 +5,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
@@ -14,10 +13,9 @@ import androidx.compose.material.icons.automirrored.filled.Sort
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -26,13 +24,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.murile.nowplaying.R
 import com.murile.nowplaying.ui.components.FriendCard
+import com.murile.nowplaying.ui.components.ShowErrorMessage
 import com.murile.nowplaying.ui.components.SortingBottomSheet
 import com.murile.nowplaying.ui.viewmodel.FriendsViewModel
-import com.murile.nowplaying.util.SortingType
 import kotlinx.coroutines.delay
 
 @ExperimentalMaterial3Api
@@ -45,12 +45,24 @@ fun FriendsTela(
     val refreshing by friendsViewModel.isRefreshing.collectAsStateWithLifecycle()
     val errorMessage by friendsViewModel.errorMessage.collectAsStateWithLifecycle()
     val recentTracksMap by friendsViewModel.recentTracksMap.collectAsStateWithLifecycle()
-    val friends by when (sortingType) {
-        SortingType.DEFAULT -> friendsViewModel.friendsDefault.collectAsStateWithLifecycle()
-        SortingType.ALPHABETICAL -> friendsViewModel.friendsAlphabetical.collectAsStateWithLifecycle()
-        SortingType.RECENTLY_PLAYED -> friendsViewModel.friendsRecently.collectAsStateWithLifecycle()
-    }
+    val friends by friendsViewModel.friends.collectAsStateWithLifecycle()
     var showBottomSheet by remember { mutableStateOf(false) }
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                if (friendsViewModel.shouldRefresh()) {
+                    friendsViewModel.onRefresh()
+                }
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
 
     LaunchedEffect(Unit) {
         if (friendsViewModel.shouldRefresh()) {
@@ -109,12 +121,7 @@ fun FriendsTela(
                 }
                 item {
                     if (errorMessage.isNotEmpty()) {
-                        Text(
-                            text = errorMessage,
-                            color = MaterialTheme.colorScheme.error,
-                            style = MaterialTheme.typography.bodyMedium,
-                            modifier = Modifier.padding(8.dp)
-                        )
+                        ShowErrorMessage(errorMessage)
                     }
                 }
             }

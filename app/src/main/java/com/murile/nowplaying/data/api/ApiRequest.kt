@@ -1,6 +1,5 @@
 package com.murile.nowplaying.data.api
 
-import android.util.Log
 import com.murile.nowplaying.data.model.ApiResponse
 import com.murile.nowplaying.data.model.Profile
 import com.murile.nowplaying.data.model.RecentTracksResponse
@@ -39,7 +38,8 @@ class ApiRequest @Inject constructor(
     companion object {
         private const val BASE_URL = "https://ws.audioscrobbler.com/2.0/?"
         private const val FORMAT_JSON = "format=json"
-        private const val DEFAULT_PROFILE_IMAGE = "https://lastfm.freetls.fastly.net/i/u/64s/2a96cbd8b46e442fc41c2b86b821562f.png"
+        private const val DEFAULT_PROFILE_IMAGE =
+            "https://lastfm.freetls.fastly.net/i/u/64s/2a96cbd8b46e442fc41c2b86b821562f.png"
         private val JSON = Json { ignoreUnknownKeys = true }
     }
 
@@ -107,7 +107,10 @@ class ApiRequest @Inject constructor(
         return exceptions.handleError(statusCode)
     }
 
-    private suspend fun processSessionResponse(responseBodyString: String, password: String): Profile? {
+    private suspend fun processSessionResponse(
+        responseBodyString: String,
+        password: String
+    ): Profile? {
         return try {
             val sessionResponse = JSON.decodeFromString<SessionResponse>(responseBodyString)
             val profile = Profile(
@@ -129,13 +132,15 @@ class ApiRequest @Inject constructor(
     suspend fun getUserInfo(
         profile: Profile
     ) {
-         withContext(Dispatchers.IO) {
-            val urlParametro = "method=user.getinfo&user=${profile.username}&api_key=${Token.LAST_FM_API_KEY}"
+        withContext(Dispatchers.IO) {
+            val urlParametro =
+                "method=user.getinfo&user=${profile.username}&api_key=${Token.LAST_FM_API_KEY}"
             val requestUrl = "$BASE_URL$FORMAT_JSON&$urlParametro"
 
             try {
                 val response: ApiResponse = HttpClientProvider.client.get(requestUrl).body()
-                val largeImageUrl = response.user.image.find { it.size == "large" }?.url ?: DEFAULT_PROFILE_IMAGE
+                val largeImageUrl =
+                    response.user.image.find { it.size == "large" }?.url ?: DEFAULT_PROFILE_IMAGE
                 val profileUrl = response.user.url
                 val country = response.user.country
                 val realname = response.user.realname
@@ -144,7 +149,7 @@ class ApiRequest @Inject constructor(
 
                 profile.imageUrl = largeImageUrl
                 profile.profileUrl = profileUrl
-                profile.country = if (country=="None") "" else country
+                profile.country = if (country == "None") "" else country
                 profile.realname = realname.ifEmpty { "" }
                 profile.playcount = playcount
                 if (subscriber != null) {
@@ -172,12 +177,12 @@ class ApiRequest @Inject constructor(
                 }
             }
             if (!response.status.isSuccess()) {
-                Log.i("getUserFriends", "Error: ${response.bodyAsText()}")
                 val jsonResponse = JSON.parseToJsonElement(response.bodyAsText()).jsonObject
                 val errorValue = jsonResponse["error"]?.jsonPrimitive?.intOrNull
                 Error(handleError(errorValue!!))
             } else {
-                val userFriendsResponse = JSON.decodeFromString<UserFriendsResponse>(response.bodyAsText())
+                val userFriendsResponse =
+                    JSON.decodeFromString<UserFriendsResponse>(response.bodyAsText())
                 val users = userFriendsResponse.friends.user.map { friend ->
                     User(
                         name = friend.name,
@@ -217,12 +222,18 @@ class ApiRequest @Inject constructor(
                     }
                 }
             }
-            val recentTracksResponse = JSON.decodeFromString<RecentTracksResponse>(response.bodyAsText())
+            val recentTracksResponse =
+                JSON.decodeFromString<RecentTracksResponse>(response.bodyAsText())
             recentTracksResponse.recenttracks.track.forEach { track ->
                 track.dateInfo?.let { dateInfo ->
-                    val localDateTime = LocalDateTime.parse(dateInfo.formattedDate, DateTimeFormatter.ofPattern("dd MMM yyyy, HH:mm"))
-                    val zonedDateTime = localDateTime.atZone(ZoneId.of("UTC")).withZoneSameInstant(ZoneId.systemDefault())
-                    val isoFormattedDate = zonedDateTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
+                    val localDateTime = LocalDateTime.parse(
+                        dateInfo.formattedDate,
+                        DateTimeFormatter.ofPattern("dd MMM yyyy, HH:mm")
+                    )
+                    val zonedDateTime = localDateTime.atZone(ZoneId.of("UTC"))
+                        .withZoneSameInstant(ZoneId.systemDefault())
+                    val isoFormattedDate =
+                        zonedDateTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
                     dateInfo.formattedDate = isoFormattedDate
                 }
             }
