@@ -113,8 +113,7 @@ class MainActivity : ComponentActivity() {
                 composable(PROFILE_SCREEN) {
                     ProfileTela(
                         navController = navController,
-                        profileViewModel = profileViewModel,
-                        friendsViewModel = friendsViewModel
+                        profileViewModel = profileViewModel
                     )
                 }
             }

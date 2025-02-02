@@ -82,7 +82,7 @@ data class RecentTracks(
 @Serializable
 data class Track(
     val artist: Artist,
-    val image: List<Image>,
+    val image: List<Image>? = null,
     val album: Album,
     val name: String,
     @SerialName("date") val dateInfo: DateInfo? = null,

@@ -115,8 +115,7 @@ fun HomePager(
                 1 -> SearchTela()
                 2 -> ProfileTela(
                     navController = navController,
-                    profileViewModel = profileViewModel,
-                    friendsViewModel = friendsViewModel
+                    profileViewModel = profileViewModel
                 )
             }
         }

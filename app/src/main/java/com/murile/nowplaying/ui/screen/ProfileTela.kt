@@ -36,15 +36,13 @@ import coil3.util.DebugLogger
 import com.murile.nowplaying.R
 import com.murile.nowplaying.ui.components.APP_ROUTE
 import com.murile.nowplaying.ui.components.LOGIN_ROUTE
-import com.murile.nowplaying.ui.viewmodel.FriendsViewModel
 import com.murile.nowplaying.ui.viewmodel.ProfileViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileTela(
     navController: NavController,
-    profileViewModel: ProfileViewModel,
-    friendsViewModel: FriendsViewModel,
+    profileViewModel: ProfileViewModel
 ) {
     val context = LocalContext.current
     val userProfile by profileViewModel.userProfile.collectAsStateWithLifecycle()
@@ -104,7 +102,6 @@ fun ProfileTela(
                 item {
                     Button(onClick = {
                         profileViewModel.logOutUser()
-                        friendsViewModel.resetLastUpdateTimestamp()
                         navController.navigate(LOGIN_ROUTE) {
                             popUpTo(APP_ROUTE) { inclusive = true }
                         }

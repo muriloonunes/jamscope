@@ -53,9 +53,7 @@ fun FriendsTela(
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME) {
-                if (friendsViewModel.shouldRefresh()) {
                     friendsViewModel.onRefresh()
-                }
             }
         }
         lifecycleOwner.lifecycle.addObserver(observer)
@@ -65,9 +63,7 @@ fun FriendsTela(
     }
 
     LaunchedEffect(Unit) {
-        if (friendsViewModel.shouldRefresh()) {
-            friendsViewModel.onRefresh()
-        }
+        friendsViewModel.onRefresh()
     }
 
     LaunchedEffect(friends) {
@@ -97,6 +93,11 @@ fun FriendsTela(
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
+                item {
+                    if (errorMessage.isNotEmpty()) {
+                        ShowErrorMessage(errorMessage)
+                    }
+                }
                 items(friends, key = { it.name!! }) { friend ->
                     FriendCard(
                         friend = friend,
@@ -118,11 +119,6 @@ fun FriendsTela(
                             ),
                         friendsViewModel = friendsViewModel
                     )
-                }
-                item {
-                    if (errorMessage.isNotEmpty()) {
-                        ShowErrorMessage(errorMessage)
-                    }
                 }
             }
         }

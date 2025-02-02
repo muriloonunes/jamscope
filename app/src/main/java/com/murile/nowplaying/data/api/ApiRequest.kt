@@ -30,6 +30,7 @@ import java.security.MessageDigest
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 import javax.inject.Inject
 
 class ApiRequest @Inject constructor(
@@ -228,7 +229,7 @@ class ApiRequest @Inject constructor(
                 track.dateInfo?.let { dateInfo ->
                     val localDateTime = LocalDateTime.parse(
                         dateInfo.formattedDate,
-                        DateTimeFormatter.ofPattern("dd MMM yyyy, HH:mm")
+                        DateTimeFormatter.ofPattern("dd MMM yyyy, HH:mm", Locale.ENGLISH)
                     )
                     val zonedDateTime = localDateTime.atZone(ZoneId.of("UTC"))
                         .withZoneSameInstant(ZoneId.systemDefault())
