@@ -6,8 +6,12 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
+import androidx.room.Room
 import com.murile.nowplaying.data.api.ApiRequest
 import com.murile.nowplaying.data.api.Exceptions
+import com.murile.nowplaying.data.local.AppDatabase
+import com.murile.nowplaying.data.local.FriendsDao
+import com.murile.nowplaying.data.repository.FriendsRepository
 import com.murile.nowplaying.data.repository.UserRepository
 import dagger.Module
 import dagger.Provides
@@ -56,5 +60,25 @@ object AppModule {
     @Singleton
     fun provideUserRepository(dataStoreManager: DataStoreManager, apiRequest: ApiRequest): UserRepository {
         return UserRepository(apiRequest, dataStoreManager)
+    }
+
+    @Provides
+    @Singleton
+    fun provideDatabase(@ApplicationContext context: Context): AppDatabase {
+        return Room.databaseBuilder(
+            context.applicationContext,
+            AppDatabase::class.java,
+            "app_database"
+        ).fallbackToDestructiveMigration().build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideFriendsDao(database: AppDatabase):FriendsDao = database.friendsDao()
+
+    @Provides
+    @Singleton
+    fun provideFriendsRepository(dataStoreManager: DataStoreManager, friendsDao: FriendsDao, apiRequest: ApiRequest): FriendsRepository {
+        return FriendsRepository(dataStoreManager, friendsDao, apiRequest)
     }
 }

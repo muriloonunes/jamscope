@@ -6,25 +6,28 @@ import androidx.lifecycle.viewModelScope
 import com.murile.nowplaying.data.model.RecentTracks
 import com.murile.nowplaying.data.model.Resource
 import com.murile.nowplaying.data.model.User
+import com.murile.nowplaying.data.repository.FriendsRepository
 import com.murile.nowplaying.data.repository.UserRepository
 import com.murile.nowplaying.ui.theme.ThemeAttributes
 import com.murile.nowplaying.util.SortingType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class FriendsViewModel @Inject constructor(
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val friendsRepository: FriendsRepository
 ) : ViewModel() {
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing get() = _isRefreshing.asStateFlow()
@@ -37,27 +40,19 @@ class FriendsViewModel @Inject constructor(
 
     private val _friends = MutableStateFlow<List<User>>(emptyList())
     val friends: StateFlow<List<User>> =
-        _friends.combine(sortingType) { friends, sortingType ->  // Combine friends and sortingType
-            when (sortingType) {
-                SortingType.DEFAULT -> friends
-                SortingType.ALPHABETICAL -> friends.sortedBy {
-                    (it.realname.ifEmpty { it.name })?.lowercase()
-                }
-
-                SortingType.RECENTLY_PLAYED -> friends.sortedWith(
-                    compareByDescending<User> { it.recentTracks?.track?.firstOrNull()?.dateInfo == null }
-                        .thenByDescending { it.recentTracks?.track?.firstOrNull()?.dateInfo?.formattedDate }) // Use derived property
-            }
+        _friends.combine(sortingType) { friends, sortingType ->
+            sortFriends(friends, sortingType)
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     private val _recentTracksMap = MutableStateFlow<Map<String, RecentTracks?>>(emptyMap())
-    val recentTracksMap: StateFlow<Map<String, RecentTracks?>> = _recentTracksMap
-
-    private var lastUpdateTimestamp: Long = 0L
+    val recentTracksMap: StateFlow<Map<String, RecentTracks?>> = friends.map { friendsList ->
+        friendsList.associate { it.url to it.recentTracks }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyMap())
 
     init {
         viewModelScope.launch {
-            _sortingType.value = userRepository.getSortingType()
+            _sortingType.value = friendsRepository.getSortingType()
+            loadCachedFriends()
         }
     }
 
@@ -66,57 +61,71 @@ class FriendsViewModel @Inject constructor(
         refreshFriends()
     }
 
+    private fun loadCachedFriends() {
+        viewModelScope.launch {
+            friendsRepository.getCachedFriends()
+                .firstOrNull()
+                ?.let { cachedFriends ->
+                    _friends.value = sortFriends(cachedFriends, _sortingType.value)
+                }
+        }
+    }
+
     private fun refreshFriends() {
         _isRefreshing.value = true
         _errorMessage.value = ""
         viewModelScope.launch {
             val userProfile = userRepository.getUserProfile()
-            delay(1000)
             when (val result = userRepository.getUserFriends(userProfile!!.username)) {
                 is Resource.Success -> {
                     val friends = result.data
                     userRepository.saveUserProfile(userProfile)
                     loadRecentTracks(friends)
+                    friendsRepository.cacheFriends(friends)
                 }
-
                 is Resource.Error -> {
                     _errorMessage.value = result.message
                     _isRefreshing.value = false
                 }
             }
-            lastUpdateTimestamp = System.currentTimeMillis()
         }
     }
 
     private fun loadRecentTracks(friends: List<User>) {
         viewModelScope.launch {
-            friends.map { friend ->
+            val updatedFriends = friends.map { friend ->
                 async {
-                    userRepository.getRecentTracks(friend)
+                    friendsRepository.getRecentTracks(friend)
+                    friendsRepository.cacheRecentTracks(
+                        friend.url,
+                        friend.recentTracks?.track ?: emptyList()
+                    )
                     friend
                 }
             }.awaitAll()
-                .let { updatedFriends ->
-                    _friends.value = updatedFriends
-                    _recentTracksMap.value = updatedFriends.associate { it.url to it.recentTracks }
-                }
+
+            _friends.value = updatedFriends
+            _recentTracksMap.value = updatedFriends.associate { it.url to it.recentTracks }
             _isRefreshing.value = false
         }
     }
 
     fun onSortingTypeChanged(sortingType: SortingType) {
         viewModelScope.launch {
-            userRepository.saveSortingType(sortingType)
+            friendsRepository.saveSortingType(sortingType)
+            _sortingType.value = sortingType
         }
-        _sortingType.value = sortingType
     }
 
-    fun shouldRefresh(): Boolean {
-        return System.currentTimeMillis() - lastUpdateTimestamp > 15000000 // 2 min e meio em milisegundos
-    }
-
-    fun resetLastUpdateTimestamp() {
-        lastUpdateTimestamp = 0L
+    private fun sortFriends(friends: List<User>, sortingType: SortingType): List<User> {
+        return when (sortingType) {
+            SortingType.DEFAULT -> friends
+            SortingType.ALPHABETICAL -> friends.sortedBy { (it.realname.ifEmpty { it.name })?.lowercase() }
+            SortingType.RECENTLY_PLAYED -> friends.sortedWith(
+                compareByDescending<User> { it.recentTracks?.track?.firstOrNull()?.dateInfo == null }
+                    .thenByDescending { it.recentTracks?.track?.firstOrNull()?.dateInfo?.formattedDate }
+            )
+        }
     }
 
     fun getSecondaryContainerColor(name: String?, isDarkTheme: Boolean): Color {
