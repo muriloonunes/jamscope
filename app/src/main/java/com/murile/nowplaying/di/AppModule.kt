@@ -1,18 +1,21 @@
 package com.murile.nowplaying.di
 
 import android.app.Application
-import com.murile.nowplaying.data.session.DataStoreManager
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.room.Room
+import androidx.work.WorkerFactory
 import com.murile.nowplaying.data.api.ApiRequest
 import com.murile.nowplaying.data.api.Exceptions
 import com.murile.nowplaying.data.local.AppDatabase
 import com.murile.nowplaying.data.local.FriendsDao
 import com.murile.nowplaying.data.repository.FriendsRepository
 import com.murile.nowplaying.data.repository.UserRepository
+import com.murile.nowplaying.data.session.UserDataStoreManager
+import com.murile.nowplaying.worker.FriendGroupWidgetWorkerFactory
+import com.murile.nowplaying.worker.FriendListeningWidgetWorkerFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -28,14 +31,14 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideDataStorePreferences(@ApplicationContext context: Context): DataStore<Preferences> {
+    fun provideUserDataStorePreferences(@ApplicationContext context: Context): DataStore<Preferences> {
         return context.userDataStore
     }
 
     @Provides
     @Singleton
-    fun provideDataStoreManager(dataStore: DataStore<Preferences>): DataStoreManager {
-        return DataStoreManager(dataStore)
+    fun provideUserDataStoreManager(dataStore: DataStore<Preferences>): UserDataStoreManager {
+        return UserDataStoreManager(dataStore)
     }
 
     @Provides
@@ -58,7 +61,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideUserRepository(dataStoreManager: DataStoreManager, apiRequest: ApiRequest): UserRepository {
+    fun provideUserRepository(dataStoreManager: UserDataStoreManager, apiRequest: ApiRequest): UserRepository {
         return UserRepository(apiRequest, dataStoreManager)
     }
 
@@ -78,7 +81,21 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideFriendsRepository(dataStoreManager: DataStoreManager, friendsDao: FriendsDao, apiRequest: ApiRequest): FriendsRepository {
+    fun provideFriendsRepository(dataStoreManager: UserDataStoreManager, friendsDao: FriendsDao, apiRequest: ApiRequest): FriendsRepository {
         return FriendsRepository(dataStoreManager, friendsDao, apiRequest)
+    }
+
+    @Provides
+    fun provideWorkerFactory(
+        repository: FriendsRepository
+    ): WorkerFactory {
+        return FriendListeningWidgetWorkerFactory(repository)
+    }
+
+    @Provides
+    fun provideWorkerFactorySecondary(
+        repository: FriendsRepository
+    ): WorkerFactory {
+        return FriendGroupWidgetWorkerFactory(repository)
     }
 }

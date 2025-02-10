@@ -15,8 +15,10 @@ android {
         applicationId = "com.murile.nowplaying"
         minSdk = 26
         targetSdk = 35
-        versionCode = 7
-        versionName = "0.7"
+        versionCode = 8
+        versionName = "0.8"
+
+        vectorDrawables.useSupportLibrary = true
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -39,6 +41,7 @@ android {
     }
     buildFeatures {
         compose = true
+        viewBinding = true
     }
 }
 
@@ -48,6 +51,7 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.datastore.preferences)
+    implementation(libs.androidx.appcompat)
 
     // Android Lifecycle
     implementation(libs.androidx.runtime.livedata)
@@ -57,12 +61,14 @@ dependencies {
     // Android UI
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
+    implementation(libs.androidx.recyclerview)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.activity.compose)
 
     // Material
     implementation(libs.androidx.material3)
+    implementation(libs.material)
     implementation(libs.androidx.material)
     implementation(libs.androidx.material.icons.extended)
 
@@ -78,8 +84,10 @@ dependencies {
 
     // Image Loading
     implementation(libs.coil.compose)
-    implementation(libs.coil)
+    implementation(libs.coil3.coil)
+    implementation(libs.coil.gif)
     implementation(libs.coil.network.okhttp)
+    implementation(libs.glide)
 
     // Ktor Network
     implementation(libs.ktor.client.core)
@@ -95,6 +103,7 @@ dependencies {
     implementation(libs.androidx.hilt.navigation.compose)
     ksp(libs.hilt.compiler)
     ksp(libs.hilt.android.compiler)
+    implementation(libs.androidx.hilt.work)
 
     // Tests
     testImplementation(libs.junit)
@@ -114,4 +123,15 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)
+
+    //Glance compose widgets
+    implementation(libs.androidx.glance.appwidget)
+    implementation(libs.androidx.glance.material3)
+    implementation(libs.androidx.glance.material)
+    implementation(libs.androidx.glance)
+    implementation(libs.androidx.glance.appwidget.preview)
+    implementation(libs.androidx.glance.preview)
+
+    //Work
+    implementation(libs.androidx.work.runtime.ktx)
 }

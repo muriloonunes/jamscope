@@ -8,7 +8,7 @@ import com.murile.nowplaying.data.local.toTrack
 import com.murile.nowplaying.data.local.toUser
 import com.murile.nowplaying.data.model.Track
 import com.murile.nowplaying.data.model.User
-import com.murile.nowplaying.data.session.DataStoreManager
+import com.murile.nowplaying.data.session.UserDataStoreManager
 import com.murile.nowplaying.util.SortingType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
@@ -16,16 +16,16 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class FriendsRepository @Inject constructor(
-    private val dataStoreManager: DataStoreManager,
+    private val userDataStoreManager: UserDataStoreManager,
     private val friendsDao: FriendsDao,
     private val apiRequest: ApiRequest
 ) {
     suspend fun saveSortingType(sortingType: SortingType) {
-        dataStoreManager.saveSortingType(sortingType)
+        userDataStoreManager.saveSortingType(sortingType)
     }
 
     suspend fun getSortingType(): SortingType {
-        return dataStoreManager.getSortingType()
+        return userDataStoreManager.getSortingType()
     }
 
     fun getCachedFriends(): Flow<List<User>> = friendsDao.getAllUsers().map { friendEntities ->

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:configure="com.murile.nowplaying.activity.FriendGroupWidgetConfigureActivity"
+    android:description="@string/friend_group_listening_widget"
+    android:minWidth="360dp"
+    android:minHeight="100dp"
+    android:resizeMode="horizontal|vertical"
+    android:targetCellWidth="4"
+    android:targetCellHeight="2"
+    android:maxResizeHeight="150dp"
+    android:previewLayout="@layout/friend_group_widget_preview"
+    android:widgetCategory="home_screen" />

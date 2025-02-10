@@ -17,7 +17,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
-import com.murile.nowplaying.data.session.DataStoreManager
+import com.murile.nowplaying.data.session.UserDataStoreManager
 import com.murile.nowplaying.ui.components.APP_ROUTE
 import com.murile.nowplaying.ui.components.FRIENDS_SCREEN
 import com.murile.nowplaying.ui.components.LOGIN_ROUTE
@@ -40,7 +40,8 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    @Inject lateinit var dataStoreManager: DataStoreManager
+    @Inject
+    lateinit var userDataStoreManager: UserDataStoreManager
 
     private val splashViewModel by viewModels<SplashViewModel>()
 
@@ -92,7 +93,7 @@ class MainActivity : ComponentActivity() {
                     LoginScreen(
                         navController,
                         loginViewModel = loginViewModel,
-                        dataStoreManager = dataStoreManager
+                        userDataStoreManager = userDataStoreManager
                     )
                 }
             }

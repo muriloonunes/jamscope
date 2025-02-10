@@ -17,7 +17,7 @@ object PreferencesKeys {
     val SORTING_TYPE = intPreferencesKey("sorting_type")
 }
 
-class DataStoreManager @Inject constructor(
+class UserDataStoreManager @Inject constructor(
     private val dataStore: DataStore<Preferences>
 ) {
     suspend fun saveUserProfile(profile: Profile) {

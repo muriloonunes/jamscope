@@ -4,27 +4,27 @@ import com.murile.nowplaying.data.api.ApiRequest
 import com.murile.nowplaying.data.model.Profile
 import com.murile.nowplaying.data.model.Resource
 import com.murile.nowplaying.data.model.User
-import com.murile.nowplaying.data.session.DataStoreManager
+import com.murile.nowplaying.data.session.UserDataStoreManager
 import javax.inject.Inject
 
 class UserRepository @Inject constructor(
     private val apiRequest: ApiRequest,
-    private val dataStoreManager: DataStoreManager,
+    private val userDataStoreManager: UserDataStoreManager,
 ) {
     suspend fun getUserProfile(): Profile? {
-        return dataStoreManager.getUserProfile()
+        return userDataStoreManager.getUserProfile()
     }
 
     suspend fun saveUserProfile(profile: Profile) {
-        dataStoreManager.saveUserProfile(profile)
+        userDataStoreManager.saveUserProfile(profile)
     }
 
     suspend fun clearUserSession() {
-        dataStoreManager.clearUserSession()
+        userDataStoreManager.clearUserSession()
     }
 
     suspend fun isUserLoggedIn(): Boolean {
-        return dataStoreManager.isUserLoggedIn()
+        return userDataStoreManager.isUserLoggedIn()
     }
 
     suspend fun authenticate(username: String, password: String, method: String): Resource<Profile> {

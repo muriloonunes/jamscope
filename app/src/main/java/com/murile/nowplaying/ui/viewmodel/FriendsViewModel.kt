@@ -79,6 +79,7 @@ class FriendsViewModel @Inject constructor(
             when (val result = userRepository.getUserFriends(userProfile!!.username)) {
                 is Resource.Success -> {
                     val friends = result.data
+                    userProfile.friends = friends
                     userRepository.saveUserProfile(userProfile)
                     loadRecentTracks(friends)
                     friendsRepository.cacheFriends(friends)

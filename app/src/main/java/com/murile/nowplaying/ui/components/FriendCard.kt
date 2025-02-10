@@ -40,7 +40,7 @@ import com.murile.nowplaying.R
 import com.murile.nowplaying.data.model.RecentTracks
 import com.murile.nowplaying.data.model.User
 import com.murile.nowplaying.ui.viewmodel.FriendsViewModel
-import com.murile.nowplaying.util.dateFormatter
+import com.murile.nowplaying.util.dateStringFormatter
 
 @Composable
 fun FriendCard(
@@ -115,7 +115,7 @@ fun FriendCard(
                                     NowPlayingAnimation()
                                 } else {
                                     Text(
-                                        text = dateFormatter(track.dateInfo.formattedDate),
+                                        text = dateStringFormatter(track.dateInfo.formattedDate, false, null),
                                         style = MaterialTheme.typography.labelLarge.copy(
                                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                                             fontSize = 13.sp
