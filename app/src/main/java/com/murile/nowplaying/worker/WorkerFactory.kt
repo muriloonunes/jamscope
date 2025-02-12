@@ -9,7 +9,7 @@ import com.murile.nowplaying.data.repository.FriendsRepository
 import javax.inject.Inject
 import javax.inject.Singleton
 
-class FriendListeningWidgetWorkerFactory @Inject constructor(
+class GenericWorkerFactory @Inject constructor(
     private val repository: FriendsRepository
 ) : WorkerFactory() {
     override fun createWorker(
@@ -18,26 +18,10 @@ class FriendListeningWidgetWorkerFactory @Inject constructor(
         workerParameters: WorkerParameters
     ): ListenableWorker? {
         return when (workerClassName) {
-            FriendListeningWidgetWorker::class.java.name -> {
+            FriendListeningWidgetWorker::class.java.name ->
                 FriendListeningWidgetWorker(appContext, workerParameters, repository)
-            }
-            else -> null
-        }
-    }
-}
-
-class FriendGroupWidgetWorkerFactory @Inject constructor(
-    private val repository: FriendsRepository
-) : WorkerFactory() {
-    override fun createWorker(
-        appContext: Context,
-        workerClassName: String,
-        workerParameters: WorkerParameters
-    ): ListenableWorker? {
-        return when (workerClassName) {
-            FriendGroupWidgetWorker::class.java.name -> {
+            FriendGroupWidgetWorker::class.java.name ->
                 FriendGroupWidgetWorker(appContext, workerParameters, repository)
-            }
             else -> null
         }
     }
@@ -45,11 +29,9 @@ class FriendGroupWidgetWorkerFactory @Inject constructor(
 
 @Singleton
 class MyDelegatingWorkerFactory @Inject constructor(
-    friendListeningWidgetWorkerFactory: FriendListeningWidgetWorkerFactory,
-    friendGroupWidgetWorkerFactory: FriendGroupWidgetWorkerFactory
+    genericWorkerFactory: GenericWorkerFactory
 ) : DelegatingWorkerFactory() {
     init {
-        addFactory(friendListeningWidgetWorkerFactory)
-        addFactory(friendGroupWidgetWorkerFactory)
+        addFactory(genericWorkerFactory)
     }
 }

@@ -14,8 +14,7 @@ import com.murile.nowplaying.data.local.FriendsDao
 import com.murile.nowplaying.data.repository.FriendsRepository
 import com.murile.nowplaying.data.repository.UserRepository
 import com.murile.nowplaying.data.session.UserDataStoreManager
-import com.murile.nowplaying.worker.FriendGroupWidgetWorkerFactory
-import com.murile.nowplaying.worker.FriendListeningWidgetWorkerFactory
+import com.murile.nowplaying.worker.GenericWorkerFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -89,13 +88,6 @@ object AppModule {
     fun provideWorkerFactory(
         repository: FriendsRepository
     ): WorkerFactory {
-        return FriendListeningWidgetWorkerFactory(repository)
-    }
-
-    @Provides
-    fun provideWorkerFactorySecondary(
-        repository: FriendsRepository
-    ): WorkerFactory {
-        return FriendGroupWidgetWorkerFactory(repository)
+        return GenericWorkerFactory(repository)
     }
 }

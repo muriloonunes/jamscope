@@ -52,6 +52,7 @@ import coil3.request.SuccessResult
 import coil3.toBitmap
 import com.murile.nowplaying.R
 import com.murile.nowplaying.data.model.User
+import com.murile.nowplaying.util.Stuff
 import com.murile.nowplaying.util.dateStringFormatter
 import com.murile.nowplaying.widget.WidgetDataStoreManager
 import com.murile.nowplaying.worker.FriendListeningWidgetWorker
@@ -87,7 +88,8 @@ class FriendListeningWidget : GlanceAppWidget() {
         }
         Row(
             modifier = GlanceModifier.fillMaxSize().background(GlanceTheme.colors.surface)
-                .padding(8.dp), verticalAlignment = Alignment.CenterVertically
+                .padding(8.dp).cornerRadius(Stuff.WIDGET_CORNER_RADIUS),
+            verticalAlignment = Alignment.CenterVertically
         ) {
             ProfileImage(friend, imageBitmap)
             FriendInfo(friend, textStyle, context)
@@ -221,7 +223,6 @@ class FriendListeningWidget : GlanceAppWidget() {
                 val request = ImageRequest.Builder(context).data(url).build()
                 val result = imageLoader.execute(request)
                 if (result is SuccessResult) {
-                    Log.i("loadBitmap", result.image.toBitmap().toString())
                     return@withContext result.image.toBitmap()
                 } else {
                     return@withContext BitmapFactory.decodeResource(

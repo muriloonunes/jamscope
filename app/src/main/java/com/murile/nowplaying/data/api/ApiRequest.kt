@@ -8,9 +8,9 @@ import com.murile.nowplaying.data.model.Resource.Error
 import com.murile.nowplaying.data.model.Resource.Success
 import com.murile.nowplaying.data.model.Session
 import com.murile.nowplaying.data.model.SessionResponse
-import com.murile.nowplaying.data.model.Token
 import com.murile.nowplaying.data.model.User
 import com.murile.nowplaying.data.model.UserFriendsResponse
+import com.murile.nowplaying.util.Stuff
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.headers
@@ -48,7 +48,7 @@ class ApiRequest @Inject constructor(
         username: String, password: String
     ): String {
         val apiSignature =
-            "api_key${Token.LAST_FM_API_KEY}" + "methodauth.getMobileSession" + "password$password" + "username$username" + Token.LAST_FM_SECRET
+            "api_key${Stuff.LAST_KEY}" + "methodauth.getMobileSession" + "password$password" + "username$username" + Stuff.LAST_SECRET
 
         val md5Digest = MessageDigest.getInstance("MD5")
         val hashBytes = md5Digest.digest(apiSignature.toByteArray(Charsets.UTF_8))
@@ -100,7 +100,7 @@ class ApiRequest @Inject constructor(
     private fun buildAuthUrl(username: String, password: String, method: String): String {
         val apiSig = generateApiSig(username, password)
         val urlParams =
-            "method=auth.$method&api_key=${Token.LAST_FM_API_KEY}&password=$password&username=$username&api_sig=$apiSig"
+            "method=auth.$method&api_key=${Stuff.LAST_KEY}&password=$password&username=$username&api_sig=$apiSig"
         return "$BASE_URL$FORMAT_JSON&$urlParams"
     }
 
@@ -135,7 +135,7 @@ class ApiRequest @Inject constructor(
     ) {
         withContext(Dispatchers.IO) {
             val urlParametro =
-                "method=user.getinfo&user=${profile.username}&api_key=${Token.LAST_FM_API_KEY}"
+                "method=user.getinfo&user=${profile.username}&api_key=${Stuff.LAST_KEY}"
             val requestUrl = "$BASE_URL$FORMAT_JSON&$urlParametro"
 
             try {
@@ -165,7 +165,7 @@ class ApiRequest @Inject constructor(
     suspend fun getUserFriends(username: String): Resource<List<User>> {
         return try {
             val urlParametro =
-                "method=user.getfriends&user=$username&api_key=${Token.LAST_FM_API_KEY}"
+                "method=user.getfriends&user=$username&api_key=${Stuff.LAST_KEY}"
             val requestUrl = "$BASE_URL$FORMAT_JSON&$urlParametro"
             val response = withContext(Dispatchers.IO) {
                 HttpClientProvider.client.post(requestUrl) {
@@ -210,7 +210,7 @@ class ApiRequest @Inject constructor(
         user: User
     ) {
         val urlParametro =
-            "method=user.getrecenttracks&user=${user.name}&api_key=${Token.LAST_FM_API_KEY}&limit=5"
+            "method=user.getrecenttracks&user=${user.name}&api_key=${Stuff.LAST_KEY}"
         val requestUrl = "$BASE_URL$FORMAT_JSON&$urlParametro"
         try {
             val response = withContext(Dispatchers.IO) {

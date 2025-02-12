@@ -52,7 +52,7 @@ fun FriendsTela(
 
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_RESUME) {
+            if (event == Lifecycle.Event.ON_RESUME && friendsViewModel.shouldRefresh()) {
                 friendsViewModel.onRefresh()
             }
         }
@@ -63,7 +63,7 @@ fun FriendsTela(
     }
 
     LaunchedEffect(Unit) {
-        friendsViewModel.onRefresh()
+        if (friendsViewModel.shouldRefresh()) friendsViewModel.onRefresh() else return@LaunchedEffect
     }
 
     LaunchedEffect(friends) {

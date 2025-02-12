@@ -4,6 +4,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 
 @Composable
-fun SearchTela() {
-    Text("SearchTela")
+fun SettingsTela() {
+    Text("SettingsTela")
 }

@@ -7,7 +7,7 @@ const val LOGIN_ROUTE = "login"
 const val APP_ROUTE = "app"
 const val FRIENDS_SCREEN = "friends"
 const val PROFILE_SCREEN = "profile"
-const val SEARCH_SCREEN = "search"
+const val SETTINGS_SCREEN = "settings"
 
 data class BottomNavigationItem(
     val title: String,

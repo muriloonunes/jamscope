@@ -23,11 +23,11 @@ import com.murile.nowplaying.ui.components.FRIENDS_SCREEN
 import com.murile.nowplaying.ui.components.LOGIN_ROUTE
 import com.murile.nowplaying.ui.components.LOGIN_SCREEN
 import com.murile.nowplaying.ui.components.PROFILE_SCREEN
-import com.murile.nowplaying.ui.components.SEARCH_SCREEN
+import com.murile.nowplaying.ui.components.SETTINGS_SCREEN
 import com.murile.nowplaying.ui.screen.HomePager
 import com.murile.nowplaying.ui.screen.LoginScreen
 import com.murile.nowplaying.ui.screen.ProfileTela
-import com.murile.nowplaying.ui.screen.SearchTela
+import com.murile.nowplaying.ui.screen.SettingsTela
 import com.murile.nowplaying.ui.theme.NowPlayingTheme
 import com.murile.nowplaying.ui.viewmodel.FriendsViewModel
 import com.murile.nowplaying.ui.viewmodel.LoginViewModel
@@ -108,8 +108,8 @@ class MainActivity : ComponentActivity() {
                         friendsViewModel
                     )
                 }
-                composable(SEARCH_SCREEN) {
-                    SearchTela()
+                composable(SETTINGS_SCREEN) {
+                    SettingsTela()
                 }
                 composable(PROFILE_SCREEN) {
                     ProfileTela(

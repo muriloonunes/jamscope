@@ -16,7 +16,7 @@
     <string name="logout">Logout</string>
     <string name="hello_string">Hello, %1$s!</string>
     <string name="friends">Friends</string>
-    <string name="search">Search</string>
+    <string name="settings">Settings</string>
     <string name="profile">Profile</string>
     <string name="no_friends">You currently don\'t have any friend on last.fm!\nNote: this is usually a last.fm error. Refreshing the page should fix it</string>
     <string name="no_recent_tracks">No recent tracks</string>
@@ -57,4 +57,7 @@
     <string name="select_group_friend_widget">Select up to four friends to add to the widget</string>
     <string name="please_select_group_friend">Please select at least two friends</string>
     <string name="max_four_friends_warning">You can\'t select more than 4 friends</string>
+    <string name="open_user_profile">Open user profile</string>
+    <string name="recent_tracks">Recent tracks</string>
+    <string name="pro" translatable="false">PRO</string>
 </resources>

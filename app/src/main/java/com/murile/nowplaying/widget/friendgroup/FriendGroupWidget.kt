@@ -54,6 +54,7 @@ import coil3.request.SuccessResult
 import coil3.toBitmap
 import com.murile.nowplaying.R
 import com.murile.nowplaying.data.model.User
+import com.murile.nowplaying.util.Stuff
 import com.murile.nowplaying.util.dateStringFormatter
 import com.murile.nowplaying.widget.WidgetDataStoreManager
 import com.murile.nowplaying.worker.FriendGroupWidgetWorker
@@ -66,7 +67,7 @@ class FriendGroupWidget : GlanceAppWidget() {
         provideContent {
             val friendsList = WidgetDataStoreManager.getFriendsGroup(currentState())
             Box(
-                modifier = GlanceModifier.background(GlanceTheme.colors.surface)
+                modifier = GlanceModifier.background(GlanceTheme.colors.surface).cornerRadius(Stuff.WIDGET_CORNER_RADIUS)
             ) {
                 LazyColumn(
                     modifier = GlanceModifier.fillMaxSize()
@@ -228,7 +229,6 @@ class FriendGroupWidget : GlanceAppWidget() {
                 val request = ImageRequest.Builder(context).data(url).build()
                 val result = imageLoader.execute(request)
                 if (result is SuccessResult) {
-                    Log.i("loadBitmap", result.image.toBitmap().toString())
                     return@withContext result.image.toBitmap()
                 } else {
                     return@withContext BitmapFactory.decodeResource(

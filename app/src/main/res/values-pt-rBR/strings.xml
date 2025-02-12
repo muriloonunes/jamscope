@@ -17,12 +17,12 @@
     <string name="logout">Sair</string>
     <string name="hello_string">Olá, %1$s!</string>
     <string name="friends">Amigos</string>
-    <string name="search">Buscar</string>
+    <string name="settings">Configurações</string>
     <string name="profile">Perfil</string>
     <string name="no_friends">Você não possui amigos adicionados no last.fm!\nObs: geralmente, isso é um erro do last.fm. Recarregar a página deve resolvê-lo</string>
     <string name="no_recent_tracks">Sem músicas recentes</string>
     <string name="unknown_album">Álbum desconhecido</string>
-    <string name="minutes_ago">Há %d minutos</string>
+    <string name="minutes_ago">Há %d min.</string>
     <string name="one_hour_ago">Há 1 hora</string>
     <string name="hours_ago">Há %d horas</string>
     <string name="one_day_ago">Há 1 dia</string>
@@ -58,4 +58,6 @@
     <string name="select_group_friend_widget">Selecione até quatro amigos para adicionar ao widget</string>
     <string name="please_select_group_friend">Por favor, selecione pelo menos dois amigos</string>
     <string name="max_four_friends_warning">Você não pode selecionar mais de 4 amigos</string>
+    <string name="open_user_profile">Abrir perfil</string>
+    <string name="recent_tracks">Músicas recentes</string>
 </resources>

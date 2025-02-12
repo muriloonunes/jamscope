@@ -8,7 +8,10 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Group
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.outlined.Group
+import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -31,7 +34,7 @@ import com.murile.nowplaying.R
 import com.murile.nowplaying.ui.components.BottomNavigationItem
 import com.murile.nowplaying.ui.components.FRIENDS_SCREEN
 import com.murile.nowplaying.ui.components.PROFILE_SCREEN
-import com.murile.nowplaying.ui.components.SEARCH_SCREEN
+import com.murile.nowplaying.ui.components.SETTINGS_SCREEN
 import com.murile.nowplaying.ui.viewmodel.FriendsViewModel
 import com.murile.nowplaying.ui.viewmodel.ProfileViewModel
 import kotlinx.coroutines.launch
@@ -48,24 +51,24 @@ fun HomePager(
         BottomNavigationItem(
             stringResource(R.string.friends),
             Icons.Filled.Group,
-            Icons.Default.Group,
+            Icons.Outlined.Group,
             FRIENDS_SCREEN
-        ),
-        BottomNavigationItem(
-            stringResource(R.string.search),
-            Icons.Filled.Search,
-            Icons.Default.Search,
-            SEARCH_SCREEN
         ),
         BottomNavigationItem(
             stringResource(R.string.profile),
             Icons.Filled.Person,
-            Icons.Default.Person,
+            Icons.Outlined.Person,
             PROFILE_SCREEN
+        ),
+        BottomNavigationItem(
+            stringResource(R.string.settings),
+            Icons.Filled.Settings,
+            Icons.Outlined.Settings,
+            SETTINGS_SCREEN
         )
     )
     val listStates = remember { List(itensBarList.size) { LazyListState() } }
-    val pagerState = rememberPagerState(initialPage = 0) { 3 }
+    val pagerState = rememberPagerState(initialPage = 0) { itensBarList.size }
     val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(pagerState) {
@@ -112,11 +115,11 @@ fun HomePager(
                     friendsViewModel = friendsViewModel,
                     listStates = listStates[page]
                 )
-                1 -> SearchTela()
-                2 -> ProfileTela(
+                1 -> ProfileTela(
                     navController = navController,
                     profileViewModel = profileViewModel
                 )
+                2 -> SettingsTela()
             }
         }
     }

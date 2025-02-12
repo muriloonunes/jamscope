@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.murile.nowplaying.data.model.Profile
 import com.murile.nowplaying.data.repository.UserRepository
+import com.murile.nowplaying.util.Stuff
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -43,7 +44,7 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun shouldRefresh(): Boolean {
-        return System.currentTimeMillis() - lastUpdateTimestamp > 15000000 // 2 min e meio em milisegundos
+        return System.currentTimeMillis() - lastUpdateTimestamp > Stuff.REFRESHING_TIME
     }
 
     private fun resetLastUpdateTimestamp() {

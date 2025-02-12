@@ -1,5 +1,6 @@
 package com.murile.nowplaying.ui.viewmodel
 
+import android.util.Log
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -10,6 +11,7 @@ import com.murile.nowplaying.data.repository.FriendsRepository
 import com.murile.nowplaying.data.repository.UserRepository
 import com.murile.nowplaying.ui.theme.ThemeAttributes
 import com.murile.nowplaying.util.SortingType
+import com.murile.nowplaying.util.Stuff
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -48,6 +50,8 @@ class FriendsViewModel @Inject constructor(
     val recentTracksMap: StateFlow<Map<String, RecentTracks?>> = friends.map { friendsList ->
         friendsList.associate { it.url to it.recentTracks }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyMap())
+
+    private var lastUpdateTimestamp: Long = 0L
 
     init {
         viewModelScope.launch {
@@ -89,6 +93,7 @@ class FriendsViewModel @Inject constructor(
                     _isRefreshing.value = false
                 }
             }
+            lastUpdateTimestamp = System.currentTimeMillis()
         }
     }
 
@@ -127,6 +132,11 @@ class FriendsViewModel @Inject constructor(
                     .thenByDescending { it.recentTracks?.track?.firstOrNull()?.dateInfo?.formattedDate }
             )
         }
+    }
+
+    fun shouldRefresh(): Boolean {
+        Log.d("FriendsViewModel", "shouldRefresh: ${System.currentTimeMillis() - lastUpdateTimestamp > Stuff.REFRESHING_TIME}")
+        return System.currentTimeMillis() - lastUpdateTimestamp > Stuff.REFRESHING_TIME
     }
 
     fun getSecondaryContainerColor(name: String?, isDarkTheme: Boolean): Color {

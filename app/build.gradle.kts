@@ -21,6 +21,10 @@ android {
         vectorDrawables.useSupportLibrary = true
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        ksp {
+            arg("room.schemaLocation", "$projectDir/schemas")
+        }
     }
 
     buildTypes {
@@ -35,6 +39,7 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
+
     }
     kotlinOptions {
         jvmTarget = "17"
@@ -134,4 +139,7 @@ dependencies {
 
     //Work
     implementation(libs.androidx.work.runtime.ktx)
+
+    //Scrollbar
+    implementation(libs.lazycolumnscrollbar)
 }
