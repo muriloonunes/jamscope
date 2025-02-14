@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -114,7 +115,8 @@ class MainActivity : ComponentActivity() {
                 composable(PROFILE_SCREEN) {
                     ProfileTela(
                         navController = navController,
-                        profileViewModel = profileViewModel
+                        profileViewModel = profileViewModel,
+                        listState = LazyListState()
                     )
                 }
             }

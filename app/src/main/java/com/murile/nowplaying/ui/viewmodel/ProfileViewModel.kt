@@ -3,6 +3,8 @@ package com.murile.nowplaying.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.murile.nowplaying.data.model.Profile
+import com.murile.nowplaying.data.model.Resource
+import com.murile.nowplaying.data.model.Track
 import com.murile.nowplaying.data.repository.UserRepository
 import com.murile.nowplaying.util.Stuff
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,16 +24,37 @@ class ProfileViewModel @Inject constructor(
     private val _userProfile = MutableStateFlow<Profile?>(null)
     val userProfile: StateFlow<Profile?> = _userProfile
 
+    private val _recentTracks = MutableStateFlow<List<Track>>(emptyList())
+    val recentTracks: StateFlow<List<Track>> = _recentTracks
+
+    private val _errorMessage = MutableStateFlow("")
+    val errorMessage: StateFlow<String> = _errorMessage
+
     private var lastUpdateTimestamp: Long = 0L
 
     fun onRefresh() {
+        if (_isRefreshing.value) return
+        refreshProfile()
+    }
+
+    private fun refreshProfile() {
         _isRefreshing.value = true
+        _errorMessage.value = ""
         viewModelScope.launch {
             val userProfile = userRepository.getUserProfile()
             userRepository.getUserInfo(userProfile!!)
-            _userProfile.value = userProfile
-
-            _isRefreshing.value = false
+            when (val result = userRepository.getRecentTracks(userProfile)) {
+                is Resource.Success -> {
+                    _userProfile.value = userProfile
+                    _recentTracks.value = userProfile.recentTracks?.track ?: emptyList()
+                    _isRefreshing.value = false
+                }
+                is Resource.Error -> {
+                    _userProfile.value = userProfile
+                    _errorMessage.value = result.message
+                    _isRefreshing.value = false
+                }
+            }
             lastUpdateTimestamp = System.currentTimeMillis()
         }
     }

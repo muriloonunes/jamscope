@@ -180,7 +180,7 @@ class ApiRequest @Inject constructor(
             if (!response.status.isSuccess()) {
                 val jsonResponse = JSON.parseToJsonElement(response.bodyAsText()).jsonObject
                 val errorValue = jsonResponse["error"]?.jsonPrimitive?.intOrNull
-                Error(handleError(errorValue!!))
+                Error(handleError(errorValue ?: 0))
             } else {
                 val userFriendsResponse =
                     JSON.decodeFromString<UserFriendsResponse>(response.bodyAsText())
@@ -202,7 +202,7 @@ class ApiRequest @Inject constructor(
             Error(handleError(666))
         } catch (e: Exception) {
             e.printStackTrace()
-            Error("Failed to fetch user friends")
+            Error(handleError(999))
         }
     }
 
@@ -241,6 +241,56 @@ class ApiRequest @Inject constructor(
             user.recentTracks = recentTracksResponse.recenttracks
         } catch (e: Exception) {
             e.printStackTrace()
+        }
+    }
+
+    suspend fun getRecentTracks(
+        profile: Profile
+    ): Resource<Unit> {
+        val urlParametro =
+            "method=user.getrecenttracks&user=${profile.username}&api_key=${Stuff.LAST_KEY}&limit=100"
+        val requestUrl = "$BASE_URL$FORMAT_JSON&$urlParametro"
+        return try {
+            val response = withContext(Dispatchers.IO) {
+                HttpClientProvider.client.post(requestUrl) {
+                    headers {
+                        append(
+                            HttpHeaders.ContentType,
+                            ContentType.Application.Json.toString()
+                        )
+                    }
+                }
+            }
+
+            if (!response.status.isSuccess()) {
+                val jsonResponse = JSON.parseToJsonElement(response.bodyAsText()).jsonObject
+                val errorValue = jsonResponse["error"]?.jsonPrimitive?.intOrNull
+                return Error(handleError(errorValue ?: 0))
+            }
+
+            val recentTracksResponse =
+                JSON.decodeFromString<RecentTracksResponse>(response.bodyAsText())
+            recentTracksResponse.recenttracks.track.forEach { track ->
+                track.dateInfo?.let { dateInfo ->
+                    val localDateTime = LocalDateTime.parse(
+                        dateInfo.formattedDate,
+                        DateTimeFormatter.ofPattern("dd MMM yyyy, HH:mm", Locale.ENGLISH)
+                    )
+                    val zonedDateTime = localDateTime.atZone(ZoneId.of("UTC"))
+                        .withZoneSameInstant(ZoneId.systemDefault())
+                    val isoFormattedDate =
+                        zonedDateTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
+                    dateInfo.formattedDate = isoFormattedDate
+                }
+            }
+            profile.recentTracks = recentTracksResponse.recenttracks
+            Success(Unit)
+        } catch (e: UnresolvedAddressException) {
+            e.printStackTrace()
+            Error(handleError(666))
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Error(handleError(0))
         }
     }
 }

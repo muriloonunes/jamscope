@@ -60,4 +60,8 @@
     <string name="max_four_friends_warning">Você não pode selecionar mais de 4 amigos</string>
     <string name="open_user_profile">Abrir perfil</string>
     <string name="recent_tracks">Músicas recentes</string>
+    <string name="scrobbles">%1$s scrobbles</string>
+    <string name="see_more">Ver mais</string>
+    <string name="fail_fetch_friend">Houve um problema ao obter os amigos</string>
+    <string name="login_required_error">Suas configurações de privacidade não estão públicas</string>
 </resources>

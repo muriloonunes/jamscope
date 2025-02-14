@@ -66,7 +66,7 @@ fun FriendsTela(
         if (friendsViewModel.shouldRefresh()) friendsViewModel.onRefresh() else return@LaunchedEffect
     }
 
-    LaunchedEffect(friends) {
+    LaunchedEffect(sortingType) {
         delay(600)
         listStates.animateScrollToItem(0)
     }

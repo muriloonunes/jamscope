@@ -1,8 +1,5 @@
 package com.murile.nowplaying.ui.components
 
-import android.content.Context
-import android.content.Intent
-import android.net.Uri
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -49,15 +46,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import coil3.compose.AsyncImage
 import com.google.android.material.color.MaterialColors
 import com.murile.nowplaying.R
-import com.murile.nowplaying.data.model.Image
 import com.murile.nowplaying.data.model.User
+import com.murile.nowplaying.util.Stuff.openUrl
 import com.murile.nowplaying.util.getCountryFlag
 import my.nanihadesuka.compose.LazyColumnScrollbar
 import my.nanihadesuka.compose.ScrollbarSettings
@@ -170,9 +166,9 @@ fun ExtendedFriendCard(
                             textAlign = TextAlign.Center,
                         )
                     }
-                    friend.country?.let {
+                    friend.country?.takeIf { it.isNotEmpty() && it != "None" }?.let { country ->
                         Text(
-                            text = friend.country + " " + getCountryFlag(friend.country),
+                            text = "$country ${getCountryFlag(country)}",
                             style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
                             textAlign = TextAlign.Center,
                         )
@@ -242,11 +238,6 @@ fun ExtendedFriendCard(
     }
 }
 
-fun Context.openUrl(url: String) {
-    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-    startActivity(intent)
-}
-
 //https://stackoverflow.com/a/68056586
 @Composable
 fun Modifier.simpleVerticalScrollbar(
@@ -282,28 +273,4 @@ fun Modifier.simpleVerticalScrollbar(
             )
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewExtendedFriendCard() {
-    val friend = User(
-        name = "lobonair",
-        image = listOf(
-            Image(
-                size = "large",
-                url = "https://lastfm.freetls.fastly.net/i/u/174s/c46bed74d990568974389e48dbb905e2.png"
-            )
-        ),
-        url = "https://www.last.fm/user/lobonair",
-        realname = "",
-        subscriber = 1,
-        country = "Brazil",
-        recentTracks = null
-    )
-    ExtendedFriendCard(
-        friend = friend,
-        backgroundColor = Color.LightGray,
-        onDismissRequest = {}
-    )
 }

@@ -87,7 +87,7 @@ fun HomePager(
                         coroutineScope.launch {
                             pagerState.animateScrollToPage(index)
 
-                            if (index == 0 || index == 2) {
+                            if (index == 0 || index == 1) {
                                 listStates[index].animateScrollToItem(0)
                             }
                         }
@@ -117,7 +117,8 @@ fun HomePager(
                 )
                 1 -> ProfileTela(
                     navController = navController,
-                    profileViewModel = profileViewModel
+                    profileViewModel = profileViewModel,
+                    listState = listStates[page]
                 )
                 2 -> SettingsTela()
             }

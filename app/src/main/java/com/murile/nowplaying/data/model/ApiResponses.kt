@@ -28,7 +28,8 @@ data class Profile(
     var friends: List<User>? = null,
     var country: String? = null,
     var realname: String = "",
-    var playcount: Long? = null
+    var playcount: Long? = null,
+    var recentTracks: RecentTracks? = null,
 )
 
 @Serializable

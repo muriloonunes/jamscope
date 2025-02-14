@@ -39,7 +39,7 @@ class UserRepository @Inject constructor(
         return apiRequest.getUserInfo(profile)
     }
 
-    suspend fun getRecentTracks(user: User) {
-        return apiRequest.getRecentTracks(user)
+    suspend fun getRecentTracks(profile: Profile): Resource<Unit> {
+        return apiRequest.getRecentTracks(profile)
     }
 }
