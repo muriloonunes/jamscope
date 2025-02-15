@@ -24,3 +24,16 @@ data class RecentTrackEntity(
     val timestamp: String,
     val formattedDate: String?
 )
+
+@Entity(tableName = "user_profile")
+data class UserProfileEntity(
+    @PrimaryKey val username: String,
+    val senha: String,
+    val url: String,
+    val session: String,
+    val imageUrl: String?,
+    val country: String?,
+    val realname: String,
+    val subscriber: Int?,
+    val playcount: Long?
+)

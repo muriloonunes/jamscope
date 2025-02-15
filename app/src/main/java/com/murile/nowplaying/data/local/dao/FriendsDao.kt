@@ -1,9 +1,11 @@
-package com.murile.nowplaying.data.local
+package com.murile.nowplaying.data.local.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.murile.nowplaying.data.local.FriendEntity
+import com.murile.nowplaying.data.local.RecentTrackEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -22,4 +24,7 @@ interface FriendsDao {
 
     @Query("DELETE FROM recent_tracks WHERE userUrl = :userUrl")
     suspend fun deleteRecentTracksForUser(userUrl: String)
+
+    @Query("DELETE FROM friend")
+    suspend fun deleteAllFriends()
 }

@@ -64,4 +64,5 @@
     <string name="see_more">See more</string>
     <string name="fail_fetch_friend">Failed to fetch user friends</string>
     <string name="login_required_error">Your profile privacy is not set to public</string>
+    <string name="no_music_player">No music player is installed</string>
 </resources>

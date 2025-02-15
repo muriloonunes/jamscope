@@ -9,8 +9,10 @@ import com.murile.nowplaying.data.repository.UserRepository
 import com.murile.nowplaying.util.Stuff
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -19,7 +21,11 @@ class ProfileViewModel @Inject constructor(
     private val userRepository: UserRepository
 ) : ViewModel() {
     private val _isRefreshing = MutableStateFlow(false)
-    val isRefreshing get() = _isRefreshing.asStateFlow()
+    val isRefreshing = _isRefreshing
+        .onStart {
+            loadCachedProfile()
+            if (shouldRefresh()) refreshProfile() }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
 
     private val _userProfile = MutableStateFlow<Profile?>(null)
     val userProfile: StateFlow<Profile?> = _userProfile
@@ -37,6 +43,14 @@ class ProfileViewModel @Inject constructor(
         refreshProfile()
     }
 
+    private fun loadCachedProfile() {
+        viewModelScope.launch {
+            val userProfile = userRepository.getCachedUserProfile()
+            _userProfile.value = userProfile
+            _recentTracks.value = userProfile.recentTracks?.track ?: emptyList()
+        }
+    }
+
     private fun refreshProfile() {
         _isRefreshing.value = true
         _errorMessage.value = ""
@@ -47,6 +61,7 @@ class ProfileViewModel @Inject constructor(
                 is Resource.Success -> {
                     _userProfile.value = userProfile
                     _recentTracks.value = userProfile.recentTracks?.track ?: emptyList()
+                    userRepository.cacheRecentTracks(userProfile.profileUrl!!, userProfile.recentTracks?.track ?: emptyList())
                     _isRefreshing.value = false
                 }
                 is Resource.Error -> {
@@ -55,6 +70,7 @@ class ProfileViewModel @Inject constructor(
                     _isRefreshing.value = false
                 }
             }
+            userRepository.saveUserProfile(userProfile)
             lastUpdateTimestamp = System.currentTimeMillis()
         }
     }

@@ -52,9 +52,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import coil3.ImageLoader
 import coil3.compose.AsyncImage
-import coil3.util.DebugLogger
 import com.murile.nowplaying.R
 import com.murile.nowplaying.ui.components.LoadTrackInfo
 import com.murile.nowplaying.ui.components.ShowErrorMessage
@@ -74,11 +72,6 @@ fun ProfileTela(
     val userProfile by profileViewModel.userProfile.collectAsStateWithLifecycle()
     val refreshing by profileViewModel.isRefreshing.collectAsStateWithLifecycle()
     val userRecentTracks by profileViewModel.recentTracks.collectAsStateWithLifecycle()
-    val imageLoader = remember {
-        ImageLoader.Builder(context)
-            .logger(DebugLogger())
-            .build()
-    }
     val lifecycleOwner = LocalLifecycleOwner.current
     var imagePfp by remember { mutableStateOf<Any?>(R.drawable.baseline_account_circle_24) }
     val errorMessage by profileViewModel.errorMessage.collectAsStateWithLifecycle()
@@ -132,7 +125,6 @@ fun ProfileTela(
                             ),
                             error = painterResource(R.drawable.profile_pic_placeholder),
                             placeholder = painterResource(R.drawable.baseline_account_circle_24),
-                            imageLoader = imageLoader,
                             modifier = Modifier
                                 .size(120.dp)
                                 .padding(8.dp)
@@ -244,7 +236,7 @@ fun ProfileTela(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         val imageUrl = track.image?.firstOrNull { it.size == "medium" }?.url ?: ""
                         TrackImageLoader(imageUrl = imageUrl, LocalContext.current)
-                        LoadTrackInfo(track = track, true)
+                        LoadTrackInfo(track = track, forExtended = true)
                     }
                     if (index < userRecentTracks.size - 1) {
                         HorizontalDivider(

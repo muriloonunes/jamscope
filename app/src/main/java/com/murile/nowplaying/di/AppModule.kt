@@ -10,7 +10,8 @@ import androidx.work.WorkerFactory
 import com.murile.nowplaying.data.api.ApiRequest
 import com.murile.nowplaying.data.api.Exceptions
 import com.murile.nowplaying.data.local.AppDatabase
-import com.murile.nowplaying.data.local.FriendsDao
+import com.murile.nowplaying.data.local.dao.FriendsDao
+import com.murile.nowplaying.data.local.dao.UserProfileDao
 import com.murile.nowplaying.data.repository.FriendsRepository
 import com.murile.nowplaying.data.repository.UserRepository
 import com.murile.nowplaying.data.session.UserDataStoreManager
@@ -60,8 +61,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideUserRepository(dataStoreManager: UserDataStoreManager, apiRequest: ApiRequest): UserRepository {
-        return UserRepository(apiRequest, dataStoreManager)
+    fun provideUserRepository(dataStoreManager: UserDataStoreManager, apiRequest: ApiRequest, userProfileDao: UserProfileDao): UserRepository {
+        return UserRepository(apiRequest, dataStoreManager, userProfileDao)
     }
 
     @Provides
@@ -76,7 +77,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideFriendsDao(database: AppDatabase):FriendsDao = database.friendsDao()
+    fun provideFriendsDao(database: AppDatabase): FriendsDao = database.friendsDao()
 
     @Provides
     @Singleton
@@ -90,4 +91,8 @@ object AppModule {
     ): WorkerFactory {
         return GenericWorkerFactory(repository)
     }
+
+    @Provides
+    @Singleton
+    fun provideUserProfileDao(database: AppDatabase): UserProfileDao = database.userProfileDao()
 }

@@ -115,11 +115,13 @@ fun HomePager(
                     friendsViewModel = friendsViewModel,
                     listStates = listStates[page]
                 )
+
                 1 -> ProfileTela(
                     navController = navController,
                     profileViewModel = profileViewModel,
                     listState = listStates[page]
                 )
+
                 2 -> SettingsTela()
             }
         }

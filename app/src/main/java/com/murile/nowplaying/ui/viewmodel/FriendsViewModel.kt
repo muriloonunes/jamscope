@@ -1,6 +1,5 @@
 package com.murile.nowplaying.ui.viewmodel
 
-import android.util.Log
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -18,10 +17,10 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -32,7 +31,11 @@ class FriendsViewModel @Inject constructor(
     private val friendsRepository: FriendsRepository
 ) : ViewModel() {
     private val _isRefreshing = MutableStateFlow(false)
-    val isRefreshing get() = _isRefreshing.asStateFlow()
+    val isRefreshing = _isRefreshing
+        .onStart {
+            loadCachedFriends()
+            if (shouldRefresh()) refreshFriends()
+        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
 
     private val _errorMessage = MutableStateFlow("")
     val errorMessage: StateFlow<String> = _errorMessage
@@ -56,7 +59,6 @@ class FriendsViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             _sortingType.value = friendsRepository.getSortingType()
-            loadCachedFriends()
         }
     }
 
@@ -88,6 +90,7 @@ class FriendsViewModel @Inject constructor(
                     loadRecentTracks(friends)
                     friendsRepository.cacheFriends(friends)
                 }
+
                 is Resource.Error -> {
                     _errorMessage.value = result.message
                     _isRefreshing.value = false
@@ -135,7 +138,6 @@ class FriendsViewModel @Inject constructor(
     }
 
     fun shouldRefresh(): Boolean {
-        Log.d("FriendsViewModel", "shouldRefresh: ${System.currentTimeMillis() - lastUpdateTimestamp > Stuff.REFRESHING_TIME}")
         return System.currentTimeMillis() - lastUpdateTimestamp > Stuff.REFRESHING_TIME
     }
 

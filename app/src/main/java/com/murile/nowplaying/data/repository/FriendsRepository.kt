@@ -1,7 +1,7 @@
 package com.murile.nowplaying.data.repository
 
 import com.murile.nowplaying.data.api.ApiRequest
-import com.murile.nowplaying.data.local.FriendsDao
+import com.murile.nowplaying.data.local.dao.FriendsDao
 import com.murile.nowplaying.data.local.toFriendEntity
 import com.murile.nowplaying.data.local.toRecentTrackEntity
 import com.murile.nowplaying.data.local.toTrack
@@ -52,5 +52,9 @@ class FriendsRepository @Inject constructor(
 
     suspend fun getRecentTracks(user: User) {
         return apiRequest.getRecentTracks(user)
+    }
+
+    suspend fun deleteFriends() {
+        friendsDao.deleteAllFriends()
     }
 }

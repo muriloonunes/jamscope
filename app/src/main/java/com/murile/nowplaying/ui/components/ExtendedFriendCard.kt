@@ -18,11 +18,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.OpenInNew
-import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.HorizontalDivider
@@ -38,9 +37,7 @@ import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -49,7 +46,6 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import coil3.compose.AsyncImage
 import com.google.android.material.color.MaterialColors
 import com.murile.nowplaying.R
 import com.murile.nowplaying.data.model.User
@@ -88,20 +84,7 @@ fun ExtendedFriendCard(
                     .padding(8.dp)
                     .align(Alignment.CenterHorizontally)
             ) {
-                AsyncImage(
-                    model = friend.image.firstOrNull { it.size == "large" }?.url ?: "",
-                    contentDescription = friend.name?.let {
-                        stringResource(
-                            R.string.profile_pic_description,
-                            it
-                        )
-                    },
-                    error = rememberVectorPainter(image = Icons.Default.AccountCircle),
-                    placeholder = ColorPainter(color = MaterialTheme.colorScheme.surfaceContainerHigh),
-                    modifier = Modifier
-                        .clip(CircleShape)
-                        .size(100.dp)
-                )
+                FriendImage(friend, true)
                 Spacer(modifier = Modifier.height(4.dp))
                 if (friend.subscriber == 1) {
                     Box(
@@ -184,6 +167,7 @@ fun ExtendedFriendCard(
                         RoundedCornerShape(16.dp)
                     )
                     .padding(8.dp)
+                    .fillMaxWidth()
             ) {
                 Text(
                     text = stringResource(R.string.recent_tracks),
@@ -213,15 +197,39 @@ fun ExtendedFriendCard(
                                 end = 8.dp,
                                 top = 2.dp,
                                 bottom = 2.dp
-                            )
+                            ),
+                            horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             items(recentTracks) { track ->
-                                LoadTrackInfo(track, true)
+                                LoadTrackInfo(track = track, forExtended = true)
                                 HorizontalDivider(
                                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(
                                         alpha = 0.5f
                                     )
                                 )
+                            }
+                            item {
+                                Icon(
+                                    imageVector = Icons.Filled.MoreHoriz,
+                                    contentDescription = stringResource(R.string.see_more),
+                                    modifier = Modifier.size(48.dp),
+                                    tint = MaterialTheme.colorScheme.onSurface
+                                )
+                            }
+                            item {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier.clickable { context.openUrl("https://www.last.fm/user/${friend.name}/library?page=2") }
+                                ) {
+                                    Text(text = stringResource(R.string.see_more), textDecoration = TextDecoration.Underline)
+                                    Icon(
+                                        imageVector = Icons.AutoMirrored.Filled.OpenInNew,
+                                        contentDescription = stringResource(R.string.see_more),
+                                        modifier = Modifier
+                                            .size(12.dp)
+                                            .padding(top = 2.dp)
+                                    )
+                                }
                             }
                         }
                     }

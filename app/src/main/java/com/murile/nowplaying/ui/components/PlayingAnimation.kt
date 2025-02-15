@@ -3,6 +3,7 @@ package com.murile.nowplaying.ui.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -30,6 +31,6 @@ fun NowPlayingAnimation() {
         speed = 1.5f,
         useFrameInterpolation = true,
         playMode = Mode.FORWARD,
-        modifier = Modifier.background(Color.Unspecified).size(22.dp)
+        modifier = Modifier.background(Color.Unspecified).size(22.dp).wrapContentWidth()
     )
 }

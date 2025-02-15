@@ -142,4 +142,7 @@ dependencies {
 
     //Scrollbar
     implementation(libs.lazycolumnscrollbar)
+
+    //Rebugger
+    implementation(libs.rebugger)
 }

@@ -18,6 +18,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
+import com.murile.nowplaying.data.repository.UserRepository
 import com.murile.nowplaying.data.session.UserDataStoreManager
 import com.murile.nowplaying.ui.components.APP_ROUTE
 import com.murile.nowplaying.ui.components.FRIENDS_SCREEN
@@ -38,11 +39,15 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     @Inject
     lateinit var userDataStoreManager: UserDataStoreManager
+
+    @Inject
+    lateinit var userRepository: UserRepository
 
     private val splashViewModel by viewModels<SplashViewModel>()
 
@@ -50,6 +55,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setupSplashScreen()
         setContent {
             NowPlayingTheme {
@@ -94,7 +100,7 @@ class MainActivity : ComponentActivity() {
                     LoginScreen(
                         navController,
                         loginViewModel = loginViewModel,
-                        userDataStoreManager = userDataStoreManager
+                        userRepository = userRepository
                     )
                 }
             }
