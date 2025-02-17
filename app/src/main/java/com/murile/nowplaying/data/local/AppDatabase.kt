@@ -5,7 +5,7 @@ import androidx.room.RoomDatabase
 import com.murile.nowplaying.data.local.dao.FriendsDao
 import com.murile.nowplaying.data.local.dao.UserProfileDao
 
-@Database(entities = [FriendEntity::class, RecentTrackEntity::class, UserProfileEntity::class], version = 5)
+@Database(entities = [FriendEntity::class, RecentTrackEntity::class, UserProfileEntity::class], version = 8)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun friendsDao(): FriendsDao
     abstract fun userProfileDao(): UserProfileDao

@@ -22,7 +22,8 @@ data class RecentTrackEntity(
     val albumName: String,
     val artistName: String,
     val timestamp: String,
-    val formattedDate: String?
+    val formattedDate: String?,
+    val imageUrl: String?
 )
 
 @Entity(tableName = "user_profile")

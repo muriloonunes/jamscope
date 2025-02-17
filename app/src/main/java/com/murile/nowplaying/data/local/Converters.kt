@@ -42,7 +42,8 @@ fun Track.toRecentTrackEntity(userUrl: String) = RecentTrackEntity(
     albumName = this.album.name,
     artistName = this.artist.name,
     timestamp = this.dateInfo?.timestamp ?: "",
-    formattedDate = dateInfo?.formattedDate
+    formattedDate = dateInfo?.formattedDate,
+    imageUrl = this.image?.firstOrNull { it.size == "medium" }?.url ?: ""
 )
 
 fun RecentTrackEntity.toTrack(): Track {
@@ -51,6 +52,9 @@ fun RecentTrackEntity.toTrack(): Track {
         album = Album(this.albumName),
         name = this.trackName,
         dateInfo = this.formattedDate?.let { DateInfo(timestamp = "", it) },
+        image = this.imageUrl.takeIf { it?.isNotEmpty() ?: true }?.let {
+        listOf(Image(url = it, size = "medium"))
+    } ?: emptyList()
     )
 }
 

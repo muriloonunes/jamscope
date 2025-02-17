@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
@@ -69,11 +70,13 @@ class FriendsViewModel @Inject constructor(
 
     private fun loadCachedFriends() {
         viewModelScope.launch {
-            friendsRepository.getCachedFriends()
-                .firstOrNull()
-                ?.let { cachedFriends ->
-                    _friends.value = sortFriends(cachedFriends, _sortingType.value)
-                }
+            val cachedFriends = friendsRepository.getCachedFriends().firstOrNull()
+            if (cachedFriends.isNullOrEmpty()) {
+                val friendsDataStore = friendsRepository.getFriendsFromDataStore().first()
+                _friends.value = sortFriends(friendsDataStore, _sortingType.value)
+            } else {
+                _friends.value = sortFriends(cachedFriends, _sortingType.value)
+            }
         }
     }
 

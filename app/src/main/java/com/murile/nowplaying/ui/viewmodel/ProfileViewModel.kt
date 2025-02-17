@@ -1,13 +1,16 @@
 package com.murile.nowplaying.ui.viewmodel
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.murile.nowplaying.R
 import com.murile.nowplaying.data.model.Profile
 import com.murile.nowplaying.data.model.Resource
 import com.murile.nowplaying.data.model.Track
 import com.murile.nowplaying.data.repository.UserRepository
 import com.murile.nowplaying.util.Stuff
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -18,7 +21,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    @ApplicationContext private val context: Context
 ) : ViewModel() {
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing = _isRefreshing
@@ -45,9 +49,13 @@ class ProfileViewModel @Inject constructor(
 
     private fun loadCachedProfile() {
         viewModelScope.launch {
-            val userProfile = userRepository.getCachedUserProfile()
-            _userProfile.value = userProfile
-            _recentTracks.value = userProfile.recentTracks?.track ?: emptyList()
+            try {
+                val userProfile = userRepository.getCachedUserProfile()
+                _userProfile.value = userProfile
+                _recentTracks.value = userProfile.recentTracks?.track ?: emptyList()
+            } catch (e: IllegalStateException) {
+                _errorMessage.value = context.getString(R.string.error_loading_profile)
+            }
         }
     }
 

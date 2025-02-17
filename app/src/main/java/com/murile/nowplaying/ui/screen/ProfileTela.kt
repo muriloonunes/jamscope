@@ -235,7 +235,7 @@ fun ProfileTela(
                 itemsIndexed(userRecentTracks, key = {index, track -> "$index${track.name}"}) { index, track ->
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         val imageUrl = track.image?.firstOrNull { it.size == "medium" }?.url ?: ""
-                        TrackImageLoader(imageUrl = imageUrl, LocalContext.current)
+                        TrackImageLoader(imageUrl = imageUrl)
                         LoadTrackInfo(track = track, forExtended = true)
                     }
                     if (index < userRecentTracks.size - 1) {

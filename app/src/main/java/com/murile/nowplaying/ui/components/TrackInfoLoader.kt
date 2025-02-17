@@ -1,6 +1,5 @@
 package com.murile.nowplaying.ui.components
 
-import android.content.Context
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -97,7 +96,7 @@ fun LoadTrackInfo(
 }
 
 @Composable
-fun TrackImageLoader(imageUrl: String, context: Context) {
+fun TrackImageLoader(imageUrl: String) {
     AsyncImage(
         model = imageUrl,
         contentDescription = null,

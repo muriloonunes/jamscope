@@ -10,6 +10,7 @@ import coil3.SingletonImageLoader
 import coil3.disk.DiskCache
 import coil3.disk.directory
 import coil3.memory.MemoryCache
+import coil3.request.CachePolicy
 import com.murile.nowplaying.worker.MyDelegatingWorkerFactory
 import dagger.hilt.EntryPoint
 import dagger.hilt.EntryPoints
@@ -41,13 +42,15 @@ class MyApp : Application(), SingletonImageLoader.Factory {
             .memoryCache {
                 MemoryCache.Builder().maxSizePercent(percent = 0.25, context = context).build()
             }
+            .diskCachePolicy(CachePolicy.ENABLED)
+            .memoryCachePolicy(CachePolicy.ENABLED)
             .diskCache {
                 DiskCache.Builder()
                     .directory(context.cacheDir.resolve("image_cache"))
                     .maxSizePercent(0.02)
                     .build()
             }
-//            .logger(logger = DebugLogger(Logger.Level.Error))
+//            .logger(logger = DebugLogger())
             .build()
     }
 }

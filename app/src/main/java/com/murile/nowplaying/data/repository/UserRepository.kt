@@ -65,9 +65,21 @@ class UserRepository @Inject constructor(
 
     suspend fun getCachedUserProfile(): Profile {
         return withContext(Dispatchers.IO) {
-            val userProfile = userProfileDao.getUserProfile()
-            val recentTracks = userProfileDao.getRecentTracksForUser(userProfile.url)
-            return@withContext userProfileDao.getUserProfile().toProfile(recentTracks)
+            val userProfileEntity = userProfileDao.getUserProfile()
+            if (userProfileEntity != null) {
+                val userUrl = userProfileEntity.url
+                val recentTracks = userProfileDao.getRecentTracksForUser(userUrl)
+                return@withContext userProfileEntity.toProfile(recentTracks)
+            } else {
+                val fallbackProfile = userDataStoreManager.getUserProfile()!!
+                if (fallbackProfile.profileUrl != null) {
+                    cacheUserProfile(fallbackProfile)
+                    return@withContext fallbackProfile
+                }
+                else {
+                    throw IllegalStateException("No user profile found")
+                }
+            }
         }
     }
 

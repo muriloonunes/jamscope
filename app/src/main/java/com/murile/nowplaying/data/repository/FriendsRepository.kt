@@ -12,6 +12,7 @@ import com.murile.nowplaying.data.session.UserDataStoreManager
 import com.murile.nowplaying.util.SortingType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -26,6 +27,11 @@ class FriendsRepository @Inject constructor(
 
     suspend fun getSortingType(): SortingType {
         return userDataStoreManager.getSortingType()
+    }
+
+    fun getFriendsFromDataStore(): Flow<List<User>> = flow {
+        val profile = userDataStoreManager.getUserProfile()
+        emit(profile?.friends ?: emptyList())
     }
 
     fun getCachedFriends(): Flow<List<User>> = friendsDao.getAllUsers().map { friendEntities ->
