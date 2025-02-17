@@ -8,11 +8,11 @@ plugins {
 }
 
 android {
-    namespace = "com.murile.nowplaying"
+    namespace = "com.mno.jamscope"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.murile.nowplaying"
+        applicationId = "com.mno.jamscope"
         minSdk = 26
         targetSdk = 35
         versionCode = 9
@@ -29,7 +29,7 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"

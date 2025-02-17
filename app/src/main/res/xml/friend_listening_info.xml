@@ -5,6 +5,6 @@
     android:resizeMode="horizontal"
     android:description="@string/friend_listening_widget"
     android:widgetCategory="home_screen"
-    android:configure="com.murile.nowplaying.activity.FriendListeningWidgetConfigureActivity"
+    android:configure="com.mno.jamscope.activity.FriendListeningWidgetConfigureActivity"
     android:previewImage="@drawable/friend_listening_widget_preview"
     />

@@ -7,6 +7,6 @@
     android:widgetCategory="home_screen"
     android:targetCellWidth="3"
     android:targetCellHeight="1"
-    android:configure="com.murile.nowplaying.activity.FriendListeningWidgetConfigureActivity"
+    android:configure="com.mno.jamscope.activity.FriendListeningWidgetConfigureActivity"
     android:previewLayout="@layout/friend_listening_widget_preview"
     />

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Now Playing</string>
+    <string name="app_name">Jamscope</string>
     <string name="welcome">Welcome!</string>
     <string name="login_please">Login to last.fm to continue</string>
     <string name="login">Login</string>

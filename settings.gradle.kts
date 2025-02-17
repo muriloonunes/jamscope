@@ -20,5 +20,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "NowPlaying"
+rootProject.name = "Jamscope"
 include(":app")

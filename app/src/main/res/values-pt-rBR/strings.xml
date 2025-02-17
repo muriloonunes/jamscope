@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Now Playing</string>
+    <string name="app_name">Jamscope</string>
     <string name="welcome">Bem-vindo!</string>
     <string name="login_please">Faça login no last.fm para continuar</string>
     <string name="login">Login</string>
