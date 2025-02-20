@@ -66,4 +66,6 @@
     <string name="login_required_error">Your profile privacy is not set to public</string>
     <string name="no_music_player">No music player is installed</string>
     <string name="error_loading_profile">Unable to load profile</string>
+    <string name="user">User</string>
+    <string name="open_settings_screen">Open settings screen</string>
 </resources>

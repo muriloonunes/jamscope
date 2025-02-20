@@ -8,10 +8,8 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Group
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.Group
 import androidx.compose.material.icons.outlined.Person
-import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -21,7 +19,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -29,42 +27,32 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.navigation.NavController
 import com.mno.jamscope.R
-import com.mno.jamscope.ui.components.BottomNavigationItem
-import com.mno.jamscope.ui.components.FRIENDS_SCREEN
-import com.mno.jamscope.ui.components.PROFILE_SCREEN
-import com.mno.jamscope.ui.components.SETTINGS_SCREEN
+import com.mno.jamscope.ui.navigator.Destination
 import com.mno.jamscope.ui.viewmodel.FriendsViewModel
-import com.mno.jamscope.ui.viewmodel.ProfileViewModel
+import com.mno.jamscope.ui.viewmodel.PagerViewModel
+import com.mno.jamscope.util.Stuff
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomePager(
-    navController: NavController,
-    profileViewModel: ProfileViewModel,
-    friendsViewModel: FriendsViewModel
+    friendsViewModel: FriendsViewModel,
+//    pagerViewModel: PagerViewModel
 ) {
-    var selectedItemIndex by rememberSaveable { mutableStateOf(0) } //TODO: talvez colocar isso aqui em um viewmodel?
+    var selectedItemIndex by rememberSaveable { mutableIntStateOf(0) }
     val itensBarList = listOf(
-        BottomNavigationItem(
+        Stuff.BottomNavigationItem(
             stringResource(R.string.friends),
             Icons.Filled.Group,
             Icons.Outlined.Group,
-            FRIENDS_SCREEN
+            Destination.FriendsScreen
         ),
-        BottomNavigationItem(
+        Stuff.BottomNavigationItem(
             stringResource(R.string.profile),
             Icons.Filled.Person,
             Icons.Outlined.Person,
-            PROFILE_SCREEN
-        ),
-        BottomNavigationItem(
-            stringResource(R.string.settings),
-            Icons.Filled.Settings,
-            Icons.Outlined.Settings,
-            SETTINGS_SCREEN
+            Destination.ProfileScreen
         )
     )
     val listStates = remember { List(itensBarList.size) { LazyListState() } }
@@ -86,10 +74,7 @@ fun HomePager(
                         selectedItemIndex = index
                         coroutineScope.launch {
                             pagerState.animateScrollToPage(index)
-
-                            if (index == 0 || index == 1) {
-                                listStates[index].animateScrollToItem(0)
-                            }
+                            listStates[index].animateScrollToItem(0)
                         }
                     },
                     icon = {
@@ -115,14 +100,9 @@ fun HomePager(
                     friendsViewModel = friendsViewModel,
                     listStates = listStates[page]
                 )
-
                 1 -> ProfileTela(
-                    navController = navController,
-                    profileViewModel = profileViewModel,
                     listState = listStates[page]
                 )
-
-                2 -> SettingsTela()
             }
         }
     }

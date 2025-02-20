@@ -9,6 +9,7 @@ import com.mno.jamscope.data.model.Resource
 import com.mno.jamscope.data.model.Track
 import com.mno.jamscope.data.repository.UserRepository
 import com.mno.jamscope.util.Stuff
+import com.mno.jamscope.util.Stuff.openUrl
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -81,6 +82,13 @@ class ProfileViewModel @Inject constructor(
             userRepository.saveUserProfile(userProfile)
             lastUpdateTimestamp = System.currentTimeMillis()
         }
+    }
+
+    fun openSong(
+        context: Context,
+        userProfile: Profile?
+    ) {
+        context.openUrl("https://www.last.fm/user/${userProfile!!.username}/library?page=3")
     }
 
     fun logOutUser() {

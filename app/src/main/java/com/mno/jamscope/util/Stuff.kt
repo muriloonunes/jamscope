@@ -7,10 +7,12 @@ import android.content.Intent
 import android.net.Uri
 import android.provider.MediaStore
 import android.widget.Toast
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import com.mno.jamscope.R
 import com.mno.jamscope.data.model.Token
 import com.mno.jamscope.data.model.Track
+import com.mno.jamscope.ui.navigator.Destination
 
 object Stuff {
     val WIDGET_CORNER_RADIUS = 16.dp
@@ -41,4 +43,11 @@ object Stuff {
             Toast.makeText(this, getString(R.string.no_music_player), Toast.LENGTH_SHORT).show()
         }
     }
+
+    data class BottomNavigationItem(
+        val title: String,
+        val selectedIcon: ImageVector,
+        val unselectedIcon: ImageVector,
+        val destination: Destination
+    )
 }

@@ -15,6 +15,8 @@ import com.mno.jamscope.data.local.dao.UserProfileDao
 import com.mno.jamscope.data.repository.FriendsRepository
 import com.mno.jamscope.data.repository.UserRepository
 import com.mno.jamscope.data.session.UserDataStoreManager
+import com.mno.jamscope.ui.navigator.DefaultNavigator
+import com.mno.jamscope.ui.navigator.Navigator
 import com.mno.jamscope.worker.GenericWorkerFactory
 import dagger.Module
 import dagger.Provides
@@ -95,4 +97,8 @@ object AppModule {
     @Provides
     @Singleton
     fun provideUserProfileDao(database: AppDatabase): UserProfileDao = database.userProfileDao()
+
+    @Provides
+    @Singleton
+    fun provideNavigator() : Navigator = DefaultNavigator()
 }

@@ -11,6 +11,7 @@ import coil3.disk.DiskCache
 import coil3.disk.directory
 import coil3.memory.MemoryCache
 import coil3.request.CachePolicy
+import coil3.request.crossfade
 import com.mno.jamscope.worker.MyDelegatingWorkerFactory
 import dagger.hilt.EntryPoint
 import dagger.hilt.EntryPoints
@@ -50,6 +51,7 @@ class MyApp : Application(), SingletonImageLoader.Factory {
                     .maxSizePercent(0.02)
                     .build()
             }
+            .crossfade(true)
 //            .logger(logger = DebugLogger())
             .build()
     }

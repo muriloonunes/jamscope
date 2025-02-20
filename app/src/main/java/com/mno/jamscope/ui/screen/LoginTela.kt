@@ -18,7 +18,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,11 +35,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import com.mno.jamscope.R
-import com.mno.jamscope.data.repository.UserRepository
-import com.mno.jamscope.ui.components.APP_ROUTE
-import com.mno.jamscope.ui.components.LOGIN_ROUTE
 import com.mno.jamscope.ui.components.ShowErrorMessage
 import com.mno.jamscope.ui.viewmodel.LoginViewModel
 import com.mno.jamscope.util.autoFillRequestHandler
@@ -51,16 +46,13 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun LoginScreen(
-    navController: NavController,
     loginViewModel: LoginViewModel = viewModel(),
-    userRepository: UserRepository
 ) {
     val username by loginViewModel.username.collectAsState()
     val password by loginViewModel.password.collectAsState()
     val errorMessage by loginViewModel.errorMessage.collectAsState()
     val loading by loginViewModel.loading.collectAsState()
     var passwordVisibility by rememberSaveable { mutableStateOf(false) }
-    val userProfile by loginViewModel.userProfile.collectAsState()
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -160,14 +152,5 @@ fun LoginScreen(
                 )
             }
         }
-        if (userProfile != null) {
-            LaunchedEffect(userProfile) {
-                userRepository.saveUserProfile(userProfile!!)
-                navController.navigate(APP_ROUTE) {
-                    popUpTo(LOGIN_ROUTE) { inclusive = true }
-                }
-            }
-        }
     }
-
 }

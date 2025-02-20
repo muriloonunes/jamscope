@@ -4,12 +4,16 @@ import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Sort
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -50,13 +54,26 @@ fun FriendsTela(
     }
 
     Column {
-        IconButton(onClick = {
-            showBottomSheet = true
-        }, modifier = Modifier.align(Alignment.End)) {
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.Sort,
-                contentDescription = stringResource(R.string.sort_button)
-            )
+        Row(modifier = Modifier.fillMaxWidth()) {
+            IconButton(
+                onClick = {
+                friendsViewModel.navigateToSettings()
+                }, modifier = Modifier.align(Alignment.CenterVertically )
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Settings,
+                    contentDescription = stringResource(R.string.open_settings_screen)
+                )
+            }
+            Spacer(modifier = Modifier.weight(1f))
+            IconButton(onClick = {
+                showBottomSheet = true
+            }, modifier = Modifier.align(Alignment.CenterVertically)) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.Sort,
+                    contentDescription = stringResource(R.string.sort_button)
+                )
+            }
         }
         PullToRefreshBox(
             isRefreshing = refreshing,

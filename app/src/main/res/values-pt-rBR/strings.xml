@@ -66,4 +66,6 @@
     <string name="login_required_error">Suas configurações de privacidade não estão públicas</string>
     <string name="no_music_player">Nenhum reprodutor de música instalado</string>
     <string name="error_loading_profile">Não foi possível carregar o perfil</string>
+    <string name="user">Usuário</string>
+    <string name="open_settings_screen">Abrir configurações</string>
 </resources>

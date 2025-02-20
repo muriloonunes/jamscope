@@ -3,8 +3,7 @@ package com.mno.jamscope.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mno.jamscope.data.repository.UserRepository
-import com.mno.jamscope.ui.components.APP_ROUTE
-import com.mno.jamscope.ui.components.LOGIN_ROUTE
+import com.mno.jamscope.ui.navigator.Destination
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,18 +17,18 @@ class SplashViewModel @Inject constructor(
     private val _isLoading = MutableStateFlow(true)
     val isLoading get() = _isLoading.asStateFlow()
 
-    private val _startDestination = MutableStateFlow<String?>(null)
+    private val _startDestination = MutableStateFlow<Destination?>(null)
     val startDestination get() = _startDestination.asStateFlow()
 
     init {
         viewModelScope.launch {
             val isLoggedIn = userRepository.isUserLoggedIn()
             if (isLoggedIn) {
-                _startDestination.value = APP_ROUTE
+                _startDestination.value = Destination.AppRoute
                 _isLoading.value = false
             } else {
+                _startDestination.value = Destination.LoginRoute
                 _isLoading.value = false
-                _startDestination.value = LOGIN_ROUTE
             }
         }
     }

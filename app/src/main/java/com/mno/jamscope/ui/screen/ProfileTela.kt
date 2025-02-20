@@ -28,7 +28,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -47,11 +46,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import com.mno.jamscope.R
 import com.mno.jamscope.ui.components.LoadTrackInfo
@@ -59,40 +55,21 @@ import com.mno.jamscope.ui.components.ShowErrorMessage
 import com.mno.jamscope.ui.components.TrackImageLoader
 import com.mno.jamscope.ui.viewmodel.ProfileViewModel
 import com.mno.jamscope.util.Stuff.openUrl
+import com.mno.jamscope.util.forwardingPainter
 import com.mno.jamscope.util.getCountryFlag
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileTela(
-    navController: NavController,
-    profileViewModel: ProfileViewModel,
     listState: LazyListState
 ) {
+    val profileViewModel: ProfileViewModel = hiltViewModel()
     val context = LocalContext.current
     val userProfile by profileViewModel.userProfile.collectAsStateWithLifecycle()
     val refreshing by profileViewModel.isRefreshing.collectAsStateWithLifecycle()
     val userRecentTracks by profileViewModel.recentTracks.collectAsStateWithLifecycle()
-    val lifecycleOwner = LocalLifecycleOwner.current
     var imagePfp by remember { mutableStateOf<Any?>(R.drawable.baseline_account_circle_24) }
     val errorMessage by profileViewModel.errorMessage.collectAsStateWithLifecycle()
-
-    DisposableEffect(lifecycleOwner) {
-        val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_RESUME && profileViewModel.shouldRefresh()) {
-                profileViewModel.onRefresh()
-            }
-        }
-        lifecycleOwner.lifecycle.addObserver(observer)
-        onDispose {
-            lifecycleOwner.lifecycle.removeObserver(observer)
-        }
-    }
-
-    LaunchedEffect(Unit) {
-        if (profileViewModel.shouldRefresh()) {
-            profileViewModel.onRefresh()
-        }
-    }
 
     LaunchedEffect(userProfile) {
         if (userProfile != null) {
@@ -123,7 +100,10 @@ fun ProfileTela(
                                 R.string.profile_pic_description,
                                 userProfile?.username ?: "User"
                             ),
-                            error = painterResource(R.drawable.profile_pic_placeholder),
+                            error = forwardingPainter(
+                                painter = painterResource(id = R.drawable.baseline_account_circle_24),
+                                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface)
+                            ),
                             placeholder = painterResource(R.drawable.baseline_account_circle_24),
                             modifier = Modifier
                                 .size(120.dp)
@@ -204,12 +184,13 @@ fun ProfileTela(
                                 )
                             }
                         }
-                        userProfile?.country?.takeIf { it.isNotEmpty() && it != "None"}?.let { country ->
-                            Text(
-                                text = "$country ${getCountryFlag(country)}",
-                                style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
-                            )
-                        }
+                        userProfile?.country?.takeIf { it.isNotEmpty() && it != "None" }
+                            ?.let { country ->
+                                Text(
+                                    text = "$country ${getCountryFlag(country)}",
+                                    style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
+                                )
+                            }
                         userProfile?.playcount?.let { playcount ->
                             Text(
                                 text = stringResource(R.string.scrobbles, playcount),
@@ -232,7 +213,9 @@ fun ProfileTela(
                         ShowErrorMessage(errorMessage)
                     }
                 }
-                itemsIndexed(userRecentTracks, key = {index, track -> "$index${track.name}"}) { index, track ->
+                itemsIndexed(
+                    userRecentTracks,
+                    key = { index, track -> "$index${track.name}" }) { index, track ->
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         val imageUrl = track.image?.firstOrNull { it.size == "medium" }?.url ?: ""
                         TrackImageLoader(imageUrl = imageUrl)
@@ -256,9 +239,17 @@ fun ProfileTela(
                     item {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.clickable { context.openUrl("https://www.last.fm/user/${userProfile!!.username}/library?page=3") }
+                            modifier = Modifier.clickable {
+                                profileViewModel.openSong(
+                                    context,
+                                    userProfile
+                                )
+                            }
                         ) {
-                            Text(text = stringResource(R.string.see_more), textDecoration = TextDecoration.Underline)
+                            Text(
+                                text = stringResource(R.string.see_more),
+                                textDecoration = TextDecoration.Underline
+                            )
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.OpenInNew,
                                 contentDescription = stringResource(R.string.see_more),

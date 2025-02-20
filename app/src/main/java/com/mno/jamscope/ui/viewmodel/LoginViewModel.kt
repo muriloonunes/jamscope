@@ -1,10 +1,12 @@
 package com.mno.jamscope.ui.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mno.jamscope.data.model.Resource
-import com.mno.jamscope.data.model.Profile
 import com.mno.jamscope.data.repository.UserRepository
+import com.mno.jamscope.ui.navigator.Destination
+import com.mno.jamscope.ui.navigator.Navigator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -13,7 +15,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val navigator: Navigator
 ) : ViewModel() {
     private val _username = MutableStateFlow("")
     val username: StateFlow<String> = _username
@@ -27,9 +30,6 @@ class LoginViewModel @Inject constructor(
     private val _loading = MutableStateFlow(false)
     val loading: StateFlow<Boolean> = _loading
 
-    private val _userProfile = MutableStateFlow<Profile?>(null)
-    val userProfile: StateFlow<Profile?> = _userProfile
-
     fun onUsernameChange(newUsername: String) {
         _username.value = newUsername
     }
@@ -41,16 +41,33 @@ class LoginViewModel @Inject constructor(
     fun login() {
         _loading.value = true
         viewModelScope.launch {
-            when (val result = userRepository.authenticate(_username.value, _password.value, "getMobileSession")) {
+            when (val result =
+                userRepository.authenticate(_username.value, _password.value, "getMobileSession")) {
                 is Resource.Success -> {
-                    _userProfile.value = result.data
+                    userRepository.saveUserProfile(result.data)
+                    Log.i("LoginViewModel", "User profile salvo")
                     _loading.value = false
+                    navigate()
                 }
+
                 is Resource.Error -> {
                     _errorMessage.value = result.message
                     _loading.value = false
                 }
             }
+        }
+    }
+
+    private fun navigate() {
+        viewModelScope.launch {
+            navigator.navigate(
+                destination = Destination.AppRoute,
+                navOptions = {
+                    popUpTo(Destination.LoginRoute) {
+                        inclusive = true
+                    }
+                }
+            )
         }
     }
 }

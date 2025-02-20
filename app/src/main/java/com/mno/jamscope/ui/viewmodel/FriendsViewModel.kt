@@ -8,6 +8,8 @@ import com.mno.jamscope.data.model.Resource
 import com.mno.jamscope.data.model.User
 import com.mno.jamscope.data.repository.FriendsRepository
 import com.mno.jamscope.data.repository.UserRepository
+import com.mno.jamscope.ui.navigator.Destination
+import com.mno.jamscope.ui.navigator.Navigator
 import com.mno.jamscope.ui.theme.ThemeAttributes
 import com.mno.jamscope.util.SortingType
 import com.mno.jamscope.util.Stuff
@@ -29,7 +31,8 @@ import javax.inject.Inject
 @HiltViewModel
 class FriendsViewModel @Inject constructor(
     private val userRepository: UserRepository,
-    private val friendsRepository: FriendsRepository
+    private val friendsRepository: FriendsRepository,
+    private val navigator: Navigator
 ) : ViewModel() {
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing = _isRefreshing
@@ -148,5 +151,11 @@ class FriendsViewModel @Inject constructor(
         val colorPalette =
             if (isDarkTheme) ThemeAttributes.ColorPalette.DARK else ThemeAttributes.ColorPalette.LIGHT
         return ThemeAttributes.getSecondaryContainerColor(name, colorPalette)
+    }
+
+    fun navigateToSettings() {
+        viewModelScope.launch {
+            navigator.navigate(Destination.SettingsScreen)
+        }
     }
 }
