@@ -36,7 +36,8 @@ class FriendsRepository @Inject constructor(
 
     fun getCachedFriends(): Flow<List<User>> = friendsDao.getAllUsers().map { friendEntities ->
         friendEntities.map { friendEntity ->
-            val recentTracks = friendsDao.getRecentTracksForUser(friendEntity.url).firstOrNull() ?: emptyList()
+            val recentTracks =
+                friendsDao.getRecentTracksForUser(friendEntity.url).firstOrNull() ?: emptyList()
             friendEntity.toUser(recentTracks)
         }
     }

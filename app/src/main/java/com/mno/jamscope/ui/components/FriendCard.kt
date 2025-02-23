@@ -22,6 +22,7 @@ import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,6 +43,7 @@ import com.mno.jamscope.R
 import com.mno.jamscope.data.model.RecentTracks
 import com.mno.jamscope.data.model.User
 import com.mno.jamscope.ui.viewmodel.FriendsViewModel
+import com.mno.jamscope.util.LocalThemePreference
 import com.mno.jamscope.util.forwardingPainter
 
 @Composable
@@ -51,14 +53,26 @@ fun FriendCard(
     modifier: Modifier,
     friendsViewModel: FriendsViewModel
 ) {
+    val themePreference = LocalThemePreference.current
+    val isDarkTheme = when (themePreference) {
+        0 -> isSystemInDarkTheme()
+        1 -> false
+        2 -> true
+        else -> isSystemInDarkTheme()
+    }
+    val cardBackgroundToggle by friendsViewModel.cardBackgroundColorToggle.collectAsState()
+    val backgroundColor = if (cardBackgroundToggle)
+        friendsViewModel.getSecondaryContainerColor(friend.url, isDarkTheme) else MaterialTheme.colorScheme.onSecondary
+
+    val playingAnimationEnabled by friendsViewModel.playingAnimationToggle.collectAsState()
+
     var isExtended by remember { mutableStateOf(false) }
-    val backgroundColor =
-        friendsViewModel.getSecondaryContainerColor(friend.url, isSystemInDarkTheme())
 
     if (isExtended) {
         ExtendedFriendCard(
             friend = friend,
             backgroundColor = backgroundColor,
+            playingAnimationEnabled = playingAnimationEnabled,
             onDismissRequest = { isExtended = false }
         )
     }
@@ -120,7 +134,8 @@ fun FriendCard(
                     if (track != null) {
                         LoadTrackInfo(
                             track = track,
-                            forExtended = false
+                            forExtended = false,
+                            playingAnimationEnabled = playingAnimationEnabled
                         )
                     } else {
                         Text(

@@ -7,6 +7,7 @@ import android.content.Intent
 import android.net.Uri
 import android.provider.MediaStore
 import android.widget.Toast
+import androidx.annotation.StringRes
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import com.mno.jamscope.R
@@ -49,5 +50,13 @@ object Stuff {
         val selectedIcon: ImageVector,
         val unselectedIcon: ImageVector,
         val destination: Destination
+    )
+
+    data class SwitchItem(
+        val key: String,
+        @StringRes val name: Int,
+        val icon: ImageVector,
+        @StringRes val iconDesc: Int,
+        val initialState: Boolean
     )
 }

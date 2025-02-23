@@ -13,7 +13,9 @@ import com.mno.jamscope.data.local.AppDatabase
 import com.mno.jamscope.data.local.dao.FriendsDao
 import com.mno.jamscope.data.local.dao.UserProfileDao
 import com.mno.jamscope.data.repository.FriendsRepository
+import com.mno.jamscope.data.repository.SettingsRepository
 import com.mno.jamscope.data.repository.UserRepository
+import com.mno.jamscope.data.session.SettingsDataStoreManager
 import com.mno.jamscope.data.session.UserDataStoreManager
 import com.mno.jamscope.ui.navigator.DefaultNavigator
 import com.mno.jamscope.ui.navigator.Navigator
@@ -63,7 +65,11 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideUserRepository(dataStoreManager: UserDataStoreManager, apiRequest: ApiRequest, userProfileDao: UserProfileDao): UserRepository {
+    fun provideUserRepository(
+        dataStoreManager: UserDataStoreManager,
+        apiRequest: ApiRequest,
+        userProfileDao: UserProfileDao
+    ): UserRepository {
         return UserRepository(apiRequest, dataStoreManager, userProfileDao)
     }
 
@@ -83,7 +89,11 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideFriendsRepository(dataStoreManager: UserDataStoreManager, friendsDao: FriendsDao, apiRequest: ApiRequest): FriendsRepository {
+    fun provideFriendsRepository(
+        dataStoreManager: UserDataStoreManager,
+        friendsDao: FriendsDao,
+        apiRequest: ApiRequest
+    ): FriendsRepository {
         return FriendsRepository(dataStoreManager, friendsDao, apiRequest)
     }
 
@@ -100,5 +110,16 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideNavigator() : Navigator = DefaultNavigator()
+    fun provideNavigator(): Navigator = DefaultNavigator()
+
+    @Provides
+    @Singleton
+    fun provideSettingsDataStoreManager(dataStore: DataStore<Preferences>): SettingsDataStoreManager =
+        SettingsDataStoreManager(dataStore)
+
+    @Provides
+    @Singleton
+    fun provideSettingsRepository(settingsDataStoreManager: SettingsDataStoreManager): SettingsRepository {
+        return SettingsRepository(settingsDataStoreManager)
+    }
 }

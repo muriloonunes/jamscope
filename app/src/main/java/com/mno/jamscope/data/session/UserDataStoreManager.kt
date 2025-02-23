@@ -3,19 +3,12 @@ package com.mno.jamscope.data.session
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.intPreferencesKey
-import androidx.datastore.preferences.core.stringPreferencesKey
 import com.mno.jamscope.data.model.Profile
 import com.mno.jamscope.util.SortingType
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
-
-object PreferencesKeys {
-    val PROFILE_JSON = stringPreferencesKey("profile_json")
-    val SORTING_TYPE = intPreferencesKey("sorting_type")
-}
 
 class UserDataStoreManager @Inject constructor(
     private val dataStore: DataStore<Preferences>

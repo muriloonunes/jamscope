@@ -35,7 +35,8 @@ import com.mno.jamscope.util.forwardingPainter
 @Composable
 fun LoadTrackInfo(
     track: Track,
-    forExtended: Boolean
+    forExtended: Boolean,
+    playingAnimationEnabled: Boolean
 ) {
     val context = LocalContext.current
     Column(
@@ -66,7 +67,16 @@ fun LoadTrackInfo(
 
             if (track.dateInfo?.formattedDate == null) {
                 // O usuário está ouvindo no momento
-                NowPlayingAnimation()
+                if (playingAnimationEnabled) NowPlayingAnimation() else
+                    Text(
+                        text = stringResource(R.string.now_playing),
+                        style = MaterialTheme.typography.labelLarge.copy(
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            fontSize = 13.sp
+                        ),
+                        maxLines = 1,
+                        modifier = Modifier.align(Alignment.CenterVertically).wrapContentWidth()
+                    )
             } else {
                 Text(
                     text = dateStringFormatter(

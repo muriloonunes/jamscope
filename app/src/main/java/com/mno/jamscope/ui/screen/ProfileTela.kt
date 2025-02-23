@@ -29,6 +29,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -70,6 +71,7 @@ fun ProfileTela(
     val userRecentTracks by profileViewModel.recentTracks.collectAsStateWithLifecycle()
     var imagePfp by remember { mutableStateOf<Any?>(R.drawable.baseline_account_circle_24) }
     val errorMessage by profileViewModel.errorMessage.collectAsStateWithLifecycle()
+    val playingAnimationEnabled by profileViewModel.playingAnimationToggle.collectAsState()
 
     LaunchedEffect(userProfile) {
         if (userProfile != null) {
@@ -219,7 +221,7 @@ fun ProfileTela(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         val imageUrl = track.image?.firstOrNull { it.size == "medium" }?.url ?: ""
                         TrackImageLoader(imageUrl = imageUrl)
-                        LoadTrackInfo(track = track, forExtended = true)
+                        LoadTrackInfo(track = track, forExtended = true, playingAnimationEnabled = playingAnimationEnabled)
                     }
                     if (index < userRecentTracks.size - 1) {
                         HorizontalDivider(

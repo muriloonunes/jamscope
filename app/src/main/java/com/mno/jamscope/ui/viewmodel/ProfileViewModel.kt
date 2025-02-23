@@ -7,6 +7,7 @@ import com.mno.jamscope.R
 import com.mno.jamscope.data.model.Profile
 import com.mno.jamscope.data.model.Resource
 import com.mno.jamscope.data.model.Track
+import com.mno.jamscope.data.repository.SettingsRepository
 import com.mno.jamscope.data.repository.UserRepository
 import com.mno.jamscope.util.Stuff
 import com.mno.jamscope.util.Stuff.openUrl
@@ -23,7 +24,9 @@ import javax.inject.Inject
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     private val userRepository: UserRepository,
-    @ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context,
+    private val settingsRepository: SettingsRepository
+
 ) : ViewModel() {
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing = _isRefreshing
@@ -41,6 +44,9 @@ class ProfileViewModel @Inject constructor(
     private val _errorMessage = MutableStateFlow("")
     val errorMessage: StateFlow<String> = _errorMessage
 
+    private val _playingAnimationToggle = MutableStateFlow(true)
+    val playingAnimationToggle: StateFlow<Boolean> = _playingAnimationToggle
+
     private var lastUpdateTimestamp: Long = 0L
 
     fun onRefresh() {
@@ -57,6 +63,10 @@ class ProfileViewModel @Inject constructor(
             } catch (e: IllegalStateException) {
                 _errorMessage.value = context.getString(R.string.error_loading_profile)
             }
+            settingsRepository.getSwitchState("playing_animation_toggle", true)
+                .collect { state ->
+                    _playingAnimationToggle.value = state
+                }
         }
     }
 
@@ -89,13 +99,6 @@ class ProfileViewModel @Inject constructor(
         userProfile: Profile?
     ) {
         context.openUrl("https://www.last.fm/user/${userProfile!!.username}/library?page=3")
-    }
-
-    fun logOutUser() {
-        viewModelScope.launch {
-            userRepository.clearUserSession()
-        }
-        resetLastUpdateTimestamp()
     }
 
     fun shouldRefresh(): Boolean {

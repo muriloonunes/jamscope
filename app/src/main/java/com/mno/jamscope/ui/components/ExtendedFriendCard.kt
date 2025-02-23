@@ -58,6 +58,7 @@ import my.nanihadesuka.compose.ScrollbarSettings
 fun ExtendedFriendCard(
     friend: User,
     backgroundColor: Color,
+    playingAnimationEnabled: Boolean,
     onDismissRequest: () -> Unit
 ) {
     val context = LocalContext.current
@@ -201,7 +202,7 @@ fun ExtendedFriendCard(
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             items(recentTracks) { track ->
-                                LoadTrackInfo(track = track, forExtended = true)
+                                LoadTrackInfo(track = track, forExtended = true, playingAnimationEnabled = playingAnimationEnabled)
                                 HorizontalDivider(
                                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(
                                         alpha = 0.5f

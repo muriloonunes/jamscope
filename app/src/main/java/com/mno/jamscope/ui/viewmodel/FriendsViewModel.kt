@@ -7,6 +7,7 @@ import com.mno.jamscope.data.model.RecentTracks
 import com.mno.jamscope.data.model.Resource
 import com.mno.jamscope.data.model.User
 import com.mno.jamscope.data.repository.FriendsRepository
+import com.mno.jamscope.data.repository.SettingsRepository
 import com.mno.jamscope.data.repository.UserRepository
 import com.mno.jamscope.ui.navigator.Destination
 import com.mno.jamscope.ui.navigator.Navigator
@@ -32,7 +33,8 @@ import javax.inject.Inject
 class FriendsViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val friendsRepository: FriendsRepository,
-    private val navigator: Navigator
+    private val navigator: Navigator,
+    private val settingsRepository: SettingsRepository
 ) : ViewModel() {
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing = _isRefreshing
@@ -58,11 +60,26 @@ class FriendsViewModel @Inject constructor(
         friendsList.associate { it.url to it.recentTracks }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyMap())
 
+    private val _cardBackgroundColorToggle = MutableStateFlow(true)
+    val cardBackgroundColorToggle: StateFlow<Boolean> = _cardBackgroundColorToggle
+
+    private val _playingAnimationToggle = MutableStateFlow(true)
+    val playingAnimationToggle: StateFlow<Boolean> = _playingAnimationToggle
+
     private var lastUpdateTimestamp: Long = 0L
 
     init {
         viewModelScope.launch {
             _sortingType.value = friendsRepository.getSortingType()
+            combine(
+                settingsRepository.getSwitchState("playing_animation_toggle", true),
+                settingsRepository.getSwitchState("card_background_color_toggle", true)
+            ) { playingAnimation, cardBackground ->
+                playingAnimation to cardBackground
+            }.collect { (playingAnimation, cardBackground) ->
+                _playingAnimationToggle.value = playingAnimation
+                _cardBackgroundColorToggle.value = cardBackground
+            }
         }
     }
 
@@ -143,7 +160,7 @@ class FriendsViewModel @Inject constructor(
         }
     }
 
-    fun shouldRefresh(): Boolean {
+    private fun shouldRefresh(): Boolean {
         return System.currentTimeMillis() - lastUpdateTimestamp > Stuff.REFRESHING_TIME
     }
 

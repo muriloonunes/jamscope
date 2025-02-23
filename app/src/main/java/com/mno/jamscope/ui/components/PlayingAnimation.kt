@@ -15,14 +15,21 @@ import androidx.compose.ui.unit.dp
 import com.dotlottie.dlplayer.Mode
 import com.lottiefiles.dotlottie.core.compose.ui.DotLottieAnimation
 import com.lottiefiles.dotlottie.core.util.DotLottieSource
+import com.mno.jamscope.util.LocalThemePreference
 
 @Composable
 fun NowPlayingAnimation() {
+    val themePreference = LocalThemePreference.current
+    val isDarkTheme = when (themePreference) {
+        1 -> false
+        2 -> true
+        else -> isSystemInDarkTheme()
+    }
     var animationLink by remember { mutableStateOf("") }
-    animationLink = if (isSystemInDarkTheme()) {
+    animationLink = if (isDarkTheme) {
         "https://lottie.host/92b7a9c6-c3c0-446c-9cb6-34b09ae76738/wAmR8oO4I6.lottie"
     } else {
-        "https://lottie.host/d399d4b2-8a4d-42b2-b607-a97adc69f352/SHKlLek83X.lottie"
+        "https://lottie.host/4b5e1d6d-7cb2-45b8-ad21-3df77d67533a/HkniWYSR5j.lottie"
     }
     DotLottieAnimation(
         source = DotLottieSource.Url(animationLink),
@@ -31,6 +38,9 @@ fun NowPlayingAnimation() {
         speed = 1.5f,
         useFrameInterpolation = true,
         playMode = Mode.FORWARD,
-        modifier = Modifier.background(Color.Unspecified).size(22.dp).wrapContentWidth()
+        modifier = Modifier
+            .background(Color.Unspecified)
+            .size(22.dp)
+            .wrapContentWidth()
     )
 }

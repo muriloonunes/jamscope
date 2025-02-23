@@ -1,74 +1,105 @@
 package com.mno.jamscope.ui.viewmodel
 
 import android.content.Context
-import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mno.jamscope.R
-import com.mno.jamscope.data.model.Profile
-import com.mno.jamscope.data.model.Session
+import com.mno.jamscope.data.repository.FriendsRepository
+import com.mno.jamscope.data.repository.SettingsRepository
 import com.mno.jamscope.data.repository.UserRepository
+import com.mno.jamscope.ui.navigator.Destination
+import com.mno.jamscope.ui.navigator.Navigator
+import com.mno.jamscope.util.Stuff.openUrl
+import com.mno.jamscope.util.switches
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.math.pow
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     private val userRepository: UserRepository,
-    @ApplicationContext private val context: Context
+    private val navigator: Navigator,
+    private val friendsRepository: FriendsRepository,
+    private val settingsRepository: SettingsRepository
 ) : ViewModel() {
-    private companion object {
-        const val RETRY_COUNT = 10
-    }
+    private val _switchStates = MutableStateFlow<Map<String, Boolean>>(emptyMap())
+    val switchStates: StateFlow<Map<String, Boolean>> = _switchStates
 
-    private val _isProfileUpdated = MutableStateFlow(false)
-    val isProfileUpdated = _isProfileUpdated
-        .onStart {
-            loadCachedProfile()
-        }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
+    private val _themePreference = MutableStateFlow(0)
+    val themePreference: StateFlow<Int> = _themePreference
 
-    private val _userProfile = MutableStateFlow<Profile?>(null)
-    val userProfile: StateFlow<Profile?> = _userProfile
-
-    private fun loadCachedProfile(retryCount: Int = 0) {
+    init {
         viewModelScope.launch {
-            try {
-                val userProfile = userRepository.getCachedUserProfile()
-                _userProfile.value = userProfile
-            } catch (e: IllegalStateException) {
-                if (retryCount < RETRY_COUNT) {
-                    val delayTime = calculateExponentialDelay(retryCount)
-                    loadDefaultProfile()
-                    delay(delayTime)
-                    loadCachedProfile(retryCount + 1)
-                } else {
-                    return@launch
-                }
-            }
+            loadSwitchStates()
+            _themePreference.value = settingsRepository.getThemePreferenceFlow()
         }
     }
 
-    private fun loadDefaultProfile() {
-        _userProfile.value = Profile(
-            username = context.getString(R.string.user),
-            senha = "1234",
-            session = Session("1234"),
-            subscriber = 0,
-            imageUrl = Uri.parse("android.resource//${context.packageName}/${R.drawable.profile_pic_placeholder}").toString()
-        )
+    private fun loadSwitchStates() {
+        viewModelScope.launch {
+            val states = switches.associate { switch ->
+                switch.key to settingsRepository.getSwitchState(switch.key, switch.initialState).first()
+            }
+            _switchStates.value = states
+        }
     }
 
-    private fun calculateExponentialDelay(retryCount: Int): Long {
-        val baseDelay = 1000L // 1 segundo como base
-        return baseDelay * (2.0.pow(retryCount)).toLong()
+    fun toggleSwitch(key: String) {
+        val currentState = _switchStates.value[key] ?: return
+        val newState = !currentState
+        _switchStates.value = _switchStates.value.toMutableMap().apply {
+            this[key] = newState
+        }
+        viewModelScope.launch {
+            settingsRepository.saveSwitchState(key, newState)
+        }
+    }
+
+    fun logOutUser() {
+        viewModelScope.launch {
+            userRepository.clearUserSession()
+            friendsRepository.deleteFriends()
+            navigateToLogin()
+        }
+    }
+
+    private fun navigateToLogin() {
+        viewModelScope.launch {
+            navigator.navigate(
+                destination = Destination.LoginRoute,
+                navOptions = {
+                    popUpTo(Destination.AppRoute) {
+                        inclusive = true
+                    }
+                }
+            )
+        }
+    }
+
+    fun navigateBack() {
+        viewModelScope.launch {
+            navigator.back()
+        }
+    }
+
+    fun setThemePreference(theme: Int) {
+        viewModelScope.launch {
+            settingsRepository.saveThemePref(theme)
+            _themePreference.value = theme
+        }
+    }
+
+    fun openDeleteAccount(context: Context) {
+        context.openUrl("https://www.last.fm/settings/account/delete")
+    }
+
+    fun openBuyMeACoffee(context: Context) {
+        context.openUrl("https://buymeacoffee.com/muriloonunes")
+    }
+
+    fun openGithubProject(context: Context) {
+        context.openUrl("https://github.com/muriloonunes/jamscope")
     }
 }
