@@ -20,6 +20,7 @@ import com.mno.jamscope.util.Stuff
 import com.mno.jamscope.util.Stuff.openUrl
 import com.mno.jamscope.util.switches
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
@@ -71,6 +72,7 @@ class SettingsViewModel @Inject constructor(
         viewModelScope.launch {
             userRepository.clearUserSession()
             friendsRepository.deleteFriends()
+            delay(500)
             navigateToLogin()
         }
     }

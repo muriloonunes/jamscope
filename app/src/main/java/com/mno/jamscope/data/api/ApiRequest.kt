@@ -1,5 +1,6 @@
 package com.mno.jamscope.data.api
 
+import android.util.Log
 import com.mno.jamscope.data.model.ApiResponse
 import com.mno.jamscope.data.model.Profile
 import com.mno.jamscope.data.model.RecentTracksResponse
@@ -10,6 +11,7 @@ import com.mno.jamscope.data.model.Session
 import com.mno.jamscope.data.model.SessionResponse
 import com.mno.jamscope.data.model.User
 import com.mno.jamscope.data.model.UserFriendsResponse
+import com.mno.jamscope.util.Crypto
 import com.mno.jamscope.util.Stuff
 import io.ktor.client.call.body
 import io.ktor.client.request.get
@@ -61,6 +63,13 @@ class ApiRequest @Inject constructor(
         return hexString.toString()
     }
 
+    private fun buildAuthUrl(username: String, password: String, method: String): String {
+        val apiSig = generateApiSig(username, password)
+        val urlParams =
+            "method=auth.$method&api_key=${Stuff.LAST_KEY}&password=$password&username=$username&api_sig=$apiSig"
+        return "$BASE_URL$FORMAT_JSON&$urlParams"
+    }
+
     suspend fun autenticar(
         username: String,
         password: String,
@@ -77,6 +86,7 @@ class ApiRequest @Inject constructor(
                 }
             }
             if (!response.status.isSuccess()) {
+                Log.e("ApiRequest", "autenticar: ${response.bodyAsText()}")
                 val errorMessage = handleError(response.status.value)
                 Error(errorMessage)
             } else {
@@ -97,13 +107,6 @@ class ApiRequest @Inject constructor(
         }
     }
 
-    private fun buildAuthUrl(username: String, password: String, method: String): String {
-        val apiSig = generateApiSig(username, password)
-        val urlParams =
-            "method=auth.$method&api_key=${Stuff.LAST_KEY}&password=$password&username=$username&api_sig=$apiSig"
-        return "$BASE_URL$FORMAT_JSON&$urlParams"
-    }
-
     private fun handleError(statusCode: Int): String {
         return exceptions.handleError(statusCode)
     }
@@ -118,7 +121,7 @@ class ApiRequest @Inject constructor(
                 username = sessionResponse.session.name,
                 subscriber = sessionResponse.session.subscriber,
                 session = Session(key = sessionResponse.session.key),
-                senha = password,
+                senha = Crypto.encrypt(password),
                 imageUrl = "",
                 profileUrl = ""
             )
@@ -178,6 +181,7 @@ class ApiRequest @Inject constructor(
                 }
             }
             if (!response.status.isSuccess()) {
+                Log.e("ApiRequest", "getUserFriends: ${response.bodyAsText()}")
                 val jsonResponse = JSON.parseToJsonElement(response.bodyAsText()).jsonObject
                 val errorValue = jsonResponse["error"]?.jsonPrimitive?.intOrNull
                 Error(handleError(errorValue ?: 0))
@@ -198,9 +202,11 @@ class ApiRequest @Inject constructor(
                 Success(users)
             }
         } catch (e: UnresolvedAddressException) {
+            Log.e("ApiRequest", "getUserFriendsError: $e")
             e.printStackTrace()
             Error(handleError(666))
         } catch (e: Exception) {
+            Log.e("ApiRequest", "getUserFriendsError: $e")
             e.printStackTrace()
             Error(handleError(999))
         }
@@ -240,6 +246,7 @@ class ApiRequest @Inject constructor(
             }
             user.recentTracks = recentTracksResponse.recenttracks
         } catch (e: Exception) {
+            Log.e("ApiRequest", "getFriendRecentTracksError: $e")
             e.printStackTrace()
         }
     }
@@ -263,6 +270,7 @@ class ApiRequest @Inject constructor(
             }
 
             if (!response.status.isSuccess()) {
+                Log.e("ApiRequest", "getProfileRecentTracksError: ${response.bodyAsText()}")
                 val jsonResponse = JSON.parseToJsonElement(response.bodyAsText()).jsonObject
                 val errorValue = jsonResponse["error"]?.jsonPrimitive?.intOrNull
                 return Error(handleError(errorValue ?: 0))
@@ -286,9 +294,11 @@ class ApiRequest @Inject constructor(
             profile.recentTracks = recentTracksResponse.recenttracks
             Success(Unit)
         } catch (e: UnresolvedAddressException) {
+            Log.e("ApiRequest", "getProfileRecentTracksError: $e")
             e.printStackTrace()
             Error(handleError(666))
         } catch (e: Exception) {
+            Log.e("ApiRequest", "getProfileRecentTracksError: $e")
             e.printStackTrace()
             Error(handleError(0))
         }

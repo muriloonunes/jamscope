@@ -1,6 +1,5 @@
 package com.mno.jamscope.ui.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mno.jamscope.data.model.Resource
@@ -45,7 +44,6 @@ class LoginViewModel @Inject constructor(
                 userRepository.authenticate(_username.value, _password.value, "getMobileSession")) {
                 is Resource.Success -> {
                     userRepository.saveUserProfile(result.data)
-                    Log.i("LoginViewModel", "User profile salvo")
                     _loading.value = false
                     navigate()
                 }

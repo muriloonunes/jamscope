@@ -191,7 +191,7 @@ fun SettingsTela(
                         subtitle = null,
                         showIcon = true
                     ) {
-                       settingsViewModel.navigateToWebView()
+                        settingsViewModel.navigateToWebView()
                     }
                 }
                 item {
@@ -289,7 +289,10 @@ fun SettingsTela(
             },
             confirmButton = {
                 TextButton(
-                    onClick = { settingsViewModel.logOutUser() }
+                    onClick = {
+                        settingsViewModel.logOutUser()
+                        showLogOutDialog = false
+                    }
                 ) { (Text(stringResource(R.string.yes))) }
             }
         )
