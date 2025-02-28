@@ -15,4 +15,6 @@ sealed interface Destination {
     data object ProfileScreen : Destination
     @Serializable
     data object SettingsScreen : Destination
+    @Serializable
+    data object WebViewScreen : Destination
 }

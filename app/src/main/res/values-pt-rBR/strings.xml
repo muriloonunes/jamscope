@@ -75,8 +75,6 @@
     <string name="background_update_setting">Atualizar em segundo plano</string>
     <string name="update_icon">Ícone de atualizar</string>
     <string name="personalization_setting_title">Personalização</string>
-    <string name="widget_icon">Ícone de widget</string>
-    <string name="add_widgets">Adicionar widgets</string>
     <string name="theme_icon">Ícone de tema</string>
     <string name="app_theme_setting">Tema do app</string>
     <string name="theme_system_default_auto">Padrão do sistema</string>
@@ -99,4 +97,5 @@
     <string name="select_theme">Selecione um tema</string>
     <string name="light_theme">Claro</string>
     <string name="dark_theme">Escuro</string>
+    <string name="no_email_app_found">Nenhum aplicativo de email encontrado</string>
 </resources>

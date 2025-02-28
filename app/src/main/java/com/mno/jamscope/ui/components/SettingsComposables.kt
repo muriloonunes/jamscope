@@ -91,7 +91,7 @@ fun SettingsClickableComp(
 
         val appName = stringResource(id = R.string.app_name)
         val versionName = packageInfo.versionName
-        val aboutApp = if (name == R.string.app_name) {
+        val textString = if (name == R.string.app_name) {
             "$appName v$versionName"
         } else {
             stringResource(id = name)
@@ -110,7 +110,7 @@ fun SettingsClickableComp(
                     )
                     Column {
                         Text(
-                            text = aboutApp,
+                            text = textString,
                             style = MaterialTheme.typography.bodyLarge.copy(
                                 color = MaterialTheme.colorScheme.secondary
                             ),

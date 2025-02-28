@@ -75,8 +75,6 @@
     <string name="background_update_setting">Enable background update</string>
     <string name="update_icon">Update icon</string>
     <string name="personalization_setting_title">Personalization</string>
-    <string name="widget_icon">Widget Icon</string>
-    <string name="add_widgets">Add widgets</string>
     <string name="theme_icon">Theme icon</string>
     <string name="app_theme_setting">App theme</string>
     <string name="theme_system_default_auto">System default</string>
@@ -101,4 +99,5 @@
     <string name="select_theme">Select a theme</string>
     <string name="light_theme">Light</string>
     <string name="dark_theme">Dark</string>
+    <string name="no_email_app_found">No email app found</string>
 </resources>

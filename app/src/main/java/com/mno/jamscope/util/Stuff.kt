@@ -1,15 +1,21 @@
 package com.mno.jamscope.util
 
+import android.app.ActivityManager
+import android.app.ApplicationExitInfo
 import android.app.SearchManager
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.provider.MediaStore
+import android.util.Log
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.annotation.StringRes
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import com.mno.jamscope.R
 import com.mno.jamscope.data.model.Token
 import com.mno.jamscope.data.model.Track
@@ -20,10 +26,43 @@ object Stuff {
     const val LAST_KEY = Token.LAST_FM_API_KEY
     const val LAST_SECRET = Token.LAST_FM_SECRET
     const val REFRESHING_TIME = 150000L // 2.5 minutes
+    const val EMAIL = "murideveloper@protonmail.com"
 
     fun Context.openUrl(url: String) {
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
         startActivity(intent)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.R)
+    fun getAppExitReasons(
+        afterTime: Long = -1,
+        printAll: Boolean = false,
+        context: Context
+    ): List<ApplicationExitInfo> {
+        return try {
+            val activityManager =
+                ContextCompat.getSystemService(context, ActivityManager::class.java)!!
+            val exitReasons = activityManager.getHistoricalProcessExitReasons(null, 0, 30)
+
+            exitReasons.filter {
+                it.processName == "${context.packageName}:com.mno.jamscope"
+                        && it.reason == ApplicationExitInfo.REASON_CRASH
+                        && it.timestamp > afterTime
+//                        && it.reason == ApplicationExitInfo.REASON_OTHER
+                        && it.timestamp > afterTime
+            }.also {
+                if (printAll) {
+                    it.take(5).forEachIndexed { index, applicationExitInfo ->
+                        Log.w("${index + 1}. $applicationExitInfo", "exitReasons")
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            emptyList()
+        }
+        // Caused by java.lang.IllegalArgumentException at getHistoricalProcessExitReasons
+        // Comparison method violates its general contract!
+        // probably a samsung bug
     }
 
     fun Context.searchMusicIntent(track: Track) {

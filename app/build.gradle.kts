@@ -5,6 +5,8 @@ plugins {
     kotlin("plugin.serialization") version "2.1.0"
     id("com.google.devtools.ksp")
     id("dagger.hilt.android.plugin")
+    id("com.google.gms.google-services")
+    id("com.google.firebase.crashlytics")
 }
 
 android {
@@ -145,4 +147,9 @@ dependencies {
 
     //Rebugger
     implementation(libs.rebugger)
+
+    //Firebase
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.crashlytics)
+    implementation(libs.firebase.analytics)
 }

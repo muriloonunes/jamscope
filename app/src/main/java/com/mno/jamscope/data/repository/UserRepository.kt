@@ -66,6 +66,12 @@ class UserRepository @Inject constructor(
     suspend fun getCachedUserProfile(): Profile {
         return withContext(Dispatchers.IO) {
             val userProfileEntity = userProfileDao.getUserProfile()
+            @Suppress("SENSELESS_COMPARISON")
+            /**
+             * this will be null if the user opens the app offline after an app update that changed the database version
+             * since the database version upgrade is destructive, user profile entity will not exist
+             * therefore pointing to null and causing a crash
+             */
             if (userProfileEntity != null) {
                 val userUrl = userProfileEntity.url
                 val recentTracks = userProfileDao.getRecentTracksForUser(userUrl)

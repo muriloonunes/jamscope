@@ -26,6 +26,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
 import com.mno.jamscope.data.repository.UserRepository
+import com.mno.jamscope.ui.components.WebViewLoader
 import com.mno.jamscope.ui.navigator.Destination
 import com.mno.jamscope.ui.navigator.NavigationAction
 import com.mno.jamscope.ui.navigator.Navigator
@@ -170,6 +171,9 @@ class MainActivity : ComponentActivity() {
                     ProfileTela(
                         listState = rememberLazyListState()
                     )
+                }
+                composable<Destination.WebViewScreen> {
+                    WebViewLoader()
                 }
             }
         }

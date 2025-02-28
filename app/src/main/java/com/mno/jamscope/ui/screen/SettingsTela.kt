@@ -17,7 +17,6 @@ import androidx.compose.material.icons.outlined.Coffee
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.ModeComment
-import androidx.compose.material.icons.outlined.Widgets
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -135,17 +134,6 @@ fun SettingsTela(
                     )
                 }
                 item {
-                    SettingsClickableComp(
-                        icon = Icons.Outlined.Widgets,
-                        iconDesc = R.string.widget_icon,
-                        name = R.string.add_widgets,
-                        subtitle = null,
-                        showIcon = true
-                    ) {
-                        TODO()
-                    }
-                }
-                item {
                     SettingSectionTitle(R.string.account_setting_tile)
                 }
                 item {
@@ -192,7 +180,7 @@ fun SettingsTela(
                         subtitle = null,
                         showIcon = true
                     ) {
-                        TODO()
+                        settingsViewModel.sendBugReportMail(context)
                     }
                 }
                 item {
@@ -203,7 +191,7 @@ fun SettingsTela(
                         subtitle = null,
                         showIcon = true
                     ) {
-                        TODO()
+                       settingsViewModel.navigateToWebView()
                     }
                 }
                 item {

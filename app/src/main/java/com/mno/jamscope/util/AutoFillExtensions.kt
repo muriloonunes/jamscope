@@ -17,6 +17,7 @@ import androidx.compose.ui.platform.LocalAutofillTree
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import kotlin.math.roundToInt
+//https://medium.com/@bagadeshrp/compose-ui-textfield-autofill-6e2ac434e380
 
 fun Modifier.connectNode(handler: AutoFillHandler): Modifier {
     return with(handler) { fillBounds() }

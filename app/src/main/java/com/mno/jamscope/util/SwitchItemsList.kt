@@ -3,7 +3,6 @@ package com.mno.jamscope.util
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Palette
 import androidx.compose.material.icons.outlined.PlayCircleOutline
-import androidx.compose.material.icons.outlined.Update
 import com.mno.jamscope.R
 
 val switches = listOf(
@@ -21,11 +20,11 @@ val switches = listOf(
         iconDesc = R.string.animation_play_icon,
         initialState = true //ON
     ),
-    Stuff.SwitchItem(
-        key = "background_updates_toggle",
-        name = R.string.background_update_setting,
-        icon = Icons.Outlined.Update,
-        iconDesc = R.string.update_icon,
-        initialState = false //OFF
-    )
+//    Stuff.SwitchItem(
+//        key = "background_updates_toggle",
+//        name = R.string.background_update_setting,
+//        icon = Icons.Outlined.Update,
+//        iconDesc = R.string.update_icon,
+//        initialState = false //OFF
+//    )
 )
