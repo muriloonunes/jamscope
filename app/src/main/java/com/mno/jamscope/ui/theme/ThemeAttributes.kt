@@ -66,7 +66,6 @@ object ThemeAttributes {
             Color(0xFF5D4038)
         )
     )
-val color = Color(0xFF5D4038)
 
     fun getSecondaryContainerColor(name: String?, colorPalette: ColorPalette): Color {
         val colors = secondaryContainerColors[colorPalette] ?: return Color.Unspecified

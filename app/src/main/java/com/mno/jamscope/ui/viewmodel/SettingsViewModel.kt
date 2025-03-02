@@ -64,6 +64,7 @@ class SettingsViewModel @Inject constructor(
         viewModelScope.launch {
             userRepository.clearUserSession()
             friendsRepository.deleteFriends()
+            settingsRepository.clearPrefs()
             delay(500)
             navigateToLogin()
         }

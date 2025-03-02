@@ -4,7 +4,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
-import com.mno.jamscope.util.AppTheme
+import com.mno.jamscope.ui.theme.AppTheme
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -35,6 +35,14 @@ class SettingsDataStoreManager @Inject constructor(
     suspend fun saveThemePref(theme: Int) {
         dataStore.edit { preferences ->
             preferences[PreferencesKeys.THEME] = theme
+        }
+    }
+
+    suspend fun clearUserPrefs() {
+        dataStore.edit { preferences ->
+            preferences.remove(PreferencesKeys.THEME)
+            preferences.remove(getKey("card_background_color_toggle"))
+            preferences.remove(getKey("playing_animation_toggle"))
         }
     }
 }

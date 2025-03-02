@@ -76,7 +76,7 @@ class AuthRequest @Inject constructor(
     suspend fun isStillAuthenticated(profile: Profile, method: String): Boolean {
         return try {
             val username = profile.username
-            val password = Crypto.decrypt(profile.senha)
+            val password = Crypto.decryptString(profile.senha)
             val requestUrl = buildAuthUrl(username, password, method)
             val response = withContext(Dispatchers.IO) {
                 HttpClientProvider.client.post(requestUrl) {
@@ -90,7 +90,7 @@ class AuthRequest @Inject constructor(
                 false
             } else {
                 val sessionResponse = Stuff.JSON.decodeFromString<SessionResponse>(response.bodyAsText())
-                sessionResponse.session.key == profile.session.key
+                sessionResponse.session.key == Crypto.decryptString(profile.session.key)
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -104,8 +104,8 @@ class AuthRequest @Inject constructor(
             Profile(
                 username = sessionResponse.session.name,
                 subscriber = sessionResponse.session.subscriber,
-                session = Session(key = sessionResponse.session.key),
-                senha = Crypto.encrypt(password),
+                session = Session(key = Crypto.encryptString(sessionResponse.session.key)),
+                senha = Crypto.encryptString(password),
                 imageUrl = "",
                 profileUrl = "",
             )

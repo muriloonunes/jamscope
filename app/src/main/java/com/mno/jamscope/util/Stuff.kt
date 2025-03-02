@@ -34,12 +34,12 @@ object Stuff {
         "https://lastfm.freetls.fastly.net/i/u/64s/2a96cbd8b46e442fc41c2b86b821562f.png"
     val JSON = Json { ignoreUnknownKeys = true }
 
-
     fun Context.openUrl(url: String) {
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
         startActivity(intent)
     }
 
+    //thanks pano-scrobbler
     @RequiresApi(Build.VERSION_CODES.R)
     fun getAppExitReasons(
         afterTime: Long = -1,
@@ -67,9 +67,6 @@ object Stuff {
         } catch (e: Exception) {
             emptyList()
         }
-        // Caused by java.lang.IllegalArgumentException at getHistoricalProcessExitReasons
-        // Comparison method violates its general contract!
-        // probably a samsung bug
     }
 
     fun Context.searchMusicIntent(track: Track) {

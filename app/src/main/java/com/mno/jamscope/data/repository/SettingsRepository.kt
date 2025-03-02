@@ -20,4 +20,8 @@ class SettingsRepository @Inject constructor(
     suspend fun saveSwitchState(key: String, value: Boolean) {
         settingsDataStoreManager.saveSwitchState(key, value)
     }
+
+    suspend fun clearPrefs() {
+        settingsDataStoreManager.clearUserPrefs()
+    }
 }

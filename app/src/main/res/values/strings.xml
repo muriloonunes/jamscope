@@ -85,7 +85,7 @@
     <string name="log_out_icon">Log out icon</string>
     <string name="open_setting_tile">Open setting</string>
     <string name="log_out_confirmation">Do you really want to log out?</string>
-    <string name="log_out_supporting_text">You will need to log in again to continue using the app.</string>
+    <string name="log_out_supporting_text">You will need to log in again to continue using the app.\nNote: this will delete all your data</string>
     <string name="yes">@android:string/yes</string>
     <string name="coffee_icon">Coffee icon</string>
     <string name="support_this_app_setting">Support this app</string>

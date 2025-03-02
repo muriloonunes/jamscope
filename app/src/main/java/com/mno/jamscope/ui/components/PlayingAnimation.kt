@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import com.dotlottie.dlplayer.Mode
 import com.lottiefiles.dotlottie.core.compose.ui.DotLottieAnimation
 import com.lottiefiles.dotlottie.core.util.DotLottieSource
-import com.mno.jamscope.util.LocalThemePreference
+import com.mno.jamscope.ui.theme.LocalThemePreference
 
 @Composable
 fun NowPlayingAnimation() {

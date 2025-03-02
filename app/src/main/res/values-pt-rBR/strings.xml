@@ -84,7 +84,7 @@
     <string name="log_out_icon">Ícone de deslogar</string>
     <string name="open_setting_tile">Abrir configuração</string>
     <string name="log_out_confirmation">Tem certeza de que deseja sair?</string>
-    <string name="log_out_supporting_text">Você precisará fazer login novamente para continuar usando o app.</string>
+    <string name="log_out_supporting_text">Você precisará fazer login novamente para continuar usando o app.\nIsso irá deletar todas as suas informações e configurações</string>
     <string name="yes">@android:string/yes</string>
     <string name="coffee_icon">ícone de café</string>
     <string name="support_this_app_setting">Apoie este app</string>

@@ -8,6 +8,7 @@ import androidx.compose.ui.graphics.painter.Painter
 /**
  * Create and return a new [Painter] that wraps [painter] with its [alpha], [colorFilter], or [onDraw] overwritten.
  */
+/* https://gist.github.com/colinrtwhite/c2966e0b8584b4cdf0a5b05786b20ae1 */
 fun forwardingPainter(
     painter: Painter,
     alpha: Float = DefaultAlpha,

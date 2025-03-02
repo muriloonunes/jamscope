@@ -30,15 +30,13 @@ import androidx.compose.ui.res.stringResource
 import com.mno.jamscope.R
 import com.mno.jamscope.ui.navigator.Destination
 import com.mno.jamscope.ui.viewmodel.FriendsViewModel
-import com.mno.jamscope.ui.viewmodel.PagerViewModel
 import com.mno.jamscope.util.Stuff
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomePager(
-    friendsViewModel: FriendsViewModel,
-//    pagerViewModel: PagerViewModel
+    friendsViewModel: FriendsViewModel
 ) {
     var selectedItemIndex by rememberSaveable { mutableIntStateOf(0) }
     val itensBarList = listOf(

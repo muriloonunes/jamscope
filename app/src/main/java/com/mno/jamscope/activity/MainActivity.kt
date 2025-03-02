@@ -13,7 +13,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -31,19 +30,17 @@ import com.mno.jamscope.ui.screen.HomePager
 import com.mno.jamscope.ui.screen.LoginScreen
 import com.mno.jamscope.ui.screen.ProfileTela
 import com.mno.jamscope.ui.screen.SettingsTela
+import com.mno.jamscope.ui.theme.LocalThemePreference
 import com.mno.jamscope.ui.theme.NowPlayingTheme
 import com.mno.jamscope.ui.viewmodel.FriendsViewModel
-import com.mno.jamscope.ui.viewmodel.PagerViewModel
 import com.mno.jamscope.ui.viewmodel.SettingsViewModel
 import com.mno.jamscope.ui.viewmodel.SplashViewModel
-import com.mno.jamscope.util.LocalThemePreference
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-
     @Inject
     lateinit var userRepository: UserRepository
 
@@ -76,7 +73,6 @@ class MainActivity : ComponentActivity() {
                                             builder = action.navOptions
                                         )
                                     }
-
                                     is NavigationAction.Back -> {
                                         navController.navigateUp()
                                     }
@@ -124,10 +120,8 @@ class MainActivity : ComponentActivity() {
                 startDestination = Destination.FriendsScreen
             ) {
                 composable<Destination.FriendsScreen> {
-                    val pagerViewModel: PagerViewModel = hiltViewModel()
                     HomePager(
-                        friendsViewModel,
-                        pagerViewModel
+                        friendsViewModel
                     )
                 }
                 composable<Destination.SettingsScreen> {

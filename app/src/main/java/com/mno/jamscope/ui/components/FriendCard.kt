@@ -42,8 +42,8 @@ import coil3.compose.AsyncImage
 import com.mno.jamscope.R
 import com.mno.jamscope.data.model.RecentTracks
 import com.mno.jamscope.data.model.User
+import com.mno.jamscope.ui.theme.LocalThemePreference
 import com.mno.jamscope.ui.viewmodel.FriendsViewModel
-import com.mno.jamscope.util.LocalThemePreference
 import com.mno.jamscope.util.forwardingPainter
 
 @Composable
