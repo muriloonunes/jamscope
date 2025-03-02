@@ -7,11 +7,14 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.room.Room
 import androidx.work.WorkerFactory
-import com.mno.jamscope.data.api.ApiRequest
+import com.mno.jamscope.data.api.AuthRequest
 import com.mno.jamscope.data.api.Exceptions
+import com.mno.jamscope.data.api.ProfileRequest
+import com.mno.jamscope.data.api.UserRequest
 import com.mno.jamscope.data.local.AppDatabase
 import com.mno.jamscope.data.local.dao.FriendsDao
 import com.mno.jamscope.data.local.dao.UserProfileDao
+import com.mno.jamscope.data.repository.ApiRepository
 import com.mno.jamscope.data.repository.FriendsRepository
 import com.mno.jamscope.data.repository.SettingsRepository
 import com.mno.jamscope.data.repository.UserRepository
@@ -59,18 +62,18 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideApiRequest(exceptions: Exceptions): ApiRequest {
-        return ApiRequest(exceptions)
+    fun provideApiRepository(authRequest: AuthRequest, userRequest: UserRequest, profileRequest: ProfileRequest): ApiRepository {
+        return ApiRepository(authRequest = authRequest, userRequest = userRequest, profileRequest = profileRequest)
     }
 
     @Provides
     @Singleton
     fun provideUserRepository(
         dataStoreManager: UserDataStoreManager,
-        apiRequest: ApiRequest,
+        apiRepository: ApiRepository,
         userProfileDao: UserProfileDao
     ): UserRepository {
-        return UserRepository(apiRequest, dataStoreManager, userProfileDao)
+        return UserRepository(apiRepository, dataStoreManager, userProfileDao)
     }
 
     @Provides
@@ -92,9 +95,9 @@ object AppModule {
     fun provideFriendsRepository(
         dataStoreManager: UserDataStoreManager,
         friendsDao: FriendsDao,
-        apiRequest: ApiRequest
+        apiRepository: ApiRepository
     ): FriendsRepository {
-        return FriendsRepository(dataStoreManager, friendsDao, apiRequest)
+        return FriendsRepository(dataStoreManager, friendsDao, apiRepository)
     }
 
     @Provides
@@ -121,5 +124,17 @@ object AppModule {
     @Singleton
     fun provideSettingsRepository(settingsDataStoreManager: SettingsDataStoreManager): SettingsRepository {
         return SettingsRepository(settingsDataStoreManager)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAuthRequest(exceptions: Exceptions): AuthRequest {
+        return AuthRequest(exceptions)
+    }
+
+    @Provides
+    @Singleton
+    fun provideProfileRequest(exceptions: Exceptions): ProfileRequest {
+        return ProfileRequest(exceptions)
     }
 }

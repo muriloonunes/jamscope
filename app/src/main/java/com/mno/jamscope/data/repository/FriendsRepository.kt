@@ -1,6 +1,5 @@
 package com.mno.jamscope.data.repository
 
-import com.mno.jamscope.data.api.ApiRequest
 import com.mno.jamscope.data.local.dao.FriendsDao
 import com.mno.jamscope.data.local.toFriendEntity
 import com.mno.jamscope.data.local.toRecentTrackEntity
@@ -19,7 +18,7 @@ import javax.inject.Inject
 class FriendsRepository @Inject constructor(
     private val userDataStoreManager: UserDataStoreManager,
     private val friendsDao: FriendsDao,
-    private val apiRequest: ApiRequest
+    private val apiRepository: ApiRepository
 ) {
     suspend fun saveSortingType(sortingType: SortingType) {
         userDataStoreManager.saveSortingType(sortingType)
@@ -58,7 +57,7 @@ class FriendsRepository @Inject constructor(
     }
 
     suspend fun getRecentTracks(user: User) {
-        return apiRequest.getRecentTracks(user)
+        return apiRepository.getUserRecentTracks(user)
     }
 
     suspend fun deleteFriends() {

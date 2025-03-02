@@ -98,4 +98,7 @@
     <string name="light_theme">Claro</string>
     <string name="dark_theme">Escuro</string>
     <string name="no_email_app_found">Nenhum aplicativo de email encontrado</string>
+    <string name="create_account">Não possui uma conta? Crie uma</string>
+    <string name="open_create_account">Abrir página de criar conta</string>
+    <string name="open_more_menu">Abrir o menu de mais opções</string>
 </resources>

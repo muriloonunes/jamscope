@@ -1,6 +1,5 @@
 package com.mno.jamscope.data.repository
 
-import com.mno.jamscope.data.api.ApiRequest
 import com.mno.jamscope.data.local.dao.UserProfileDao
 import com.mno.jamscope.data.local.toProfile
 import com.mno.jamscope.data.local.toRecentTrackEntity
@@ -15,7 +14,7 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class UserRepository @Inject constructor(
-    private val apiRequest: ApiRequest,
+    private val apiRepository: ApiRepository,
     private val userDataStoreManager: UserDataStoreManager,
     private val userProfileDao: UserProfileDao
 ) {
@@ -43,22 +42,22 @@ class UserRepository @Inject constructor(
         password: String,
         method: String
     ): Resource<Profile> {
-        return apiRequest.autenticar(username, password, method)
+        return apiRepository.authenticate(username, password, method)
     }
 
     suspend fun getUserFriends(username: String): Resource<List<User>> {
-        return apiRequest.getUserFriends(username)
+        return apiRepository.getProfileFriends(username)
     }
 
     suspend fun getUserInfo(profile: Profile) {
-        return apiRequest.getUserInfo(profile)
+        return apiRepository.getProfileInfo(profile)
     }
 
     suspend fun getRecentTracks(profile: Profile): Resource<Unit> {
-        return apiRequest.getRecentTracks(profile)
+        return apiRepository.getProfileRecentTracks(profile)
     }
 
-    suspend fun cacheUserProfile(profile: Profile) {
+    private suspend fun cacheUserProfile(profile: Profile) {
         val userProfile = profile.toUserProfileEntity()
         userProfileDao.insertUserProfile(userProfile)
     }

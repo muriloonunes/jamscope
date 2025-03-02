@@ -20,6 +20,7 @@ import com.mno.jamscope.R
 import com.mno.jamscope.data.model.Token
 import com.mno.jamscope.data.model.Track
 import com.mno.jamscope.ui.navigator.Destination
+import kotlinx.serialization.json.Json
 
 object Stuff {
     val WIDGET_CORNER_RADIUS = 16.dp
@@ -27,6 +28,12 @@ object Stuff {
     const val LAST_SECRET = Token.LAST_FM_SECRET
     const val REFRESHING_TIME = 150000L // 2.5 minutes
     const val EMAIL = "murideveloper@protonmail.com"
+    const val BASE_URL = "https://ws.audioscrobbler.com/2.0/?"
+    const val FORMAT_JSON = "format=json"
+    const val DEFAULT_PROFILE_IMAGE =
+        "https://lastfm.freetls.fastly.net/i/u/64s/2a96cbd8b46e442fc41c2b86b821562f.png"
+    val JSON = Json { ignoreUnknownKeys = true }
+
 
     fun Context.openUrl(url: String) {
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
