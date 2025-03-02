@@ -2,6 +2,7 @@ package com.mno.jamscope.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mno.jamscope.data.repository.ApiRepository
 import com.mno.jamscope.data.repository.UserRepository
 import com.mno.jamscope.ui.navigator.Destination
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -12,7 +13,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SplashViewModel @Inject constructor(
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val apiRepository: ApiRepository
 ) : ViewModel() {
     private val _isLoading = MutableStateFlow(true)
     val isLoading get() = _isLoading.asStateFlow()
@@ -24,8 +26,11 @@ class SplashViewModel @Inject constructor(
         viewModelScope.launch {
             val isLoggedIn = userRepository.isUserLoggedIn()
             if (isLoggedIn) {
-                _startDestination.value = Destination.AppRoute
-                _isLoading.value = false
+                val profile = userRepository.getUserProfile()
+                if (apiRepository.isStillAuthenticated(profile!!)) {
+                    _startDestination.value = Destination.AppRoute
+                    _isLoading.value = false
+                }
             } else {
                 _startDestination.value = Destination.LoginRoute
                 _isLoading.value = false

@@ -4,12 +4,9 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -36,7 +33,6 @@ import com.mno.jamscope.ui.screen.ProfileTela
 import com.mno.jamscope.ui.screen.SettingsTela
 import com.mno.jamscope.ui.theme.NowPlayingTheme
 import com.mno.jamscope.ui.viewmodel.FriendsViewModel
-import com.mno.jamscope.ui.viewmodel.LoginViewModel
 import com.mno.jamscope.ui.viewmodel.PagerViewModel
 import com.mno.jamscope.ui.viewmodel.SettingsViewModel
 import com.mno.jamscope.ui.viewmodel.SplashViewModel
@@ -65,31 +61,29 @@ class MainActivity : ComponentActivity() {
 
         setupSplashScreen()
         setContent {
-            NowPlayingTheme {
-                val startDestination by splashViewModel.startDestination.collectAsState()
-                val navController = rememberNavController()
-                val themePreference by settingsViewModel.themePreference.collectAsState()
+            val themePreference by settingsViewModel.themePreference.collectAsState()
+            val startDestination by splashViewModel.startDestination.collectAsState()
+            val navController = rememberNavController()
+            NowPlayingTheme(themePreference = themePreference) {
                 CompositionLocalProvider(LocalThemePreference provides themePreference) {
-                    AppTheme(themePreference) {
-                        Surface(color = MaterialTheme.colorScheme.background) {
-                            LaunchedEffect(Unit) {
-                                navigator.navigationActions.collect { action ->
-                                    when (action) {
-                                        is NavigationAction.Navigate -> {
-                                            navController.navigate(
-                                                route = action.destination,
-                                                builder = action.navOptions
-                                            )
-                                        }
+                    Surface(color = MaterialTheme.colorScheme.background) {
+                        LaunchedEffect(Unit) {
+                            navigator.navigationActions.collect { action ->
+                                when (action) {
+                                    is NavigationAction.Navigate -> {
+                                        navController.navigate(
+                                            route = action.destination,
+                                            builder = action.navOptions
+                                        )
+                                    }
 
-                                        is NavigationAction.Back -> {
-                                            navController.navigateUp()
-                                        }
+                                    is NavigationAction.Back -> {
+                                        navController.navigateUp()
                                     }
                                 }
                             }
-                            startDestination?.let { AppNavigation(navController, it) }
                         }
+                        startDestination?.let { AppNavigation(navController, it) }
                     }
                 }
             }
@@ -111,29 +105,6 @@ class MainActivity : ComponentActivity() {
     }
 
     @Composable
-    fun AppTheme(
-        themePreference: Int,
-        content: @Composable () -> Unit
-    ) {
-        val darkTheme = when (themePreference) {
-            1 -> false
-            2 -> true
-            else -> isSystemInDarkTheme()
-        }
-
-        val colors = if (darkTheme) {
-            darkColorScheme()
-        } else {
-            lightColorScheme()
-        }
-
-        MaterialTheme(
-            colorScheme = colors,
-            content = content
-        )
-    }
-
-    @Composable
     fun AppNavigation(
         navController: NavHostController,
         startDestination: Destination
@@ -146,10 +117,7 @@ class MainActivity : ComponentActivity() {
                 startDestination = Destination.LoginScreen,
             ) {
                 composable<Destination.LoginScreen> {
-                    val loginViewModel: LoginViewModel = hiltViewModel()
-                    LoginScreen(
-                        loginViewModel = loginViewModel,
-                    )
+                    LoginScreen()
                 }
             }
             navigation<Destination.AppRoute>(

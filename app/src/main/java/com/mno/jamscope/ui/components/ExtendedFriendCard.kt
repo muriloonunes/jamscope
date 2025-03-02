@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
@@ -40,6 +41,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
@@ -114,11 +116,11 @@ fun ExtendedFriendCard(
                                 text = friend.realname,
                                 style = MaterialTheme.typography.titleLarge.copy(
                                     fontWeight = FontWeight.Bold,
+                                    platformStyle = PlatformTextStyle(includeFontPadding = false)
                                 ),
                                 textAlign = TextAlign.Center,
                                 textDecoration = TextDecoration.Underline,
                                 maxLines = 1,
-                                modifier = Modifier.align(Alignment.CenterVertically)
                             )
                         } else {
                             friend.name?.let {
@@ -126,21 +128,20 @@ fun ExtendedFriendCard(
                                     text = it,
                                     style = MaterialTheme.typography.titleLarge.copy(
                                         fontWeight = FontWeight.Bold,
+                                        platformStyle = PlatformTextStyle(includeFontPadding = false)
                                     ),
                                     textDecoration = TextDecoration.Underline,
                                     maxLines = 1,
                                     textAlign = TextAlign.Center,
-                                    modifier = Modifier.align(Alignment.CenterVertically)
                                 )
                             }
                         }
+                        Spacer(modifier = Modifier.width(4.dp))
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.OpenInNew,
                             contentDescription = stringResource(R.string.open_user_profile),
                             modifier = Modifier
                                 .size(18.dp)
-                                .align(Alignment.CenterVertically)
-                                .padding(start = 2.dp, top = 4.dp)
                         )
                     }
                     if (friend.realname.isNotEmpty() && friend.name != null) {

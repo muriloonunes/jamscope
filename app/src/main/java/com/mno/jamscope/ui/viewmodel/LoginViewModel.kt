@@ -1,11 +1,14 @@
 package com.mno.jamscope.ui.viewmodel
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mno.jamscope.data.model.Resource
 import com.mno.jamscope.data.repository.UserRepository
 import com.mno.jamscope.ui.navigator.Destination
 import com.mno.jamscope.ui.navigator.Navigator
+import com.mno.jamscope.util.Stuff.openUrl
+import com.mno.jamscope.util.sendReportMail
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -37,6 +40,10 @@ class LoginViewModel @Inject constructor(
         _password.value = newPassword
     }
 
+    fun openCreateAccount(context: Context) {
+        context.openUrl("https://www.last.fm/join")
+    }
+
     fun login() {
         _loading.value = true
         viewModelScope.launch {
@@ -66,6 +73,12 @@ class LoginViewModel @Inject constructor(
                     }
                 }
             )
+        }
+    }
+
+    fun openBugReport(context: Context) {
+        viewModelScope.launch {
+            sendReportMail(context)
         }
     }
 }
