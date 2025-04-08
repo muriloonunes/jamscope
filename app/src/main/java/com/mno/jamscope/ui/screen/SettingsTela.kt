@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Logout
+import androidx.compose.material.icons.automirrored.outlined.LibraryBooks
 import androidx.compose.material.icons.automirrored.outlined.Logout
 import androidx.compose.material.icons.outlined.BrightnessMedium
 import androidx.compose.material.icons.outlined.BugReport
@@ -18,6 +19,7 @@ import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.ModeComment
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -196,6 +198,17 @@ fun SettingsTela(
                 }
                 item {
                     SettingsClickableComp(
+                        icon = Icons.AutoMirrored.Outlined.LibraryBooks,
+                        iconDesc = R.string.libraries_icon,
+                        name = R.string.show_libraries_setting,
+                        subtitle = null,
+                        showIcon = true
+                    ) {
+                        settingsViewModel.navigateToLibraries()
+                    }
+                }
+                item {
+                    SettingsClickableComp(
                         icon = Icons.Outlined.Info,
                         iconDesc = R.string.info_icon,
                         name = R.string.app_name,
@@ -205,6 +218,17 @@ fun SettingsTela(
                         settingsViewModel.openGithubProject(context)
                     }
                 }
+//                item {
+//                    SettingsClickableComp(
+//                        icon = Icons.Outlined.Star,
+//                        iconDesc = R.string.star_icon,
+//                        name = R.string.liking_app_text,
+//                        subtitle = R.string.liking_app_expanded_text,
+//                        showIcon = false
+//                    ) {
+//                        settingsViewModel.openPlayStore(context)
+//                    }
+//                }
             }
         }
     }
@@ -288,7 +312,7 @@ fun SettingsTela(
                 ) { (Text(stringResource(R.string.cancel))) }
             },
             confirmButton = {
-                TextButton(
+                Button(
                     onClick = {
                         settingsViewModel.logOutUser()
                         showLogOutDialog = false

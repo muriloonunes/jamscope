@@ -211,7 +211,7 @@ class FriendListeningWidget : GlanceAppWidget() {
         }
     }
 
-    private suspend fun loadBitmap(url: String, context: Context): Bitmap {
+    private suspend fun loadBitmap(url: String, context: Context): Bitmap? {
         return withContext(Dispatchers.IO) {
             try {
                 if (url.isEmpty()) {
@@ -231,9 +231,10 @@ class FriendListeningWidget : GlanceAppWidget() {
                 }
             } catch (e: Exception) {
                 Log.e("loadBitmap", e.toString())
-                return@withContext BitmapFactory.decodeResource(
-                    context.resources, R.drawable.baseline_account_circle_24
-                )
+//                return@withContext BitmapFactory.decodeResource(
+//                    context.resources, R.drawable.baseline_account_circle_24
+//                )
+                return@withContext null
             }
         }
     }

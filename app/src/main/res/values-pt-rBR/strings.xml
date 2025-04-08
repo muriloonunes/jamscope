@@ -101,4 +101,10 @@
     <string name="create_account">Não possui uma conta? Crie uma</string>
     <string name="open_create_account">Abrir página de criar conta</string>
     <string name="open_more_menu">Abrir o menu de mais opções</string>
+    <string name="liking_app_text">Gostando do app?</string>
+    <string name="liking_app_expanded_text">Considere deixar uma review na PlayStore :)</string>
+    <string name="no_not_today_review">Hoje não</string>
+    <string name="star_icon">Ícone de estrela</string>
+    <string name="libraries_icon">Ícone de bibliotecas</string>
+    <string name="show_libraries_setting">Bibliotecas de código aberto</string>
 </resources>

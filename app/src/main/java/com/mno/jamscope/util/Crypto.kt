@@ -1,30 +1,64 @@
 package com.mno.jamscope.util
 
-import java.security.SecureRandom
-import java.util.Base64
+import android.security.keystore.KeyGenParameterSpec
+import android.security.keystore.KeyProperties
+import java.security.KeyStore
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
 import javax.crypto.spec.IvParameterSpec
 
 object Crypto {
-    private val stringKey: SecretKey = KeyGenerator.getInstance("AES").apply { init(256) }.generateKey()
+    private const val KEY_ALIAS = "secret"
+    private const val ALGORITHM = KeyProperties.KEY_ALGORITHM_AES
+    private const val BLOCK_MODE = KeyProperties.BLOCK_MODE_CBC
+    private const val PADDING = KeyProperties.ENCRYPTION_PADDING_PKCS7
+    private const val TRANSFORMATION = "$ALGORITHM/$BLOCK_MODE/$PADDING"
 
-    fun encryptString(text: String): String {
-        val cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
-        val iv = ByteArray(16).apply { SecureRandom().nextBytes(this) }
-        cipher.init(Cipher.ENCRYPT_MODE, stringKey, IvParameterSpec(iv))
-        val encrypted = cipher.doFinal(text.toByteArray(Charsets.UTF_8))
+    private val cipher = Cipher.getInstance(TRANSFORMATION)
+    private val keyStore = KeyStore
+        .getInstance("AndroidKeyStore")
+        .apply {
+            load(null)
+        }
 
-        return Base64.getEncoder().encodeToString(iv + encrypted)
+    private fun getKey(): SecretKey {
+        val existingKey = keyStore
+            .getEntry(KEY_ALIAS, null) as? KeyStore.SecretKeyEntry
+        return existingKey?.secretKey ?: createKey()
     }
 
-    fun decryptString(encryptedText: String): String {
-        val decoded = Base64.getDecoder().decode(encryptedText)
-        val iv = decoded.copyOfRange(0, 16)
-        val encrypted = decoded.copyOfRange(16, decoded.size)
-        val cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
-        cipher.init(Cipher.DECRYPT_MODE, stringKey, IvParameterSpec(iv))
-        return String(cipher.doFinal(encrypted), Charsets.UTF_8)
+    private fun createKey(): SecretKey {
+        return KeyGenerator
+            .getInstance(ALGORITHM)
+            .apply {
+                init(
+                    KeyGenParameterSpec.Builder(
+                        KEY_ALIAS,
+                        KeyProperties.PURPOSE_ENCRYPT or
+                                KeyProperties.PURPOSE_DECRYPT
+                    )
+                        .setBlockModes(BLOCK_MODE)
+                        .setEncryptionPaddings(PADDING)
+                        .setRandomizedEncryptionRequired(true)
+                        .setUserAuthenticationRequired(false)
+                        .build()
+                )
+            }
+            .generateKey()
+    }
+
+    fun encrypt(bytes: ByteArray): ByteArray {
+        cipher.init(Cipher.ENCRYPT_MODE, getKey())
+        val iv = cipher.iv
+        val encrypted = cipher.doFinal(bytes)
+        return iv + encrypted
+    }
+
+    fun decrypt(bytes: ByteArray): ByteArray {
+        val iv = bytes.copyOfRange(0, cipher.blockSize)
+        val data = bytes.copyOfRange(cipher.blockSize, bytes.size)
+        cipher.init(Cipher.DECRYPT_MODE, getKey(), IvParameterSpec(iv))
+        return cipher.doFinal(data)
     }
 }

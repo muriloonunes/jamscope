@@ -7,6 +7,6 @@
     android:resizeMode="horizontal|vertical"
     android:targetCellWidth="4"
     android:targetCellHeight="2"
-    android:maxResizeHeight="150dp"
+    android:maxResizeHeight="300dp"
     android:previewLayout="@layout/friend_group_widget_preview"
     android:widgetCategory="home_screen" />

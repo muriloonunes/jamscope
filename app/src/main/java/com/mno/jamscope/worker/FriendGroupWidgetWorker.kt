@@ -39,7 +39,6 @@ class FriendGroupWidgetWorker(
                     return Result.failure()
                 }
             }
-
             return Result.success()
         } catch (e: Exception) {
             e.printStackTrace()
@@ -49,11 +48,11 @@ class FriendGroupWidgetWorker(
 
     private suspend fun updateWidgetState(glanceId: GlanceId, friendsList: List<User>) {
         FriendGroupWidget().apply {
-            updateAppWidgetState(appContext, glanceId) { state ->
+            updateAppWidgetState(applicationContext, glanceId) { state ->
                 WidgetDataStoreManager.saveFriendsGroup(state, friendsList)
-                WidgetDataStoreManager.saveLastUpdated(state)
+                WidgetDataStoreManager.saveLastUpdated(state, applicationContext)
             }
-            update(appContext, glanceId)
+            update(applicationContext, glanceId)
         }
     }
 }

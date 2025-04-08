@@ -24,4 +24,10 @@ class SettingsRepository @Inject constructor(
     suspend fun clearPrefs() {
         settingsDataStoreManager.clearUserPrefs()
     }
+
+//    suspend fun getAppOpenedFlow() = settingsDataStoreManager.appOpenedFlow.first()
+//
+//    suspend fun incrementAppOpened() {
+//        settingsDataStoreManager.incrementAppOpened()
+//    }
 }

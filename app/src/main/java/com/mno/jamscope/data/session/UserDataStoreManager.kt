@@ -4,10 +4,13 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import com.mno.jamscope.data.model.Profile
+import com.mno.jamscope.util.Crypto
 import com.mno.jamscope.util.SortingType
+import io.ktor.utils.io.core.toByteArray
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.json.Json
+import java.util.Base64
 import javax.inject.Inject
 
 class UserDataStoreManager @Inject constructor(
@@ -15,17 +18,21 @@ class UserDataStoreManager @Inject constructor(
 ) {
     suspend fun saveUserProfile(profile: Profile) {
         val json = Json.encodeToString(profile)
+        val encryptedJson = Crypto.encrypt(json.toByteArray())
+        val encryptedBase64 = Base64.getEncoder().encodeToString(encryptedJson)
         dataStore.edit { preferences ->
-            preferences[PreferencesKeys.PROFILE_JSON] = json
+            preferences[PreferencesKeys.PROFILE_JSON] = encryptedBase64
         }
     }
 
     suspend fun getUserProfile(): Profile? {
         val preferences = dataStore.data.first()
-        val profileJson = preferences[PreferencesKeys.PROFILE_JSON]
-        return if (profileJson != null) {
-            Json.decodeFromString(profileJson)
-        } else {
+        val encryptedBase64 = preferences[PreferencesKeys.PROFILE_JSON] ?: return null
+        return try {
+            val encryptedBytes = Base64.getDecoder().decode(encryptedBase64)
+            val decryptedBytes = Crypto.decrypt(encryptedBytes)
+            Json.decodeFromString(decryptedBytes.decodeToString())
+        } catch (e: Exception) {
             null
         }
     }

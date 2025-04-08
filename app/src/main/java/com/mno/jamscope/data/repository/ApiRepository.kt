@@ -18,7 +18,7 @@ class ApiRepository @Inject constructor(
     }
 
     suspend fun isStillAuthenticated(profile: Profile): Boolean {
-        return authRequest.isStillAuthenticated(profile, "auth.getMobileSession")
+        return authRequest.isStillAuthenticated(profile, "getMobileSession")
     }
 
     suspend fun getProfileInfo(profile: Profile) {

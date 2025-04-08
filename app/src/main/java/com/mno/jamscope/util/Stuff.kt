@@ -4,6 +4,7 @@ import android.app.ActivityManager
 import android.app.ApplicationExitInfo
 import android.app.SearchManager
 import android.content.ActivityNotFoundException
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -16,6 +17,7 @@ import androidx.annotation.StringRes
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import com.mno.jamscope.R
 import com.mno.jamscope.data.model.Token
 import com.mno.jamscope.data.model.Track
@@ -35,8 +37,59 @@ object Stuff {
     val JSON = Json { ignoreUnknownKeys = true }
 
     fun Context.openUrl(url: String) {
-        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+        val intent = Intent(Intent.ACTION_VIEW, url.toUri())
         startActivity(intent)
+    }
+
+    //fiz essa funcao antes de descobrir que preciso pagar pra colocar o app na play store...
+    //entao essa funcao provavelmente nunca vai ser usada
+    //vai se fuder google
+    fun Context.openPlayStore() {
+        val appId = packageName
+        val rateIntent = Intent(
+            Intent.ACTION_VIEW,
+            "market://details?id=$appId".toUri()
+        )
+        var marketFound = false
+
+
+        // find all applications able to handle our rateIntent
+        val otherApps = packageManager
+            .queryIntentActivities(rateIntent, 0)
+        for (otherApp in otherApps) {
+            // look for Google Play application
+            if (otherApp.activityInfo.applicationInfo.packageName
+                == "com.android.vending"
+            ) {
+                val otherAppActivity = otherApp.activityInfo
+                val componentName = ComponentName(
+                    otherAppActivity.applicationInfo.packageName,
+                    otherAppActivity.name
+                )
+                // make sure it does NOT open in the stack of your activity
+                rateIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                // task reparenting if needed
+                rateIntent.addFlags(Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED)
+                // if the Google Play was already open in a search result
+                //  this make sure it still go to the app page you requested
+                rateIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                // this make sure only the Google Play app is allowed to
+                // intercept the intent
+                rateIntent.setComponent(componentName)
+                startActivity(rateIntent)
+                marketFound = true
+                break
+            }
+        }
+
+        // if GP not present on device, open web browser
+        if (!marketFound) {
+            val webIntent = Intent(
+                Intent.ACTION_VIEW,
+                Uri.parse("https://play.google.com/store/apps/details?id=$appId")
+            )
+            startActivity(webIntent)
+        }
     }
 
     //thanks pano-scrobbler

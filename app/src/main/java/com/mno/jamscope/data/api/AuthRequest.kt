@@ -4,14 +4,13 @@ import android.util.Log
 import com.mno.jamscope.data.model.Profile
 import com.mno.jamscope.data.model.Resource
 import com.mno.jamscope.data.model.Resource.Error
+import com.mno.jamscope.data.model.Resource.Success
+import com.mno.jamscope.data.model.Session
+import com.mno.jamscope.data.model.SessionResponse
 import com.mno.jamscope.util.Stuff
 import io.ktor.client.request.headers
 import io.ktor.client.request.post
 import io.ktor.client.statement.bodyAsText
-import com.mno.jamscope.data.model.Resource.Success
-import com.mno.jamscope.data.model.Session
-import com.mno.jamscope.data.model.SessionResponse
-import com.mno.jamscope.util.Crypto
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.isSuccess
@@ -19,6 +18,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.nio.channels.UnresolvedAddressException
 import java.security.MessageDigest
+import javax.crypto.BadPaddingException
 import javax.inject.Inject
 
 class AuthRequest @Inject constructor(
@@ -41,7 +41,6 @@ class AuthRequest @Inject constructor(
 
     private fun buildAuthUrl(username: String, password: String, method: String): String {
         val apiSig = generateApiSig(username, password)
-        println("apisig: $apiSig")
         val urlParams =
             "method=auth.$method&api_key=${Stuff.LAST_KEY}&password=$password&username=$username&api_sig=$apiSig"
         return "${Stuff.BASE_URL}${Stuff.FORMAT_JSON}&$urlParams"
@@ -76,7 +75,7 @@ class AuthRequest @Inject constructor(
     suspend fun isStillAuthenticated(profile: Profile, method: String): Boolean {
         return try {
             val username = profile.username
-            val password = Crypto.decryptString(profile.senha)
+            val password = profile.senha
             val requestUrl = buildAuthUrl(username, password, method)
             val response = withContext(Dispatchers.IO) {
                 HttpClientProvider.client.post(requestUrl) {
@@ -86,12 +85,15 @@ class AuthRequest @Inject constructor(
                 }
             }
             if (!response.status.isSuccess()) {
-                Log.e("ApiRequest", "isStillAuthenticated: ${response.bodyAsText()}")
+                Log.e("AuthRequest", "isStillAuthenticated: ${response.bodyAsText()}")
                 false
             } else {
                 val sessionResponse = Stuff.JSON.decodeFromString<SessionResponse>(response.bodyAsText())
-                sessionResponse.session.key == Crypto.decryptString(profile.session.key)
+                sessionResponse.session.key == profile.session.key
             }
+        } catch (e: BadPaddingException) {
+            Log.e("Auth", "Erro de descriptografia: ${e.message}")
+            false
         } catch (e: Exception) {
             e.printStackTrace()
             true
@@ -104,12 +106,13 @@ class AuthRequest @Inject constructor(
             Profile(
                 username = sessionResponse.session.name,
                 subscriber = sessionResponse.session.subscriber,
-                session = Session(key = Crypto.encryptString(sessionResponse.session.key)),
-                senha = Crypto.encryptString(password),
+                session = Session(key = sessionResponse.session.key),
+                senha = password,
                 imageUrl = "",
                 profileUrl = "",
             )
         } catch (e: Exception) {
+            e.printStackTrace()
             null
         }
     }

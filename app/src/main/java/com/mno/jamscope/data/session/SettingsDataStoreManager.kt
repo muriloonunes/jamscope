@@ -38,9 +38,18 @@ class SettingsDataStoreManager @Inject constructor(
         }
     }
 
+//    suspend fun incrementAppOpened() = dataStore.edit {
+//        preferences -> preferences[PreferencesKeys.APP_OPENED] = (preferences[PreferencesKeys.APP_OPENED] ?: 0) + 1
+//    }
+//
+//    val appOpenedFlow : Flow<Int> = dataStore.data.map { preferences ->
+//        preferences[PreferencesKeys.APP_OPENED] ?: 0
+//    }
+
     suspend fun clearUserPrefs() {
         dataStore.edit { preferences ->
             preferences.remove(PreferencesKeys.THEME)
+            preferences.remove(PreferencesKeys.APP_OPENED)
             preferences.remove(getKey("card_background_color_toggle"))
             preferences.remove(getKey("playing_animation_toggle"))
         }

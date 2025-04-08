@@ -103,4 +103,10 @@
     <string name="create_account">Don\'t have an account? Create one</string>
     <string name="open_create_account">Open create account page</string>
     <string name="open_more_menu">Open more options menu</string>
+    <string name="liking_app_text">Liking this app?</string>
+    <string name="liking_app_expanded_text">Consider leaving a review on PlayStore :)</string>
+    <string name="no_not_today_review">No, not today</string>
+    <string name="star_icon">Star icon</string>
+    <string name="libraries_icon">Libraries icon</string>
+    <string name="show_libraries_setting">Open-source libraries</string>
 </resources>

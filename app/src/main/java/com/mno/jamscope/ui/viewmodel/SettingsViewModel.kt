@@ -89,6 +89,12 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
+    fun navigateToLibraries() {
+        viewModelScope.launch {
+            navigator.navigate(Destination.LibrariesScreen)
+        }
+    }
+
     fun navigateBack() {
         viewModelScope.launch {
             navigator.back()
@@ -120,4 +126,8 @@ class SettingsViewModel @Inject constructor(
     fun openGithubProject(context: Context) {
         context.openUrl("https://github.com/muriloonunes/jamscope")
     }
+
+//    fun openPlayStore(context: Context) {
+//        context.openPlayStore()
+//    }
 }

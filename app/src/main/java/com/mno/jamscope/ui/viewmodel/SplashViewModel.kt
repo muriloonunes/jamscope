@@ -14,7 +14,8 @@ import javax.inject.Inject
 @HiltViewModel
 class SplashViewModel @Inject constructor(
     private val userRepository: UserRepository,
-    private val apiRepository: ApiRepository
+    private val apiRepository: ApiRepository,
+//    private val settingsRepository: SettingsRepository
 ) : ViewModel() {
     private val _isLoading = MutableStateFlow(true)
     val isLoading get() = _isLoading.asStateFlow()
@@ -22,13 +23,21 @@ class SplashViewModel @Inject constructor(
     private val _startDestination = MutableStateFlow<Destination?>(null)
     val startDestination get() = _startDestination.asStateFlow()
 
+//    private val _appOpenedTimes = MutableStateFlow(0)
+//    val appOpenedTimes: StateFlow<Int> = _appOpenedTimes
+
     init {
         viewModelScope.launch {
             val isLoggedIn = userRepository.isUserLoggedIn()
             if (isLoggedIn) {
+//                settingsRepository.incrementAppOpened()
+//                _appOpenedTimes.value = settingsRepository.getAppOpenedFlow()
                 val profile = userRepository.getUserProfile()
                 if (apiRepository.isStillAuthenticated(profile!!)) {
                     _startDestination.value = Destination.AppRoute
+                    _isLoading.value = false
+                } else {
+                    _startDestination.value = Destination.LoginRoute
                     _isLoading.value = false
                 }
             } else {

@@ -1,6 +1,7 @@
 [versions]
+aboutlibrariesCore = "11.6.3"
 activityCompose = "1.10.1"
-agp = "8.8.2"
+agp = "8.9.1"
 appcompat = "1.7.0"
 appcompatV7 = "28.0.0"
 coil = "3.1.0"
@@ -9,13 +10,13 @@ coilGif = "3.1.0"
 composeBom = "2024.04.01"
 coreKtx = "1.15.0"
 coreSplashscreen = "1.0.1"
-datastorePreferences = "1.1.3"
+datastorePreferences = "1.1.4"
 dotlottieAndroid = "0.5.0"
 dotlottieAndroidVersion = "0.6.2"
 espressoCore = "3.6.1"
-firebaseAppdistribution = "16.0.0-beta14"
-firebaseAppdistributionApiKtx = "16.0.0-beta14"
-firebaseBom = "33.10.0"
+firebaseAppdistribution = "16.0.0-beta15"
+firebaseAppdistributionApiKtx = "16.0.0-beta15"
+firebaseBom = "33.12.0"
 glanceAppwidgetPreview = "1.1.1"
 glancePreview = "1.1.1"
 glide = "4.16.0"
@@ -33,6 +34,7 @@ ktorClientSerialization = "3.0.3"
 ktorSerializationKotlinxJson = "3.0.3"
 ktorServerContentNegotiation = "3.0.3"
 lazycolumnscrollbar = "2.2.0"
+leakcanaryAndroid = "2.14"
 lifecycleRuntimeKtx = "2.8.7"
 lottieCompose = "4.0.0"
 material = "1.7.8"
@@ -40,7 +42,7 @@ material3 = "1.3.1"
 materialVersion = "1.12.0"
 multiplatformSettings = "1.1.1"
 multiplatformSettingsCoroutines = "1.1.1"
-navigationCompose = "2.8.8"
+navigationCompose = "2.8.9"
 rebugger = "1.0.0-rc03"
 recyclerview = "1.4.0"
 roomRuntime = "2.6.1"
@@ -49,6 +51,8 @@ uiTestJunit4Android = "1.7.8"
 workRuntimeKtx = "2.10.0"
 
 [libraries]
+aboutlibraries-compose-m3 = { module = "com.mikepenz:aboutlibraries-compose-m3", version.ref = "aboutlibrariesCore" }
+aboutlibraries-core = { module = "com.mikepenz:aboutlibraries-core", version.ref = "aboutlibrariesCore" }
 androidx-core = { module = "androidx.core:core", version.ref = "coreKtx" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
@@ -90,7 +94,7 @@ androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "j
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
-androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version = "2025.02.00" }
+androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version = "2025.03.01" }
 androidx-ui = { group = "androidx.compose.ui", name = "ui" }
 androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
 androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
@@ -107,6 +111,7 @@ ktor-client-serialization = { module = "io.ktor:ktor-client-serialization", vers
 ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktorSerializationKotlinxJson" }
 ktor-server-content-negotiation = { module = "io.ktor:ktor-server-content-negotiation", version.ref = "ktorServerContentNegotiation" }
 lazycolumnscrollbar = { module = "com.github.nanihadesuka:LazyColumnScrollbar", version.ref = "lazycolumnscrollbar" }
+leakcanary-android = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "leakcanaryAndroid" }
 lottie-compose = { module = "com.airbnb.android:lottie-compose", version.ref = "lottieCompose" }
 material = { module = "com.google.android.material:material", version.ref = "materialVersion" }
 multiplatform-settings = { module = "com.russhwolf:multiplatform-settings", version.ref = "multiplatformSettings" }

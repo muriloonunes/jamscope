@@ -22,3 +22,7 @@
 
 -keepattributes SourceFile,LineNumberTable
 -keep class com.google.firebase.crashlytics.** { *; }
+-dontwarn java.awt.Component
+-dontwarn java.awt.GraphicsEnvironment
+-dontwarn java.awt.HeadlessException
+-dontwarn java.awt.Window
