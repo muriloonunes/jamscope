@@ -8,6 +8,7 @@ plugins {
     id("com.google.gms.google-services")
     id("com.google.firebase.crashlytics")
     id("com.mikepenz.aboutlibraries.plugin")
+    id("androidx.room")
 }
 
 android {
@@ -24,10 +25,6 @@ android {
         vectorDrawables.useSupportLibrary = true
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-
-        ksp {
-            arg("room.schemaLocation", "$projectDir/schemas")
-        }
     }
 
     buildTypes {
@@ -55,6 +52,9 @@ android {
     buildFeatures {
         compose = true
         viewBinding = true
+    }
+    room {
+        schemaDirectory("$projectDir/schemas")
     }
 }
 

@@ -1,54 +1,47 @@
 [versions]
-aboutlibrariesCore = "11.6.3"
+aboutlibrariesCore = "12.2.3"
 activityCompose = "1.10.1"
-agp = "8.9.1"
-appcompat = "1.7.0"
+agp = "8.11.0"
+appcompat = "1.7.1"
 appcompatV7 = "28.0.0"
 coil = "3.1.0"
-coilCompose = "3.1.0"
-coilGif = "3.1.0"
-composeBom = "2024.04.01"
-coreKtx = "1.15.0"
+coilCompose = "3.2.0"
+coilGif = "3.2.0"
+composeBom = "2025.06.01"
+coreKtx = "1.16.0"
 coreSplashscreen = "1.0.1"
-datastorePreferences = "1.1.4"
+datastorePreferences = "1.1.7"
 dotlottieAndroid = "0.5.0"
-dotlottieAndroidVersion = "0.6.2"
+dotlottieAndroidVersion = "0.8.0"
 espressoCore = "3.6.1"
 firebaseAppdistribution = "16.0.0-beta15"
 firebaseAppdistributionApiKtx = "16.0.0-beta15"
-firebaseBom = "33.12.0"
+firebaseBom = "33.16.0"
 glanceAppwidgetPreview = "1.1.1"
 glancePreview = "1.1.1"
 glide = "4.16.0"
-hiltAndroidCompiler = "2.51.1"
+hiltAndroidCompiler = "2.56.2"
 hiltCompiler = "1.2.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
-kotlin = "2.0.0"
-kotlinxSerializationJson = "1.8.0"
-ktorClientCio = "3.0.3"
-ktorClientContentNegotiation = "3.0.3"
-ktorClientCore = "3.0.3"
-ktorClientJson = "3.0.3"
-ktorClientSerialization = "3.0.3"
-ktorSerializationKotlinxJson = "3.0.3"
-ktorServerContentNegotiation = "3.0.3"
+kotlin = "2.2.0"
+kotlinxSerializationJson = "1.8.1"
+ktor = "3.1.3"
 lazycolumnscrollbar = "2.2.0"
 leakcanaryAndroid = "2.14"
-lifecycleRuntimeKtx = "2.8.7"
-lottieCompose = "4.0.0"
-material = "1.7.8"
-material3 = "1.3.1"
+lifecycleRuntimeKtx = "2.9.1"
+lottieCompose = "6.6.7"
+material3 = "1.3.2"
 materialVersion = "1.12.0"
-multiplatformSettings = "1.1.1"
-multiplatformSettingsCoroutines = "1.1.1"
-navigationCompose = "2.8.9"
+multiplatformSettings = "1.3.0"
+multiplatformSettingsCoroutines = "1.3.0"
+navigationCompose = "2.9.0"
 rebugger = "1.0.0-rc03"
 recyclerview = "1.4.0"
-roomRuntime = "2.6.1"
-runtimeLivedata = "1.7.8"
-uiTestJunit4Android = "1.7.8"
-workRuntimeKtx = "2.10.0"
+roomRuntime = "2.7.2"
+runtimeLivedata = "1.8.3"
+uiTestJunit4Android = "1.8.3"
+workRuntimeKtx = "2.10.2"
 
 [libraries]
 aboutlibraries-compose-m3 = { module = "com.mikepenz:aboutlibraries-compose-m3", version.ref = "aboutlibrariesCore" }
@@ -66,15 +59,14 @@ androidx-hilt-compiler = { module = "androidx.hilt:hilt-compiler", version.ref =
 androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltCompiler" }
 androidx-hilt-work = { module = "androidx.hilt:hilt-work", version.ref = "hiltCompiler" }
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleRuntimeKtx" }
-androidx-material = { module = "androidx.compose.material:material", version.ref = "material" }
-androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "material" }
+androidx-material = { module = "androidx.compose.material:material" }
+androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomRuntime" }
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomRuntime" }
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomRuntime" }
 androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtx" }
 appcompat-v7 = { module = "com.android.support:appcompat-v7", version.ref = "appcompatV7" }
-coil = { module = "io.coil-kt:coil", version = "2.7.0" }
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coilCompose" }
 coil-gif = { module = "io.coil-kt.coil3:coil-gif", version.ref = "coilGif" }
 coil-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coilCompose" }
@@ -94,7 +86,7 @@ androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "j
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
-androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version = "2025.03.01" }
+androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
 androidx-ui = { group = "androidx.compose.ui", name = "ui" }
 androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
 androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
@@ -103,13 +95,13 @@ androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-man
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "material3" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
-ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktorClientCio" }
-ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktorClientContentNegotiation" }
-ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktorClientCore" }
-ktor-client-json = { module = "io.ktor:ktor-client-json", version.ref = "ktorClientJson" }
-ktor-client-serialization = { module = "io.ktor:ktor-client-serialization", version.ref = "ktorClientSerialization" }
-ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktorSerializationKotlinxJson" }
-ktor-server-content-negotiation = { module = "io.ktor:ktor-server-content-negotiation", version.ref = "ktorServerContentNegotiation" }
+ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
+ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktor-client-json = { module = "io.ktor:ktor-client-json", version.ref = "ktor" }
+ktor-client-serialization = { module = "io.ktor:ktor-client-serialization", version.ref = "ktor" }
+ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
+ktor-server-content-negotiation = { module = "io.ktor:ktor-server-content-negotiation", version.ref = "ktor" }
 lazycolumnscrollbar = { module = "com.github.nanihadesuka:LazyColumnScrollbar", version.ref = "lazycolumnscrollbar" }
 leakcanary-android = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "leakcanaryAndroid" }
 lottie-compose = { module = "com.airbnb.android:lottie-compose", version.ref = "lottieCompose" }

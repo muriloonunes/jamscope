@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "349924047520",
+    "project_id": "jamscope-73aa6",
+    "storage_bucket": "jamscope-73aa6.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:349924047520:android:b00caec0fb0a198b0ae7c5",
+        "android_client_info": {
+          "package_name": "com.mno.jamscope"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBmv5QXjEfQeHPl6IE9XS-zu0K_6xIQMVQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
