@@ -24,9 +24,8 @@ import javax.inject.Inject
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     private val userRepository: UserRepository,
-    @ApplicationContext private val context: Context,
+    @param:ApplicationContext private val context: Context,
     private val settingsRepository: SettingsRepository
-
 ) : ViewModel() {
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing = _isRefreshing
@@ -60,7 +59,7 @@ class ProfileViewModel @Inject constructor(
                 val userProfile = userRepository.getCachedUserProfile()
                 _userProfile.value = userProfile
                 _recentTracks.value = userProfile.recentTracks?.track ?: emptyList()
-            } catch (e: IllegalStateException) {
+            } catch (_: IllegalStateException) {
                 _errorMessage.value = context.getString(R.string.error_loading_profile)
             }
             settingsRepository.getSwitchState("playing_animation_toggle", true)

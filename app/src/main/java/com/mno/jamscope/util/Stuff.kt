@@ -7,7 +7,6 @@ import android.content.ActivityNotFoundException
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
 import android.util.Log
@@ -86,7 +85,7 @@ object Stuff {
         if (!marketFound) {
             val webIntent = Intent(
                 Intent.ACTION_VIEW,
-                Uri.parse("https://play.google.com/store/apps/details?id=$appId")
+                "https://play.google.com/store/apps/details?id=$appId".toUri()
             )
             startActivity(webIntent)
         }
@@ -117,7 +116,7 @@ object Stuff {
                     }
                 }
             }
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             emptyList()
         }
     }
@@ -136,7 +135,7 @@ object Stuff {
 
         try {
             startActivity(intent)
-        } catch (e: ActivityNotFoundException) {
+        } catch (_: ActivityNotFoundException) {
             Toast.makeText(this, getString(R.string.no_music_player), Toast.LENGTH_SHORT).show()
         }
     }
@@ -150,9 +149,9 @@ object Stuff {
 
     data class SwitchItem(
         val key: String,
-        @StringRes val name: Int,
+        @param:StringRes val name: Int,
         val icon: ImageVector,
-        @StringRes val iconDesc: Int,
+        @param:StringRes val iconDesc: Int,
         val initialState: Boolean
     )
 }

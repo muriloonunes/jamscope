@@ -11,9 +11,11 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.mikepenz.aboutlibraries.ui.compose.android.rememberLibraries
 import com.mikepenz.aboutlibraries.ui.compose.m3.LibrariesContainer
 import com.mno.jamscope.R
 import com.mno.jamscope.ui.viewmodel.SettingsViewModel
@@ -43,11 +45,13 @@ fun LoadLibrariesScreen() {
             },
         )
     }) { innerPadding ->
+        val libraries by rememberLibraries(R.raw.aboutlibraries)
         LibrariesContainer(
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize(),
             showVersion = true,
+            libraries = libraries
         )
     }
 }
