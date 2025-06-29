@@ -31,7 +31,8 @@ class ProfileViewModel @Inject constructor(
     val isRefreshing = _isRefreshing
         .onStart {
             loadCachedProfile()
-            if (shouldRefresh()) refreshProfile() }
+            if (shouldRefresh()) refreshProfile()
+        }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
 
     private val _userProfile = MutableStateFlow<Profile?>(null)
@@ -79,9 +80,13 @@ class ProfileViewModel @Inject constructor(
                 is Resource.Success -> {
                     _userProfile.value = userProfile
                     _recentTracks.value = userProfile.recentTracks?.track ?: emptyList()
-                    userRepository.cacheRecentTracks(userProfile.profileUrl!!, userProfile.recentTracks?.track ?: emptyList())
+                    userRepository.cacheRecentTracks(
+                        userProfile.profileUrl!!,
+                        userProfile.recentTracks?.track ?: emptyList()
+                    )
                     _isRefreshing.value = false
                 }
+
                 is Resource.Error -> {
                     _userProfile.value = userProfile
                     _errorMessage.value = result.message

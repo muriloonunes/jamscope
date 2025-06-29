@@ -7,8 +7,10 @@ import com.mno.jamscope.data.model.Profile
 import com.mno.jamscope.util.Crypto
 import com.mno.jamscope.util.SortingType
 import io.ktor.utils.io.core.toByteArray
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import java.util.Base64
 import javax.inject.Inject
@@ -16,7 +18,7 @@ import javax.inject.Inject
 class UserDataStoreManager @Inject constructor(
     private val dataStore: DataStore<Preferences>
 ) {
-    suspend fun saveUserProfile(profile: Profile) {
+    suspend fun saveUserProfile(profile: Profile) = withContext(Dispatchers.IO) {
         val json = Json.encodeToString(profile)
         val encryptedJson = Crypto.encrypt(json.toByteArray())
         val encryptedBase64 = Base64.getEncoder().encodeToString(encryptedJson)
@@ -25,14 +27,14 @@ class UserDataStoreManager @Inject constructor(
         }
     }
 
-    suspend fun getUserProfile(): Profile? {
+    suspend fun getUserProfile(): Profile? = withContext(Dispatchers.IO) {
         val preferences = dataStore.data.first()
-        val encryptedBase64 = preferences[PreferencesKeys.PROFILE_JSON] ?: return null
-        return try {
+        val encryptedBase64 = preferences[PreferencesKeys.PROFILE_JSON] ?: return@withContext null
+        return@withContext try {
             val encryptedBytes = Base64.getDecoder().decode(encryptedBase64)
             val decryptedBytes = Crypto.decrypt(encryptedBytes)
             Json.decodeFromString(decryptedBytes.decodeToString())
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             null
         }
     }
@@ -60,7 +62,7 @@ class UserDataStoreManager @Inject constructor(
             val ordinal = preferences[PreferencesKeys.SORTING_TYPE] ?: SortingType.DEFAULT.ordinal
             try {
                 SortingType.entries[ordinal]
-            } catch (e: IndexOutOfBoundsException) {
+            } catch (_: IndexOutOfBoundsException) {
                 SortingType.DEFAULT
             }
         }.first()

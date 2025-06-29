@@ -12,9 +12,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.dotlottie.dlplayer.Mode
-import com.lottiefiles.dotlottie.core.compose.ui.DotLottieAnimation
-import com.lottiefiles.dotlottie.core.util.DotLottieSource
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.mno.jamscope.ui.theme.LocalThemePreference
 
 @Composable
@@ -27,17 +28,15 @@ fun NowPlayingAnimation() {
     }
     var animationLink by remember { mutableStateOf("") }
     animationLink = if (isDarkTheme) {
-        "https://lottie.host/92b7a9c6-c3c0-446c-9cb6-34b09ae76738/wAmR8oO4I6.lottie"
+        "https://lottie.host/42f20bd0-773a-4124-8ffa-e477b2f4092c/PzWxhKJYcH.json"
     } else {
-        "https://lottie.host/4b5e1d6d-7cb2-45b8-ad21-3df77d67533a/HkniWYSR5j.lottie"
+        "https://lottie.host/ed0b7d19-44f1-41e3-999a-2f5fc099484f/7MYcgDJxA6.json"
     }
-    DotLottieAnimation(
-        source = DotLottieSource.Url(animationLink),
-        autoplay = true,
-        loop = true,
+    val composition by rememberLottieComposition(LottieCompositionSpec.Url(animationLink))
+    LottieAnimation(
+        composition =  composition,
+        iterations = LottieConstants.IterateForever,
         speed = 1.5f,
-        useFrameInterpolation = true,
-        playMode = Mode.FORWARD,
         modifier = Modifier
             .background(Color.Unspecified)
             .size(22.dp)

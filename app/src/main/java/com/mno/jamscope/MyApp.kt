@@ -13,7 +13,6 @@ import coil3.disk.directory
 import coil3.memory.MemoryCache
 import coil3.request.CachePolicy
 import coil3.request.crossfade
-import com.google.firebase.BuildConfig
 import com.mno.jamscope.worker.MyDelegatingWorkerFactory
 import dagger.hilt.EntryPoint
 import dagger.hilt.EntryPoints
