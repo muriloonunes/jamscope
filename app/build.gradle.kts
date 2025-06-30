@@ -52,6 +52,7 @@ android {
     buildFeatures {
         compose = true
         viewBinding = true
+        buildConfig = true
     }
     room {
         schemaDirectory("$projectDir/schemas")
@@ -84,6 +85,7 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.material)
     implementation(libs.androidx.material.icons.extended)
+    implementation(libs.androidx.adaptive)
 
     // Navigation
     implementation(libs.androidx.navigation.compose)
@@ -129,7 +131,6 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
     //Lottie animations
-    implementation(libs.dotlottie.android.v062)
     implementation(libs.lottie.compose)
 
     //Room

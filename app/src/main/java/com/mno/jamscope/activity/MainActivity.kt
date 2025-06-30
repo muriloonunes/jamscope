@@ -3,6 +3,7 @@ package com.mno.jamscope.activity
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
@@ -13,6 +14,7 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -40,6 +42,7 @@ import com.mno.jamscope.ui.screen.LoginScreen
 import com.mno.jamscope.ui.screen.ProfileTela
 import com.mno.jamscope.ui.screen.SettingsTela
 import com.mno.jamscope.ui.theme.LocalThemePreference
+import com.mno.jamscope.ui.theme.LocalWindowSizeClass
 import com.mno.jamscope.ui.theme.NowPlayingTheme
 import com.mno.jamscope.ui.viewmodel.FriendsViewModel
 import com.mno.jamscope.ui.viewmodel.NavigationViewModel
@@ -64,17 +67,22 @@ class MainActivity : ComponentActivity() {
     private val navigationViewModel by viewModels<NavigationViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        setupSplashScreen()
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
 
-        setupSplashScreen()
         setContent {
             val themePreference by settingsViewModel.themePreference.collectAsState()
             val startDestination by splashViewModel.startDestination.collectAsState()
 //            val appOpenedTimes by splashViewModel.appOpenedTimes.collectAsState()
             var showBottomSheet by remember { mutableStateOf(false) }
             val navController = rememberNavController()
+            val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
             NowPlayingTheme(themePreference = themePreference) {
-                CompositionLocalProvider(LocalThemePreference provides themePreference) {
+                CompositionLocalProvider(
+                    LocalThemePreference provides themePreference,
+                    LocalWindowSizeClass provides windowSizeClass
+                ) {
                     Surface(color = MaterialTheme.colorScheme.background) {
 //                        LaunchedEffect(appOpenedTimes) {
 //                            if (appOpenedTimes == 10 && !showBottomSheet) {
@@ -92,6 +100,7 @@ class MainActivity : ComponentActivity() {
                                             builder = action.navOptions
                                         )
                                     }
+
                                     is NavigationAction.Back -> {
                                         navController.navigateUp()
                                     }
@@ -196,4 +205,3 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-

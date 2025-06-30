@@ -10,8 +10,10 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.window.core.layout.WindowSizeClass
 
 private val lightScheme = lightColorScheme(
     primary = primaryLight,
@@ -287,3 +289,7 @@ enum class AppTheme {
     SYSTEM, LIGHT, DARK
 }
 val LocalThemePreference = compositionLocalOf { 0 }
+
+val LocalWindowSizeClass = staticCompositionLocalOf<WindowSizeClass> {
+    error("No WindowSizeClass provided")
+}

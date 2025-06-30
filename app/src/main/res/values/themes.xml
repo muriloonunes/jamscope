@@ -4,9 +4,12 @@
     <style name="Theme.MySplashScreen" parent="Theme.SplashScreen">
         <item name="postSplashScreenTheme">@style/Theme.NowPlaying</item>
         <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
+
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="Theme.NowPlaying" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="Theme.NowPlaying" parent="Theme.Material3.DayNight.NoActionBar" />
 
     <style name="Theme.WidgetConfigure" parent="Theme.Material3.DayNight.NoActionBar"/>
 </resources>
