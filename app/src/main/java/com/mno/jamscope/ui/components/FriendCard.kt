@@ -62,7 +62,10 @@ fun FriendCard(
     }
     val cardBackgroundToggle by friendsViewModel.cardBackgroundColorToggle.collectAsState()
     val backgroundColor = if (cardBackgroundToggle)
-        friendsViewModel.getSecondaryContainerColor(friend.url, isDarkTheme) else MaterialTheme.colorScheme.onSecondary
+        friendsViewModel.getSecondaryContainerColor(
+            friend.url,
+            isDarkTheme
+        ) else MaterialTheme.colorScheme.onSecondary
 
     val playingAnimationEnabled by friendsViewModel.playingAnimationToggle.collectAsState()
 
@@ -149,26 +152,4 @@ fun FriendCard(
             }
         }
     }
-}
-
-@Composable
-fun FriendImage(friend: User, forExtended: Boolean) {
-    val size = if (forExtended) 100.dp else 50.dp
-    AsyncImage(
-        model = friend.image.firstOrNull { it.size == "large" }?.url ?: "",
-        contentDescription = friend.name?.let {
-            stringResource(
-                R.string.profile_pic_description,
-                it
-            )
-        },
-        error = forwardingPainter(
-            painter = painterResource(id = R.drawable.baseline_account_circle_24),
-            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface)
-        ),
-        placeholder = ColorPainter(color = MaterialTheme.colorScheme.surfaceContainerHigh),
-        modifier = Modifier
-            .clip(CircleShape)
-            .size(size),
-    )
 }

@@ -1,8 +1,11 @@
 package com.mno.jamscope.ui.screen
 
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
@@ -27,8 +30,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.window.core.layout.WindowWidthSizeClass
 import com.mno.jamscope.R
 import com.mno.jamscope.ui.navigator.Destination
+import com.mno.jamscope.ui.theme.LocalWindowSizeClass
 import com.mno.jamscope.ui.viewmodel.FriendsViewModel
 import com.mno.jamscope.util.Stuff
 import kotlinx.coroutines.launch
@@ -53,9 +58,13 @@ fun HomePager(
             Destination.ProfileScreen
         )
     )
-    val listStates = remember { List(itensBarList.size) { LazyListState() } }
+    val listState = remember { List(itensBarList.size) { LazyListState() } }
+    val gridState = remember { List(itensBarList.size) { LazyGridState() } }
     val pagerState = rememberPagerState(initialPage = 0) { itensBarList.size }
     val coroutineScope = rememberCoroutineScope()
+    val windowSizeClass = LocalWindowSizeClass.current
+    val windowsWidth = windowSizeClass.windowWidthSizeClass
+    val isCompact = windowsWidth == WindowWidthSizeClass.COMPACT
 
     LaunchedEffect(pagerState) {
         snapshotFlow { pagerState.currentPage }.collect { page ->
@@ -63,7 +72,9 @@ fun HomePager(
         }
     }
 
-    Scaffold(bottomBar = {
+    Scaffold(
+        contentWindowInsets = WindowInsets.safeDrawing,
+        bottomBar = {
         NavigationBar {
             itensBarList.forEachIndexed { index, item ->
                 NavigationBarItem(
@@ -72,7 +83,11 @@ fun HomePager(
                         selectedItemIndex = index
                         coroutineScope.launch {
                             pagerState.animateScrollToPage(index)
-                            listStates[index].animateScrollToItem(0)
+                            if (isCompact) {
+                                listState[index].animateScrollToItem(0)
+                            } else {
+                                gridState[index].animateScrollToItem(0)
+                            }
                         }
                     },
                     icon = {
@@ -94,12 +109,24 @@ fun HomePager(
                 .padding(innerPadding)
         ) { page ->
             when (page) {
-                0 -> FriendsTela(
-                    friendsViewModel = friendsViewModel,
-                    listStates = listStates[page]
-                )
+                0 -> {
+                    if (isCompact) {
+                        FriendsTela(
+                            friendsViewModel = friendsViewModel,
+                            listState = listState[page],
+                            windowSizeClass = windowSizeClass
+                        )
+                    } else {
+                        FriendsTela(
+                            friendsViewModel = friendsViewModel,
+                            gridState = gridState[page],
+                            windowSizeClass = windowSizeClass
+                        )
+                    }
+                }
                 1 -> ProfileTela(
-                    listState = listStates[page]
+                    listState = listState[page],
+                    windowSizeClass = windowSizeClass
                 )
             }
         }

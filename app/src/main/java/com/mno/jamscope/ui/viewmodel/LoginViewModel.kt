@@ -8,7 +8,6 @@ import com.mno.jamscope.data.repository.UserRepository
 import com.mno.jamscope.ui.navigator.Destination
 import com.mno.jamscope.ui.navigator.Navigator
 import com.mno.jamscope.util.Stuff.openUrl
-import com.mno.jamscope.util.sendReportMail
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -73,12 +72,6 @@ class LoginViewModel @Inject constructor(
                     }
                 }
             )
-        }
-    }
-
-    fun openBugReport(context: Context) {
-        viewModelScope.launch {
-            sendReportMail(context)
         }
     }
 }

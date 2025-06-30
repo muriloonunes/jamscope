@@ -2,59 +2,36 @@ package com.mno.jamscope.ui.components
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.OpenInNew
-import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.PlatformTextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
+import androidx.window.core.layout.WindowHeightSizeClass
 import com.google.android.material.color.MaterialColors
-import com.mno.jamscope.R
 import com.mno.jamscope.data.model.User
-import com.mno.jamscope.util.Stuff.openUrl
-import com.mno.jamscope.util.getCountryFlag
-import my.nanihadesuka.compose.LazyColumnScrollbar
-import my.nanihadesuka.compose.ScrollbarSettings
+import com.mno.jamscope.ui.theme.LocalWindowSizeClass
 
 @Composable
 fun ExtendedFriendCard(
@@ -69,11 +46,23 @@ fun ExtendedFriendCard(
         backgroundColor.toArgb(),
         MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f).toArgb()
     )
-    Dialog(onDismissRequest = { onDismissRequest() }) {
+    val windowSizeClass = LocalWindowSizeClass.current
+    val windowHeight = windowSizeClass.windowHeightSizeClass
+    val cardModifier = when (windowHeight) {
+        WindowHeightSizeClass.COMPACT -> Modifier
+            .fillMaxHeight(0.9f)
+            .fillMaxWidth(0.7f)
+        else -> Modifier
+            .fillMaxHeight(0.7f)
+            .fillMaxWidth(0.9f)
+    }
+
+    Dialog(
+        onDismissRequest = onDismissRequest,
+        properties = DialogProperties(usePlatformDefaultWidth = false)
+    ) {
         ElevatedCard(
-            modifier = Modifier
-                .fillMaxHeight(0.7f)
-                .fillMaxWidth(),
+            modifier = cardModifier,
             colors = CardDefaults.cardColors(
                 containerColor = backgroundColor,
             ),
@@ -81,167 +70,63 @@ fun ExtendedFriendCard(
                 defaultElevation = 16.dp
             )
         ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                    .padding(8.dp)
-                    .align(Alignment.CenterHorizontally)
-            ) {
-                FriendImage(friend, true)
-                Spacer(modifier = Modifier.height(4.dp))
-                if (friend.subscriber == 1) {
-                    Box(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(8.dp))
-                            .background(MaterialTheme.colorScheme.surface)
-                    ) {
-                        Text(
-                            text = stringResource(R.string.pro),
-                            style = MaterialTheme.typography.bodySmall.copy(
-                                color = MaterialTheme.colorScheme.onSurface
-                            ),
-                            modifier = Modifier.padding(4.dp)
+            when (windowHeight) {
+                WindowHeightSizeClass.MEDIUM, WindowHeightSizeClass.EXPANDED -> {
+                    Column {
+                        FriendExtendedCardHeader(
+                            modifier = Modifier
+                                .padding(8.dp),
+                            friend = friend,
+                            windowSizeClass = windowSizeClass
+                        )
+                        FriendExtendedCardTracksSection(
+                            modifier = Modifier
+                                .padding(4.dp)
+                                .border(
+                                    1.dp,
+                                    MaterialTheme.colorScheme.onSurfaceVariant,
+                                    RoundedCornerShape(16.dp)
+                                )
+                                .padding(8.dp)
+                                .fillMaxWidth(),
+                            friend = friend,
+                            recentTracks = recentTracks,
+                            darkerBackgroundColor = darkerBackgroundColor,
+                            playingAnimationEnabled = playingAnimationEnabled,
+                            context = context
                         )
                     }
                 }
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
+
+                WindowHeightSizeClass.COMPACT -> {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.clickable { context.openUrl(friend.url) },
+                        horizontalArrangement = Arrangement.Center
                     ) {
-                        if (friend.realname.isNotEmpty()) {
-                            Text(
-                                text = friend.realname,
-                                style = MaterialTheme.typography.titleLarge.copy(
-                                    fontWeight = FontWeight.Bold,
-                                    platformStyle = PlatformTextStyle(includeFontPadding = false)
-                                ),
-                                textAlign = TextAlign.Center,
-                                textDecoration = TextDecoration.Underline,
-                                maxLines = 1,
-                            )
-                        } else {
-                            friend.name?.let {
-                                Text(
-                                    text = it,
-                                    style = MaterialTheme.typography.titleLarge.copy(
-                                        fontWeight = FontWeight.Bold,
-                                        platformStyle = PlatformTextStyle(includeFontPadding = false)
-                                    ),
-                                    textDecoration = TextDecoration.Underline,
-                                    maxLines = 1,
-                                    textAlign = TextAlign.Center,
-                                )
-                            }
-                        }
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.OpenInNew,
-                            contentDescription = stringResource(R.string.open_user_profile),
+                        FriendExtendedCardHeader(
                             modifier = Modifier
-                                .size(18.dp)
+                                .padding(8.dp)
+                                .align(Alignment.CenterVertically),
+                            friend = friend,
+                            windowSizeClass = windowSizeClass
                         )
-                    }
-                    if (friend.realname.isNotEmpty() && friend.name != null) {
-                        Text(
-                            text = friend.name,
-                            style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
-                            textAlign = TextAlign.Center,
-                        )
-                    }
-                    friend.country?.takeIf { it.isNotEmpty() && it != "None" }?.let { country ->
-                        Text(
-                            text = "$country ${getCountryFlag(country)}",
-                            style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
-                            textAlign = TextAlign.Center,
-                        )
-                    }
-                }
-            }
-            Column(
-                modifier = Modifier
-                    .padding(4.dp)
-                    .border(
-                        1.dp,
-                        MaterialTheme.colorScheme.onSurfaceVariant,
-                        RoundedCornerShape(16.dp)
-                    )
-                    .padding(8.dp)
-                    .fillMaxWidth()
-            ) {
-                Text(
-                    text = stringResource(R.string.recent_tracks),
-                    style = MaterialTheme.typography.titleMedium.copy(
-                        fontWeight = FontWeight.Bold,
-                    )
-                )
-                if (recentTracks.isNotEmpty()) {
-                    val scrollState = rememberLazyListState()
-                    LazyColumnScrollbar(
-                        modifier = Modifier
-                            .background(
-                                color = Color(darkerBackgroundColor),
-                                shape = RoundedCornerShape(12.dp)
-                            ),
-                        state = scrollState,
-                        settings = ScrollbarSettings(
-                            thumbUnselectedColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                            thumbSelectedColor = MaterialTheme.colorScheme.onSurface,
-                            scrollbarPadding = 2.dp
-                        ),
-                    ) {
-                        LazyColumn(
-                            state = scrollState,
-                            modifier = Modifier.padding(
-                                start = 4.dp,
-                                end = 8.dp,
-                                top = 2.dp,
-                                bottom = 2.dp
-                            ),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            items(recentTracks) { track ->
-                                LoadTrackInfo(track = track, forExtended = true, playingAnimationEnabled = playingAnimationEnabled)
-                                HorizontalDivider(
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(
-                                        alpha = 0.5f
-                                    )
+                        FriendExtendedCardTracksSection(
+                            modifier = Modifier
+                                .padding(4.dp)
+                                .border(
+                                    1.dp,
+                                    MaterialTheme.colorScheme.onSurfaceVariant,
+                                    RoundedCornerShape(16.dp)
                                 )
-                            }
-                            item {
-                                Icon(
-                                    imageVector = Icons.Filled.MoreHoriz,
-                                    contentDescription = stringResource(R.string.see_more),
-                                    modifier = Modifier.size(48.dp),
-                                    tint = MaterialTheme.colorScheme.onSurface
-                                )
-                            }
-                            item {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    modifier = Modifier.clickable { context.openUrl("https://www.last.fm/user/${friend.name}/library?page=2") }
-                                ) {
-                                    Text(text = stringResource(R.string.see_more), textDecoration = TextDecoration.Underline)
-                                    Icon(
-                                        imageVector = Icons.AutoMirrored.Filled.OpenInNew,
-                                        contentDescription = stringResource(R.string.see_more),
-                                        modifier = Modifier
-                                            .size(12.dp)
-                                            .padding(top = 2.dp)
-                                    )
-                                }
-                            }
-                        }
-                    }
-                } else {
-                    Text(
-                        text = stringResource(id = R.string.no_recent_tracks),
-                        style = MaterialTheme.typography.bodySmall.copy(
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                                .padding(8.dp)
+                                .fillMaxWidth(),
+                            friend = friend,
+                            recentTracks = recentTracks,
+                            darkerBackgroundColor = darkerBackgroundColor,
+                            playingAnimationEnabled = playingAnimationEnabled,
+                            context = context
                         )
-                    )
+                    }
                 }
             }
         }
