@@ -20,9 +20,6 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -75,7 +72,7 @@ class MainActivity : ComponentActivity() {
             val themePreference by settingsViewModel.themePreference.collectAsState()
             val startDestination by splashViewModel.startDestination.collectAsState()
 //            val appOpenedTimes by splashViewModel.appOpenedTimes.collectAsState()
-            var showBottomSheet by remember { mutableStateOf(false) }
+//            var showBottomSheet by remember { mutableStateOf(false) }
             val navController = rememberNavController()
             val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
             NowPlayingTheme(themePreference = themePreference) {
@@ -192,7 +189,8 @@ class MainActivity : ComponentActivity() {
                 }
                 composable<Destination.ProfileScreen> {
                     ProfileTela(
-                        listState = rememberLazyListState()
+                        listState = rememberLazyListState(),
+                        windowSizeClass = LocalWindowSizeClass.current
                     )
                 }
                 composable<Destination.WebViewScreen> {
