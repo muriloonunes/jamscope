@@ -1,6 +1,8 @@
 package com.mno.jamscope.ui.components
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -8,6 +10,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
 import androidx.compose.material3.Icon
@@ -147,15 +151,68 @@ fun SettingsClickableComp(
     }
 }
 
+@Composable
+fun SettingsHorizontalMenu(
+    modifier: Modifier = Modifier,
+    tiles: List<Int>,
+    selected: Int,
+    onTileSelected: (Int) -> Unit
+) {
+    LazyColumn(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        for (tile in tiles) {
+            item {
+                SettingMenuItem(
+                    name = tile,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(4.dp),
+                    selected = tile == selected,
+                    onClick = { onTileSelected(tile) }
+                )
+            }
+        }
+    }
+}
 
 @Composable
 fun SettingSectionTitle(
-    @StringRes name :Int
+    @StringRes name: Int
 ) {
     Text(
         text = stringResource(id = name),
         style = MaterialTheme.typography.titleLarge.copy(
             color = MaterialTheme.colorScheme.surfaceTint
         )
+    )
+}
+
+@Composable
+fun SettingMenuItem(
+    @StringRes name: Int,
+    modifier: Modifier = Modifier,
+    selected: Boolean,
+    onClick: () -> Unit
+) {
+    val backgroundColor = if (selected)
+        MaterialTheme.colorScheme.surfaceContainerHigh
+    else
+        MaterialTheme.colorScheme.surfaceContainerLow
+
+    val textColor = if (selected)
+        MaterialTheme.colorScheme.onSurface
+    else
+        MaterialTheme.colorScheme.onSurfaceVariant
+
+    Text(
+        text = stringResource(id = name),
+        style = MaterialTheme.typography.titleLarge.copy(color = textColor),
+        modifier = modifier
+            .background(backgroundColor, RoundedCornerShape(8.dp))
+            .clickable { onClick() }
+            .padding(horizontal = 16.dp, vertical = 12.dp)
     )
 }

@@ -1,23 +1,26 @@
 package com.mno.jamscope.ui.screen
 
+import android.content.Context
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.SizeTransform
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Logout
-import androidx.compose.material.icons.automirrored.outlined.LibraryBooks
-import androidx.compose.material.icons.automirrored.outlined.Logout
-import androidx.compose.material.icons.outlined.BrightnessMedium
-import androidx.compose.material.icons.outlined.BugReport
-import androidx.compose.material.icons.outlined.Coffee
-import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material.icons.outlined.Info
-import androidx.compose.material.icons.outlined.ModeComment
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -30,9 +33,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -43,12 +48,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.window.core.layout.WindowWidthSizeClass
 import com.mno.jamscope.R
 import com.mno.jamscope.ui.components.SettingSectionTitle
-import com.mno.jamscope.ui.components.SettingSwitch
-import com.mno.jamscope.ui.components.SettingsClickableComp
+import com.mno.jamscope.ui.components.SettingsHorizontalMenu
+import com.mno.jamscope.ui.components.aboutSettingsSection
+import com.mno.jamscope.ui.components.accountSettingsSection
+import com.mno.jamscope.ui.components.personalizationSettingsSection
+import com.mno.jamscope.ui.theme.LocalWindowSizeClass
 import com.mno.jamscope.ui.viewmodel.SettingsViewModel
-import com.mno.jamscope.util.switches
 import my.nanihadesuka.compose.LazyColumnScrollbar
 import my.nanihadesuka.compose.ScrollbarSettings
 
@@ -59,13 +67,21 @@ fun SettingsTela(
 ) {
     val context = LocalContext.current
     val scrollBehaviour = TopAppBarDefaults.pinnedScrollBehavior()
-    val switches = switches
     val switchStates by settingsViewModel.switchStates.collectAsState()
     val themePreference by settingsViewModel.themePreference.collectAsState()
+    val windowSizeClass = LocalWindowSizeClass.current
 
     var showLogOutDialog by remember { mutableStateOf(false) }
     var showThemeDialog by remember { mutableStateOf(false) }
+    val windowWidth = windowSizeClass.windowWidthSizeClass
+
+    val sectionTiles = listOf(
+        R.string.personalization_setting_title,
+        R.string.account_setting_tile,
+        R.string.about_setting_tile
+    )
     Scaffold(
+        contentWindowInsets = WindowInsets.safeDrawing,
         modifier = Modifier
             .fillMaxSize()
             .nestedScroll(scrollBehaviour.nestedScrollConnection),
@@ -92,143 +108,34 @@ fun SettingsTela(
             )
         }
     ) { innerPadding ->
-        LazyColumnScrollbar(
-            modifier = Modifier
-                .padding(innerPadding)
-                .padding(16.dp),
-            state = rememberLazyListState(),
-            settings = ScrollbarSettings(
-                thumbUnselectedColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                thumbSelectedColor = MaterialTheme.colorScheme.onSurface,
-                scrollbarPadding = 2.dp
-            ),
-        ) {
-            LazyColumn {
-                item {
-                    SettingSectionTitle(R.string.personalization_setting_title)
-                }
-                item {
-                    SettingsClickableComp(
-                        icon = Icons.Outlined.BrightnessMedium,
-                        iconDesc = R.string.theme_icon,
-                        name = R.string.app_theme_setting,
-                        subtitle = when (themePreference) {
-                            0 -> R.string.theme_system_default_auto
-                            1 -> R.string.light_theme
-                            2 -> R.string.dark_theme
-                            else -> R.string.theme_system_default_auto
-                        },
-                        showIcon = false
-                    ) {
-                        showThemeDialog = true
-                    }
-                }
-                items(switches) { switch ->
-                    val state = switchStates[switch.key] ?: switch.initialState
-                    SettingSwitch(
-                        icon = switch.icon,
-                        iconDesc = switch.iconDesc,
-                        name = switch.name,
-                        state = state,
-                        onClick = {
-                            settingsViewModel.toggleSwitch(switch.key)
-                        }
-                    )
-                }
-                item {
-                    SettingSectionTitle(R.string.account_setting_tile)
-                }
-                item {
-                    SettingsClickableComp(
-                        icon = Icons.Outlined.Delete,
-                        iconDesc = R.string.theme_icon,
-                        name = R.string.delete_account_setting,
-                        subtitle = R.string.last_fm_delete_account,
-                        showIcon = false
-                    ) {
-                        settingsViewModel.openDeleteAccount(context)
-                    }
-                }
-                item {
-                    SettingsClickableComp(
-                        icon = Icons.AutoMirrored.Outlined.Logout,
-                        iconDesc = R.string.log_out_icon,
-                        name = R.string.logout,
-                        showIcon = false,
-                        subtitle = null
-                    ) {
-                        showLogOutDialog = true
-                    }
-                }
-                item {
-                    SettingSectionTitle(R.string.about_setting_tile)
-                }
-                item {
-                    SettingsClickableComp(
-                        icon = Icons.Outlined.Coffee,
-                        iconDesc = R.string.coffee_icon,
-                        name = R.string.support_this_app_setting,
-                        subtitle = R.string.buy_me_a_coffee,
-                        showIcon = false
-                    ) {
-                        settingsViewModel.openBuyMeACoffee(context)
-                    }
-                }
-                item {
-                    SettingsClickableComp(
-                        icon = Icons.Outlined.BugReport,
-                        iconDesc = R.string.bug_report_icon,
-                        name = R.string.report_bug_setting,
-                        subtitle = null,
-                        showIcon = true
-                    ) {
-                        settingsViewModel.sendBugReportMail(context)
-                    }
-                }
-                item {
-                    SettingsClickableComp(
-                        icon = Icons.Outlined.ModeComment,
-                        iconDesc = R.string.suggest_feature_icon,
-                        name = R.string.suggest_feature_setting,
-                        subtitle = null,
-                        showIcon = true
-                    ) {
-                        settingsViewModel.navigateToWebView()
-                    }
-                }
-                item {
-                    SettingsClickableComp(
-                        icon = Icons.AutoMirrored.Outlined.LibraryBooks,
-                        iconDesc = R.string.libraries_icon,
-                        name = R.string.show_libraries_setting,
-                        subtitle = null,
-                        showIcon = true
-                    ) {
-                        settingsViewModel.navigateToLibraries()
-                    }
-                }
-                item {
-                    SettingsClickableComp(
-                        icon = Icons.Outlined.Info,
-                        iconDesc = R.string.info_icon,
-                        name = R.string.app_name,
-                        subtitle = R.string.github_project_link,
-                        showIcon = false
-                    ) {
-                        settingsViewModel.openGithubProject(context)
-                    }
-                }
-//                item {
-//                    SettingsClickableComp(
-//                        icon = Icons.Outlined.Star,
-//                        iconDesc = R.string.star_icon,
-//                        name = R.string.liking_app_text,
-//                        subtitle = R.string.liking_app_expanded_text,
-//                        showIcon = false
-//                    ) {
-//                        settingsViewModel.openPlayStore(context)
-//                    }
-//                }
+        when (windowWidth) {
+            WindowWidthSizeClass.COMPACT -> {
+                SettingsVerticalScreen(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .padding(16.dp),
+                    themePreference = themePreference,
+                    switchStates = switchStates,
+                    settingsViewModel = settingsViewModel,
+                    context = context,
+                    onSelectThemeClick = { showThemeDialog = true },
+                    onLogOutClick = { showLogOutDialog = true }
+                )
+            }
+
+            WindowWidthSizeClass.EXPANDED, WindowWidthSizeClass.MEDIUM -> {
+                SettingsHorizontalScreen(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .padding(horizontal = 16.dp),
+                    tiles = sectionTiles,
+                    themePreference = themePreference,
+                    switchStates = switchStates,
+                    settingsViewModel = settingsViewModel,
+                    onSelectThemeClick = { showThemeDialog = true },
+                    onLogOutClick = { showLogOutDialog = true },
+                    context = context
+                )
             }
         }
     }
@@ -320,5 +227,155 @@ fun SettingsTela(
                 ) { (Text(stringResource(R.string.yes))) }
             }
         )
+    }
+}
+
+@Composable
+fun SettingsVerticalScreen(
+    modifier: Modifier = Modifier,
+    themePreference: Int,
+    switchStates: Map<String, Boolean>,
+    settingsViewModel: SettingsViewModel,
+    context: Context,
+    onSelectThemeClick: () -> Unit,
+    onLogOutClick: () -> Unit
+) {
+    LazyColumnScrollbar(
+        modifier = modifier,
+        state = rememberLazyListState(),
+        settings = ScrollbarSettings(
+            thumbUnselectedColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            thumbSelectedColor = MaterialTheme.colorScheme.onSurface,
+            scrollbarPadding = 2.dp
+        )
+    ) {
+        LazyColumn {
+            item {
+                SettingSectionTitle(R.string.personalization_setting_title)
+            }
+            personalizationSettingsSection(
+                themePreference = themePreference,
+                onSelectThemeClick = onSelectThemeClick,
+                switchStates = switchStates,
+                onSwitchClick = { settingsViewModel.toggleSwitch(it) }
+            )
+            item {
+                SettingSectionTitle(R.string.account_setting_tile)
+            }
+            accountSettingsSection(
+                onDeleteAccountClick = { settingsViewModel.openDeleteAccount(context) },
+                onLogOutClick = onLogOutClick,
+            )
+            item {
+                SettingSectionTitle(R.string.about_setting_tile)
+            }
+            aboutSettingsSection(
+                onBuyMeACoffeeClick = { settingsViewModel.openBuyMeACoffee(context) },
+                onBugReportClick = { settingsViewModel.sendBugReportMail(context) },
+                onSuggestFeatureClick = { settingsViewModel.navigateToWebView() },
+                onShowLibrariesClick = { settingsViewModel.navigateToLibraries() },
+                onGithubProjectClick = { settingsViewModel.openGithubProject(context) }
+            )
+        }
+    }
+}
+
+@Composable
+fun SettingsHorizontalScreen(
+    modifier: Modifier = Modifier,
+    themePreference: Int,
+    switchStates: Map<String, Boolean>,
+    settingsViewModel: SettingsViewModel,
+    onSelectThemeClick: () -> Unit,
+    onLogOutClick: () -> Unit,
+    tiles: List<Int>,
+    context: Context
+) {
+    var selectedTile by remember { mutableIntStateOf(tiles.first()) }
+    Row(
+        modifier = modifier
+    ) {
+        SettingsHorizontalMenu(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxHeight()
+                .padding(horizontal = 8.dp),
+            tiles = tiles,
+            selected = selectedTile,
+            onTileSelected = { selectedTile = it }
+        )
+        VerticalDivider()
+        AnimatedContent(
+            targetState = selectedTile,
+            transitionSpec = {
+                val currentIndex = tiles.indexOf(targetState)
+                val previousIndex = tiles.indexOf(initialState)
+
+                val duracao = 250
+
+                if (currentIndex > previousIndex) {
+                    slideInVertically(
+                        animationSpec = tween(durationMillis = duracao)
+                    ) { height -> height } + fadeIn() togetherWith
+                            slideOutVertically(
+                                animationSpec = tween(durationMillis = duracao)
+                            ) { height -> -height } + fadeOut()
+                } else {
+                    slideInVertically(
+                        animationSpec = tween(durationMillis = duracao)
+                    ) { height -> -height } + fadeIn() togetherWith
+                            slideOutVertically(
+                                animationSpec = tween(durationMillis = duracao)
+                            ) { height -> height } + fadeOut()
+                }.using(
+                    SizeTransform(clip = false)
+                )
+            },
+            modifier = Modifier
+                .weight(2f)
+        ) { tile ->
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 8.dp)
+            ) {
+                when (tile) {
+                    R.string.personalization_setting_title -> {
+                        item {
+                            SettingSectionTitle(R.string.personalization_setting_title)
+                        }
+                        personalizationSettingsSection(
+                            themePreference = themePreference,
+                            onSelectThemeClick = onSelectThemeClick,
+                            switchStates = switchStates,
+                            onSwitchClick = { settingsViewModel.toggleSwitch(it) }
+                        )
+                    }
+
+                    R.string.account_setting_tile -> {
+                        item {
+                            SettingSectionTitle(R.string.account_setting_tile)
+                        }
+                        accountSettingsSection(
+                            onDeleteAccountClick = { settingsViewModel.openDeleteAccount(context) },
+                            onLogOutClick = onLogOutClick,
+                        )
+                    }
+
+                    R.string.about_setting_tile -> {
+                        item {
+                            SettingSectionTitle(R.string.about_setting_tile)
+                        }
+                        aboutSettingsSection(
+                            onBuyMeACoffeeClick = { settingsViewModel.openBuyMeACoffee(context) },
+                            onBugReportClick = { settingsViewModel.sendBugReportMail(context) },
+                            onSuggestFeatureClick = { settingsViewModel.navigateToWebView() },
+                            onShowLibrariesClick = { settingsViewModel.navigateToLibraries() },
+                            onGithubProjectClick = { settingsViewModel.openGithubProject(context) }
+                        )
+                    }
+                }
+            }
+        }
     }
 }
