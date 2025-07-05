@@ -12,6 +12,7 @@ import com.mno.jamscope.data.repository.UserRepository
 import com.mno.jamscope.ui.navigator.Destination
 import com.mno.jamscope.ui.navigator.Navigator
 import com.mno.jamscope.ui.theme.ThemeAttributes
+import com.mno.jamscope.util.LogoutEventBus
 import com.mno.jamscope.util.SortingType
 import com.mno.jamscope.util.Stuff
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -70,6 +71,9 @@ class FriendsViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
+            LogoutEventBus.logoutEvents.collect {
+                resetLastUpdateTimestamp()
+            }
             _sortingType.value = friendsRepository.getSortingType()
             combine(
                 settingsRepository.getSwitchState("playing_animation_toggle", true),
@@ -160,7 +164,7 @@ class FriendsViewModel @Inject constructor(
         }
     }
 
-    private fun shouldRefresh(): Boolean {
+    fun shouldRefresh(): Boolean {
         return System.currentTimeMillis() - lastUpdateTimestamp > Stuff.REFRESHING_TIME
     }
 
@@ -174,5 +178,9 @@ class FriendsViewModel @Inject constructor(
         viewModelScope.launch {
             navigator.navigate(Destination.SettingsScreen)
         }
+    }
+
+    private fun resetLastUpdateTimestamp() {
+        lastUpdateTimestamp = 0L
     }
 }

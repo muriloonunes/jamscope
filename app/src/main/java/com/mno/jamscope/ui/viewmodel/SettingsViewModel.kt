@@ -8,6 +8,7 @@ import com.mno.jamscope.data.repository.SettingsRepository
 import com.mno.jamscope.data.repository.UserRepository
 import com.mno.jamscope.ui.navigator.Destination
 import com.mno.jamscope.ui.navigator.Navigator
+import com.mno.jamscope.util.LogoutEventBus
 import com.mno.jamscope.util.Stuff.openUrl
 import com.mno.jamscope.util.sendReportMail
 import com.mno.jamscope.util.switches
@@ -65,6 +66,7 @@ class SettingsViewModel @Inject constructor(
             userRepository.clearUserSession()
             friendsRepository.deleteFriends()
             settingsRepository.clearPrefs()
+            LogoutEventBus.sendLogoutEvent()
             delay(500)
             navigateToLogin()
         }

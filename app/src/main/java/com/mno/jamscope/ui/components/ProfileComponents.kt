@@ -140,7 +140,11 @@ fun ProfileTracksSection(
         itemsIndexed(
             items = userRecentTracks,
             key = { index, track -> "$index${track.name}" }) { index, track ->
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .animateItem()
+            ) {
                 val imageUrl = track.image?.firstOrNull { it.size == "medium" }?.url ?: ""
                 TrackImageLoader(imageUrl = imageUrl)
                 LoadTrackInfo(

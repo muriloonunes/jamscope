@@ -9,6 +9,7 @@ import com.mno.jamscope.data.model.Resource
 import com.mno.jamscope.data.model.Track
 import com.mno.jamscope.data.repository.SettingsRepository
 import com.mno.jamscope.data.repository.UserRepository
+import com.mno.jamscope.util.LogoutEventBus
 import com.mno.jamscope.util.Stuff
 import com.mno.jamscope.util.Stuff.openUrl
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -48,6 +49,14 @@ class ProfileViewModel @Inject constructor(
     val playingAnimationToggle: StateFlow<Boolean> = _playingAnimationToggle
 
     private var lastUpdateTimestamp: Long = 0L
+
+    init {
+        viewModelScope.launch {
+            LogoutEventBus.logoutEvents.collect {
+                resetLastUpdateTimestamp()
+            }
+        }
+    }
 
     fun onRefresh() {
         if (_isRefreshing.value) return
