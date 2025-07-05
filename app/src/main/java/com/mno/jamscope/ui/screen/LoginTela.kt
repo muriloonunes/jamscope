@@ -116,7 +116,6 @@ fun LoginVerticalScreen(
         )
         Spacer(modifier = Modifier.height(8.dp))
         LoginForm(
-            modifier = Modifier,
             username = username,
             onUsernameChange = { loginViewModel.onUsernameChange(it) },
             password = password,

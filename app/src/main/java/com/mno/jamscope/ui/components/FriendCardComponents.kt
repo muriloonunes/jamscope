@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -211,12 +212,17 @@ fun FriendExtendedCardHeader(
             ) {
                 FriendImage(friend, true)
                 Spacer(modifier = Modifier.width(4.dp))
-                if (friend.subscriber == 1) {
-                    LastProBadge()
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    FriendInfo(
+                        friend = friend
+                    )
+                    if (friend.subscriber == 1) {
+                        LastProBadge()
+                    }
                 }
-                FriendInfo(
-                    friend = friend
-                )
             }
         }
     }

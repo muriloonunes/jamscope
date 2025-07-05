@@ -53,7 +53,11 @@ fun FriendsTela(
 
     LaunchedEffect(sortingType) {
         delay(600)
-        listState.animateScrollToItem(0)
+        if (windowWidth == WindowWidthSizeClass.COMPACT) {
+            listState.scrollToItem(0)
+        } else {
+            gridState.scrollToItem(0)
+        }
     }
 
     Column {
