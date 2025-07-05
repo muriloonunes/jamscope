@@ -50,6 +50,7 @@ import com.mno.jamscope.data.model.User
 import com.mno.jamscope.util.Stuff.openUrl
 import com.mno.jamscope.util.forwardingPainter
 import com.mno.jamscope.util.getCountryFlag
+import com.mno.jamscope.util.getLocalizedCountryName
 import my.nanihadesuka.compose.LazyColumnScrollbar
 import my.nanihadesuka.compose.ScrollbarSettings
 
@@ -279,7 +280,7 @@ fun FriendInfo(
         }
         friend.country?.takeIf { it.isNotEmpty() && it != "None" }?.let { country ->
             Text(
-                text = "$country ${getCountryFlag(country)}",
+                text = "${getLocalizedCountryName(country)} ${getCountryFlag(country)}",
                 style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
                 textAlign = TextAlign.Center,
             )

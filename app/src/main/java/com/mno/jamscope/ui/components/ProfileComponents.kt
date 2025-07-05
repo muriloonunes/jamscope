@@ -48,6 +48,7 @@ import com.mno.jamscope.data.model.Profile
 import com.mno.jamscope.data.model.Track
 import com.mno.jamscope.util.forwardingPainter
 import com.mno.jamscope.util.getCountryFlag
+import com.mno.jamscope.util.getLocalizedCountryName
 import java.text.NumberFormat
 import java.util.Locale
 
@@ -137,7 +138,7 @@ fun ProfileTracksSection(
             }
         }
         itemsIndexed(
-            userRecentTracks,
+            items = userRecentTracks,
             key = { index, track -> "$index${track.name}" }) { index, track ->
             Row(verticalAlignment = Alignment.CenterVertically) {
                 val imageUrl = track.image?.firstOrNull { it.size == "medium" }?.url ?: ""
@@ -302,13 +303,13 @@ fun ProfileInfo(
         userProfile.country?.takeIf { it.isNotEmpty() && it != "None" }
             ?.let { country ->
                 Text(
-                    text = "$country ${getCountryFlag(country)}",
+                    text = "${getLocalizedCountryName(country)} ${getCountryFlag(country)}",
                     style = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
                 )
             }
-        userProfile.playcount?.let { playcount ->
+        userProfile.playcount?.let { userPlaycount ->
             val numberFormat = NumberFormat.getNumberInstance(Locale.getDefault())
-            val playcount = numberFormat.format(playcount)
+            val playcount = numberFormat.format(userPlaycount)
             Text(
                 text = stringResource(R.string.scrobbles, playcount),
                 style = MaterialTheme.typography.bodyLarge,
