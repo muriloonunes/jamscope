@@ -90,10 +90,6 @@ dependencies {
     // Navigation
     implementation(libs.androidx.navigation.compose)
 
-    // Multiplatform Settings
-    implementation(libs.multiplatform.settings)
-    implementation(libs.multiplatform.settings.coroutines)
-
     // JSON Serialization
     implementation(libs.kotlinx.serialization.json)
 
@@ -151,9 +147,6 @@ dependencies {
 
     //Scrollbar
     implementation(libs.lazycolumnscrollbar)
-
-    //Rebugger
-    implementation(libs.rebugger)
 
     //Firebase
     implementation(platform(libs.firebase.bom))
