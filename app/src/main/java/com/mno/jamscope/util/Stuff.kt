@@ -20,7 +20,6 @@ import androidx.core.net.toUri
 import com.mno.jamscope.R
 import com.mno.jamscope.data.model.Token
 import com.mno.jamscope.data.model.Track
-import com.mno.jamscope.ui.navigator.Destination
 import kotlinx.serialization.json.Json
 
 object Stuff {
@@ -139,13 +138,6 @@ object Stuff {
             Toast.makeText(this, getString(R.string.no_music_player), Toast.LENGTH_SHORT).show()
         }
     }
-
-    data class BottomNavigationItem(
-        val title: String,
-        val selectedIcon: ImageVector,
-        val unselectedIcon: ImageVector,
-        val destination: Destination
-    )
 
     data class SwitchItem(
         val key: String,

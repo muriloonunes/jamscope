@@ -35,8 +35,8 @@ import androidx.compose.ui.unit.sp
 import com.mno.jamscope.R
 import com.mno.jamscope.data.model.RecentTracks
 import com.mno.jamscope.data.model.User
+import com.mno.jamscope.features.friends.viewmodel.FriendsViewModel
 import com.mno.jamscope.ui.theme.LocalThemePreference
-import com.mno.jamscope.ui.viewmodel.FriendsViewModel
 
 @Composable
 fun FriendCard(

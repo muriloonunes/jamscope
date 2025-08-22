@@ -32,10 +32,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.window.core.layout.WindowWidthSizeClass
 import com.mno.jamscope.R
+import com.mno.jamscope.features.friends.ui.FriendsTela
+import com.mno.jamscope.features.friends.ui.components.BottomNavigationItem
+import com.mno.jamscope.features.friends.viewmodel.FriendsViewModel
 import com.mno.jamscope.ui.navigator.Destination
 import com.mno.jamscope.ui.theme.LocalWindowSizeClass
-import com.mno.jamscope.ui.viewmodel.FriendsViewModel
-import com.mno.jamscope.util.Stuff
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -44,23 +45,23 @@ fun HomePager(
     friendsViewModel: FriendsViewModel
 ) {
     var selectedItemIndex by rememberSaveable { mutableIntStateOf(0) }
-    val itensBarList = listOf(
-        Stuff.BottomNavigationItem(
+    val itemsBarList = listOf(
+        BottomNavigationItem(
             stringResource(R.string.friends),
             Icons.Filled.Group,
             Icons.Outlined.Group,
             Destination.FriendsScreen
         ),
-        Stuff.BottomNavigationItem(
+        BottomNavigationItem(
             stringResource(R.string.profile),
             Icons.Filled.Person,
             Icons.Outlined.Person,
             Destination.ProfileScreen
         )
     )
-    val listState = remember { List(itensBarList.size) { LazyListState() } }
-    val gridState = remember { List(itensBarList.size) { LazyGridState() } }
-    val pagerState = rememberPagerState(initialPage = 0) { itensBarList.size }
+    val listState = remember { List(itemsBarList.size) { LazyListState() } }
+    val gridState = remember { List(itemsBarList.size) { LazyGridState() } }
+    val pagerState = rememberPagerState(initialPage = 0) { itemsBarList.size }
     val coroutineScope = rememberCoroutineScope()
     val windowSizeClass = LocalWindowSizeClass.current
     val windowsWidth = windowSizeClass.windowWidthSizeClass
@@ -76,7 +77,7 @@ fun HomePager(
         contentWindowInsets = WindowInsets.safeDrawing,
         bottomBar = {
         NavigationBar {
-            itensBarList.forEachIndexed { index, item ->
+            itemsBarList.forEachIndexed { index, item ->
                 NavigationBarItem(
                     selected = index == selectedItemIndex,
                     onClick = {

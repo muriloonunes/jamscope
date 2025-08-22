@@ -1,4 +1,4 @@
-package com.mno.jamscope.ui.viewmodel
+package com.mno.jamscope.features.friends.viewmodel
 
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
@@ -36,7 +36,7 @@ class FriendsViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val friendsRepository: FriendsRepository,
     private val navigator: Navigator,
-    private val settingsRepository: SettingsRepository
+    private val settingsRepository: SettingsRepository,
 ) : ViewModel() {
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing = _isRefreshing
@@ -75,7 +75,6 @@ class FriendsViewModel @Inject constructor(
             LogoutEventBus.logoutEvents.collect {
                 resetLastUpdateTimestamp()
             }
-            _sortingType.value = friendsRepository.getSortingType()
             combine(
                 settingsRepository.getSwitchState("playing_animation_toggle", true),
                 settingsRepository.getSwitchState("card_background_color_toggle", true)
