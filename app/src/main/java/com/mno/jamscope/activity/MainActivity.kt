@@ -88,7 +88,6 @@ class MainActivity : ComponentActivity() {
 //                            }
 //                        }
                         LaunchedEffect(Unit) {
-                            //nao sei se isso funciona mas resolve o memory leak que a versao comentada tinha criado
                             navigationViewModel.navActions.collect { action ->
                                 when (action) {
                                     is NavigationAction.Navigate -> {
@@ -103,20 +102,6 @@ class MainActivity : ComponentActivity() {
                                     }
                                 }
                             }
-//                            navigator.navigationActions.collect { action ->
-//                                when (action) {
-//                                    is NavigationAction.Navigate -> {
-//                                        navController.navigate(
-//                                            route = action.destination,
-//                                            builder = action.navOptions
-//                                        )
-//                                    }
-//
-//                                    is NavigationAction.Back -> {
-//                                        navController.navigateUp()
-//                                    }
-//                                }
-//                            }
                         }
                         startDestination?.let { AppNavigation(navController, it) }
 //                        if (showBottomSheet) {

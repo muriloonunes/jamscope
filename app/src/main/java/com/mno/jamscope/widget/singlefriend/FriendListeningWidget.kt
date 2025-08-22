@@ -19,6 +19,7 @@ import androidx.glance.GlanceTheme
 import androidx.glance.Image
 import androidx.glance.ImageProvider
 import androidx.glance.LocalContext
+import androidx.glance.LocalSize
 import androidx.glance.action.ActionParameters
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
@@ -30,13 +31,13 @@ import androidx.glance.appwidget.provideContent
 import androidx.glance.background
 import androidx.glance.currentState
 import androidx.glance.layout.Alignment
+import androidx.glance.layout.Box
 import androidx.glance.layout.Column
 import androidx.glance.layout.Row
 import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.padding
 import androidx.glance.layout.size
-import androidx.glance.layout.wrapContentSize
 import androidx.glance.layout.wrapContentWidth
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
@@ -72,9 +73,10 @@ class FriendListeningWidget : GlanceAppWidget() {
 
     @Composable
     private fun WidgetDesign(
-        context: Context
+        context: Context,
     ) {
         val friend = WidgetDataStoreManager.getFriend(currentState())
+        Log.i("Widget Size", LocalSize.current.toString())
         val textStyle = TextStyle(
             color = GlanceTheme.colors.onSurface,
         )
@@ -88,7 +90,7 @@ class FriendListeningWidget : GlanceAppWidget() {
         }
         Row(
             modifier = GlanceModifier.fillMaxSize().background(GlanceTheme.colors.surface)
-                .padding(8.dp).cornerRadius(Stuff.WIDGET_CORNER_RADIUS),
+                .padding(2.dp).cornerRadius(Stuff.WIDGET_CORNER_RADIUS),
             verticalAlignment = Alignment.CenterVertically
         ) {
             ProfileImage(friend, imageBitmap)
@@ -98,22 +100,27 @@ class FriendListeningWidget : GlanceAppWidget() {
 
     @Composable
     private fun ProfileImage(
-        friend: User?, imageBitmap: Bitmap?
+        friend: User?, imageBitmap: Bitmap?,
     ) {
         val imageDescription = friend?.name?.let {
             LocalContext.current.getString(R.string.profile_pic_description, it)
         } ?: LocalContext.current.getString(R.string.no_friend_selected)
         imageBitmap?.let {
-            Image(
-                provider = ImageProvider(it),
-                contentDescription = imageDescription,
-                modifier = GlanceModifier.cornerRadius(50.dp).size(60.dp)
-            )
+            Box(
+                modifier = GlanceModifier.padding(8.dp)
+            ) {
+                Image(
+                    provider = ImageProvider(it),
+                    contentDescription = imageDescription,
+                    modifier = GlanceModifier.cornerRadius(50.dp).size(60.dp)
+                )
+            }
         } ?: run {
             Image(
                 provider = ImageProvider(R.drawable.baseline_account_circle_24),
                 contentDescription = imageDescription,
-                colorFilter = ColorFilter.tint(GlanceTheme.colors.onSurface)
+                colorFilter = ColorFilter.tint(GlanceTheme.colors.onSurface),
+                modifier = GlanceModifier.padding(14.dp)
             )
         }
     }
@@ -121,7 +128,8 @@ class FriendListeningWidget : GlanceAppWidget() {
     @Composable
     private fun FriendInfo(friend: User?, textStyle: TextStyle, context: Context) {
         Column(
-            horizontalAlignment = Alignment.Start, modifier = GlanceModifier.padding(start = 8.dp)
+            horizontalAlignment = Alignment.Start,
+            modifier = GlanceModifier.padding(start = 8.dp, end = 2.dp)
         ) {
             when {
                 friend == null -> NoFriendSelected(textStyle)
@@ -164,7 +172,8 @@ class FriendListeningWidget : GlanceAppWidget() {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = track.album.name,
+                    //·
+                    text = "${track.album.name} — ${it.artist.name}",
                     style = textStyle,
                     maxLines = 1,
                     modifier = GlanceModifier.defaultWeight()
@@ -180,7 +189,7 @@ class FriendListeningWidget : GlanceAppWidget() {
                     ), maxLines = 1, modifier = GlanceModifier.wrapContentWidth()
                 )
             }
-            Text(text = it.artist.name, style = textStyle, maxLines = 1)
+//            Text(text = it.artist.name, style = textStyle, maxLines = 1)
             LastUpdatedManager()
         } ?: NoRecentTracks(textStyle, context)
     }
@@ -205,7 +214,7 @@ class FriendListeningWidget : GlanceAppWidget() {
                 provider = ImageProvider(R.drawable.round_refresh_24),
                 contentDescription = LocalContext.current.getString(R.string.refresh_button),
                 colorFilter = ColorFilter.tint(GlanceTheme.colors.onSurfaceVariant),
-                modifier = GlanceModifier.wrapContentSize()
+                modifier = GlanceModifier.size(14.dp)
                     .clickable(onClick = actionRunCallback<WidgetRefreshAction>())
             )
         }
@@ -268,7 +277,7 @@ class WidgetRefreshAction : ActionCallback {
     override suspend fun onAction(
         context: Context,
         glanceId: GlanceId,
-        parameters: ActionParameters
+        parameters: ActionParameters,
     ) {
         WorkManager.getInstance(context).cancelUniqueWork("FriendListeningWidgetWorker")
 
