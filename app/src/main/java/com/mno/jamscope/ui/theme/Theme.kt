@@ -1,5 +1,6 @@
 package com.mno.jamscope.ui.theme
 
+import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
@@ -9,10 +10,13 @@ import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
+import androidx.core.view.WindowCompat
 import androidx.window.core.layout.WindowSizeClass
 
 private val lightScheme = lightColorScheme(
@@ -248,20 +252,19 @@ data class ColorFamily(
     val color: Color,
     val onColor: Color,
     val colorContainer: Color,
-    val onColorContainer: Color
+    val onColorContainer: Color,
 )
 
 val unspecified_scheme = ColorFamily(
     Color.Unspecified, Color.Unspecified, Color.Unspecified, Color.Unspecified
 )
 
-
 @Composable
 fun NowPlayingTheme(
     themePreference: Int,
     // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     val darkTheme = when (themePreference) {
         1 -> false
@@ -278,6 +281,16 @@ fun NowPlayingTheme(
         else -> lightScheme
     }
 
+    val view = LocalView.current
+    if (!view.isInEditMode) {
+        SideEffect {
+            val window = (view.context as Activity).window
+            val insetsController = WindowCompat.getInsetsController(window, view)
+            insetsController.isAppearanceLightStatusBars = !darkTheme
+        }
+    }
+
+
     MaterialTheme(
         colorScheme = colorScheme,
         typography = Typography,
@@ -288,6 +301,7 @@ fun NowPlayingTheme(
 enum class AppTheme {
     SYSTEM, LIGHT, DARK
 }
+
 val LocalThemePreference = compositionLocalOf { 0 }
 
 val LocalWindowSizeClass = staticCompositionLocalOf<WindowSizeClass> {

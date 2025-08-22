@@ -11,6 +11,7 @@ import com.mno.jamscope.data.repository.SettingsRepository
 import com.mno.jamscope.data.repository.UserRepository
 import com.mno.jamscope.ui.navigator.Destination
 import com.mno.jamscope.ui.navigator.Navigator
+import com.mno.jamscope.ui.theme.AppTheme
 import com.mno.jamscope.ui.theme.ThemeAttributes
 import com.mno.jamscope.util.LogoutEventBus
 import com.mno.jamscope.util.SortingType
@@ -170,7 +171,7 @@ class FriendsViewModel @Inject constructor(
 
     fun getSecondaryContainerColor(name: String?, isDarkTheme: Boolean): Color {
         val colorPalette =
-            if (isDarkTheme) ThemeAttributes.ColorPalette.DARK else ThemeAttributes.ColorPalette.LIGHT
+            if (isDarkTheme) AppTheme.DARK else AppTheme.LIGHT
         return ThemeAttributes.getSecondaryContainerColor(name, colorPalette)
     }
 

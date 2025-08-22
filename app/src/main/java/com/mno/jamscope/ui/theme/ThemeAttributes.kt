@@ -4,12 +4,8 @@ import androidx.compose.ui.graphics.Color
 import kotlin.math.absoluteValue
 
 object ThemeAttributes {
-    enum class ColorPalette {
-        LIGHT, DARK
-    }
-
     private val secondaryContainerColors = mapOf(
-        ColorPalette.LIGHT to listOf(
+        AppTheme.LIGHT to listOf(
             Color(0xFFFFDBD1),
             Color(0xFFDCE7C8),
             Color(0xFFDAE2F9),
@@ -37,7 +33,7 @@ object ThemeAttributes {
             Color(0xFFD3E8D1),
             Color(0xFFFFDBD2)
         ),
-        ColorPalette.DARK to listOf(
+        AppTheme.DARK to listOf(
             Color(0xFF5D4037),
             Color(0xFF404A33),
             Color(0xFF3E4759),
@@ -67,8 +63,8 @@ object ThemeAttributes {
         )
     )
 
-    fun getSecondaryContainerColor(name: String?, colorPalette: ColorPalette): Color {
-        val colors = secondaryContainerColors[colorPalette] ?: return Color.Unspecified
+    fun getSecondaryContainerColor(name: String?, appTheme: AppTheme): Color {
+        val colors = secondaryContainerColors[appTheme] ?: return Color.Unspecified
         val index = (name.hashCode() * 28).absoluteValue % colors.size
         return colors[index]
     }
