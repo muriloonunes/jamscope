@@ -30,19 +30,23 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.window.core.layout.WindowWidthSizeClass
 import com.mno.jamscope.R
 import com.mno.jamscope.features.friends.ui.FriendsTela
 import com.mno.jamscope.features.friends.ui.components.BottomNavigationItem
 import com.mno.jamscope.features.friends.viewmodel.FriendsViewModel
+import com.mno.jamscope.features.profile.ui.ProfileTela
+import com.mno.jamscope.features.profile.viewmodel.ProfileViewModel
 import com.mno.jamscope.ui.navigator.Destination
 import com.mno.jamscope.ui.theme.LocalWindowSizeClass
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomePager(
-    friendsViewModel: FriendsViewModel
+fun JamHomePager(
+    friendsViewModel: FriendsViewModel,
 ) {
     var selectedItemIndex by rememberSaveable { mutableIntStateOf(0) }
     val itemsBarList = listOf(
@@ -76,33 +80,33 @@ fun HomePager(
     Scaffold(
         contentWindowInsets = WindowInsets.safeDrawing,
         bottomBar = {
-        NavigationBar {
-            itemsBarList.forEachIndexed { index, item ->
-                NavigationBarItem(
-                    selected = index == selectedItemIndex,
-                    onClick = {
-                        selectedItemIndex = index
-                        coroutineScope.launch {
-                            pagerState.animateScrollToPage(index)
-                            if (isCompact) {
-                                listState[index].animateScrollToItem(0)
-                            } else {
-                                gridState[index].animateScrollToItem(0)
+            NavigationBar {
+                itemsBarList.forEachIndexed { index, item ->
+                    NavigationBarItem(
+                        selected = index == selectedItemIndex,
+                        onClick = {
+                            selectedItemIndex = index
+                            coroutineScope.launch {
+                                pagerState.animateScrollToPage(index)
+                                if (isCompact) {
+                                    listState[index].animateScrollToItem(0)
+                                } else {
+                                    gridState[index].animateScrollToItem(0)
+                                }
                             }
-                        }
-                    },
-                    icon = {
-                        Icon(
-                            imageVector = if (index == selectedItemIndex) item.selectedIcon else item.unselectedIcon,
-                            contentDescription = item.title
-                        )
-                    },
-                    label = { Text(item.title) },
-                    alwaysShowLabel = true
-                )
+                        },
+                        icon = {
+                            Icon(
+                                imageVector = if (index == selectedItemIndex) item.selectedIcon else item.unselectedIcon,
+                                contentDescription = item.title
+                            )
+                        },
+                        label = { Text(item.title) },
+                        alwaysShowLabel = true
+                    )
+                }
             }
-        }
-    }) { innerPadding ->
+        }) { innerPadding ->
         HorizontalPager(
             state = pagerState,
             modifier = Modifier
@@ -111,24 +115,57 @@ fun HomePager(
         ) { page ->
             when (page) {
                 0 -> {
+                    val state by friendsViewModel.uiState.collectAsStateWithLifecycle()
                     if (isCompact) {
                         FriendsTela(
-                            friendsViewModel = friendsViewModel,
+                            state = state,
+                            onRefresh = { friendsViewModel.onRefresh() },
+                            onSettingIconClick = { friendsViewModel.navigateToSettings() },
+                            onSortIconClick = { friendsViewModel.showSortingSheet() },
+                            onSortingTypeChange = {
+                                friendsViewModel.onSortingTypeChanged(it)
+                                friendsViewModel.hideSortingSheet()
+                            },
+                            onHideSortingSheet = { friendsViewModel.hideSortingSheet() },
+                            colorProvider = { name, isDark ->
+                                friendsViewModel.getSecondaryContainerColor(name, isDark)
+                            },
                             listState = listState[page],
                             windowSizeClass = windowSizeClass
                         )
                     } else {
                         FriendsTela(
-                            friendsViewModel = friendsViewModel,
+                            state = state,
+                            onRefresh = { friendsViewModel.onRefresh() },
+                            onSettingIconClick = { friendsViewModel.navigateToSettings() },
+                            onSortIconClick = { friendsViewModel.showSortingSheet() },
+                            onSortingTypeChange = {
+                                friendsViewModel.onSortingTypeChanged(it)
+                                friendsViewModel.hideSortingSheet()
+                            },
+                            onHideSortingSheet = { friendsViewModel.hideSortingSheet() },
+                            colorProvider = { name, isDark ->
+                                friendsViewModel.getSecondaryContainerColor(name, isDark)
+                            },
                             gridState = gridState[page],
                             windowSizeClass = windowSizeClass
                         )
                     }
                 }
-                1 -> ProfileTela(
-                    listState = listState[page],
-                    windowSizeClass = windowSizeClass
-                )
+
+                1 -> {
+                    val profileViewModel: ProfileViewModel = hiltViewModel()
+                    val state by profileViewModel.uiState.collectAsStateWithLifecycle()
+                    ProfileTela(
+                        listState = listState[page],
+                        windowSizeClass = windowSizeClass,
+                        state = state,
+                        onRefresh = { profileViewModel.onRefresh() },
+                        onSeeMoreClick = { context, profile ->
+                            profileViewModel.seeMore(context, profile)
+                        }
+                    )
+                }
             }
         }
     }
