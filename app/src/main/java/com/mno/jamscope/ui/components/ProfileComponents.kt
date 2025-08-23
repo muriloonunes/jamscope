@@ -124,7 +124,7 @@ fun ProfileTracksSection(
     errorMessage: String,
     userRecentTracks: List<Track>,
     playingAnimationEnabled: Boolean,
-    onTrackClick: () -> Unit,
+    onSeeMoreClick: () -> Unit,
 ) {
     LazyColumn(
         modifier = modifier,
@@ -171,7 +171,7 @@ fun ProfileTracksSection(
             item {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.clickable { onTrackClick() }
+                    modifier = Modifier.clickable { onSeeMoreClick() }
                 ) {
                     Text(
                         text = stringResource(R.string.see_more),

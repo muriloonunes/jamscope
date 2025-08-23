@@ -1,4 +1,4 @@
-package com.mno.jamscope.ui.viewmodel
+package com.mno.jamscope.features.profile.viewmodel
 
 import android.content.Context
 import androidx.lifecycle.ViewModel
@@ -6,19 +6,18 @@ import androidx.lifecycle.viewModelScope
 import com.mno.jamscope.R
 import com.mno.jamscope.data.model.Profile
 import com.mno.jamscope.data.model.Resource
-import com.mno.jamscope.data.model.Track
 import com.mno.jamscope.data.repository.SettingsRepository
 import com.mno.jamscope.data.repository.UserRepository
+import com.mno.jamscope.features.profile.state.ProfileState
 import com.mno.jamscope.util.LogoutEventBus
 import com.mno.jamscope.util.Stuff
 import com.mno.jamscope.util.Stuff.openUrl
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -28,25 +27,8 @@ class ProfileViewModel @Inject constructor(
     @param:ApplicationContext private val context: Context,
     private val settingsRepository: SettingsRepository
 ) : ViewModel() {
-    private val _isRefreshing = MutableStateFlow(false)
-    val isRefreshing = _isRefreshing
-        .onStart {
-            loadCachedProfile()
-            if (shouldRefresh()) refreshProfile()
-        }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
-
-    private val _userProfile = MutableStateFlow<Profile?>(null)
-    val userProfile: StateFlow<Profile?> = _userProfile
-
-    private val _recentTracks = MutableStateFlow<List<Track>>(emptyList())
-    val recentTracks: StateFlow<List<Track>> = _recentTracks
-
-    private val _errorMessage = MutableStateFlow("")
-    val errorMessage: StateFlow<String> = _errorMessage
-
-    private val _playingAnimationToggle = MutableStateFlow(true)
-    val playingAnimationToggle: StateFlow<Boolean> = _playingAnimationToggle
+    private val _uiState = MutableStateFlow(ProfileState())
+    val uiState: StateFlow<ProfileState> = _uiState.asStateFlow()
 
     private var lastUpdateTimestamp: Long = 0L
 
@@ -56,10 +38,18 @@ class ProfileViewModel @Inject constructor(
                 resetLastUpdateTimestamp()
             }
         }
+        loadCachedProfile()
+        if (shouldRefresh()) refreshProfile()
+        viewModelScope.launch {
+            settingsRepository.getSwitchState("playing_animation_toggle", true)
+                .collect { state ->
+                    _uiState.update { it.copy(playingAnimationEnabled = state) }
+                }
+        }
     }
 
     fun onRefresh() {
-        if (_isRefreshing.value) return
+        if (_uiState.value.isRefreshing) return
         refreshProfile()
     }
 
@@ -67,39 +57,49 @@ class ProfileViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val userProfile = userRepository.getCachedUserProfile()
-                _userProfile.value = userProfile
-                _recentTracks.value = userProfile.recentTracks?.track ?: emptyList()
-            } catch (_: IllegalStateException) {
-                _errorMessage.value = context.getString(R.string.error_loading_profile)
-            }
-            settingsRepository.getSwitchState("playing_animation_toggle", true)
-                .collect { state ->
-                    _playingAnimationToggle.value = state
+                val recentTracks = userProfile.recentTracks?.track ?: emptyList()
+                _uiState.update {
+                    it.copy(
+                        userProfile = userProfile,
+                        recentTracks = recentTracks,
+                        imagePfp = userProfile.imageUrl ?: R.drawable.baseline_account_circle_24
+                    )
                 }
+            } catch (_: IllegalStateException) {
+                _uiState.update { it.copy(errorMessage = context.getString(R.string.error_loading_profile)) }
+            }
         }
     }
 
     private fun refreshProfile() {
-        _isRefreshing.value = true
-        _errorMessage.value = ""
+        _uiState.update { it.copy(isRefreshing = true, errorMessage = "") }
         viewModelScope.launch {
             val userProfile = userRepository.getUserProfile()
             userRepository.getUserInfo(userProfile!!)
             when (val result = userRepository.getRecentTracks(userProfile)) {
                 is Resource.Success -> {
-                    _userProfile.value = userProfile
-                    _recentTracks.value = userProfile.recentTracks?.track ?: emptyList()
+                    val recentTracks = userProfile.recentTracks?.track ?: emptyList()
+                    _uiState.update {
+                        it.copy(
+                            userProfile = userProfile,
+                            recentTracks = recentTracks,
+                            imagePfp = userProfile.imageUrl ?: R.drawable.baseline_account_circle_24,
+                            isRefreshing = false
+                        )
+                    }
                     userRepository.cacheRecentTracks(
                         userProfile.profileUrl!!,
-                        userProfile.recentTracks?.track ?: emptyList()
+                        recentTracks
                     )
-                    _isRefreshing.value = false
                 }
-
                 is Resource.Error -> {
-                    _userProfile.value = userProfile
-                    _errorMessage.value = result.message
-                    _isRefreshing.value = false
+                    _uiState.update {
+                        it.copy(
+                            userProfile = userProfile,
+                            errorMessage = result.message,
+                            isRefreshing = false
+                        )
+                    }
                 }
             }
             userRepository.saveUserProfile(userProfile)
@@ -107,7 +107,7 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    fun openSong(
+    fun seeMore(
         context: Context,
         userProfile: Profile?
     ) {
