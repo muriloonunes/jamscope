@@ -1,4 +1,4 @@
-package com.mno.jamscope.ui.viewmodel
+package com.mno.jamscope.features.settings.viewmodel
 
 import android.content.Context
 import androidx.lifecycle.ViewModel
@@ -36,7 +36,9 @@ class SettingsViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             loadSwitchStates()
-            _themePreference.value = settingsRepository.getThemePreferenceFlow()
+            settingsRepository.themePreferenceFlow().collect { it ->
+                _themePreference.value = it
+            }
         }
     }
 

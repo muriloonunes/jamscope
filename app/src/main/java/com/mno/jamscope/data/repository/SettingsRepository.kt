@@ -2,13 +2,12 @@ package com.mno.jamscope.data.repository
 
 import com.mno.jamscope.data.session.SettingsDataStoreManager
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
 class SettingsRepository @Inject constructor(
     private val settingsDataStoreManager: SettingsDataStoreManager
 ) {
-    suspend fun getThemePreferenceFlow() = settingsDataStoreManager.themePreferenceFlow.first()
+    fun themePreferenceFlow(): Flow<Int> = settingsDataStoreManager.themePreferenceFlow
 
     suspend fun saveThemePref(theme: Int) {
         settingsDataStoreManager.saveThemePref(theme)
