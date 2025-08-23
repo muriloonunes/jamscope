@@ -42,7 +42,7 @@
             </intent-filter>
         </activity>
         <receiver
-            android:name=".widget.singlefriend.FriendListeningReceiver"
+            android:name="com.mno.jamscope.features.widgets.singlefriend.FriendListeningReceiver"
             android:exported="true"
             android:label="@string/friend_listening_widget_label">
             <intent-filter>
@@ -61,7 +61,7 @@
             </intent-filter>
         </activity>
         <receiver
-            android:name=".widget.friendgroup.FriendGroupReceiver"
+            android:name="com.mno.jamscope.features.widgets.friendgroup.FriendGroupReceiver"
             android:exported="true"
             android:label="@string/friend_group_widget_label">
             <intent-filter>

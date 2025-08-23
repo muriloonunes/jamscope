@@ -10,8 +10,8 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.mno.jamscope.data.model.User
 import com.mno.jamscope.data.repository.FriendsRepository
-import com.mno.jamscope.widget.WidgetDataStoreManager
-import com.mno.jamscope.widget.friendgroup.FriendGroupWidget
+import com.mno.jamscope.features.widgets.WidgetDataStoreManager
+import com.mno.jamscope.features.widgets.friendgroup.FriendGroupWidget
 
 class FriendGroupWidgetWorker(
     private val appContext: Context,

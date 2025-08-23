@@ -24,9 +24,9 @@ import com.mno.jamscope.databinding.FriendGroupWidgetConfigureBinding
 import com.mno.jamscope.databinding.FriendsListItemBinding
 import com.mno.jamscope.data.model.User
 import com.mno.jamscope.ui.viewmodel.ConfigWidgetScreenViewModel
-import com.mno.jamscope.widget.WidgetDataStoreManager
-import com.mno.jamscope.widget.friendgroup.FriendGroupWidget
-import com.mno.jamscope.widget.friendgroup.startGroupUpdateWorker
+import com.mno.jamscope.features.widgets.WidgetDataStoreManager
+import com.mno.jamscope.features.widgets.friendgroup.FriendGroupWidget
+import com.mno.jamscope.features.widgets.friendgroup.startGroupUpdateWorker
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 

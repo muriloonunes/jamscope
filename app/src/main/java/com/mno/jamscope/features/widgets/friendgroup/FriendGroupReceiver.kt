@@ -1,9 +1,9 @@
-package com.mno.jamscope.widget.singlefriend
+package com.mno.jamscope.features.widgets.friendgroup
 
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
 
-class FriendListeningReceiver: GlanceAppWidgetReceiver() {
+class FriendGroupReceiver: GlanceAppWidgetReceiver() {
     override val glanceAppWidget: GlanceAppWidget
-        get() = FriendListeningWidget()
+        get() = FriendGroupWidget()
 }

@@ -24,9 +24,9 @@ import com.mno.jamscope.databinding.FriendListeningWidgetConfigureBinding
 import com.mno.jamscope.databinding.FriendsListItemBinding
 import com.mno.jamscope.data.model.User
 import com.mno.jamscope.ui.viewmodel.ConfigWidgetScreenViewModel
-import com.mno.jamscope.widget.WidgetDataStoreManager
-import com.mno.jamscope.widget.singlefriend.FriendListeningWidget
-import com.mno.jamscope.widget.singlefriend.startListeningUpdateWorker
+import com.mno.jamscope.features.widgets.WidgetDataStoreManager
+import com.mno.jamscope.features.widgets.singlefriend.FriendListeningWidget
+import com.mno.jamscope.features.widgets.singlefriend.startListeningUpdateWorker
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 

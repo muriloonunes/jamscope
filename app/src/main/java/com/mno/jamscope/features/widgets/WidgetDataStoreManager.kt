@@ -1,4 +1,4 @@
-package com.mno.jamscope.widget
+package com.mno.jamscope.features.widgets
 
 import android.content.Context
 import androidx.datastore.preferences.core.MutablePreferences

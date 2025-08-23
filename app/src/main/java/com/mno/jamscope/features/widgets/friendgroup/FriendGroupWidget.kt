@@ -1,4 +1,4 @@
-package com.mno.jamscope.widget.friendgroup
+package com.mno.jamscope.features.widgets.friendgroup
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -56,7 +56,7 @@ import com.mno.jamscope.R
 import com.mno.jamscope.data.model.User
 import com.mno.jamscope.util.Stuff
 import com.mno.jamscope.util.dateStringFormatter
-import com.mno.jamscope.widget.WidgetDataStoreManager
+import com.mno.jamscope.features.widgets.WidgetDataStoreManager
 import com.mno.jamscope.worker.FriendGroupWidgetWorker
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
