@@ -18,13 +18,14 @@ import androidx.navigation.navigation
 import com.mno.jamscope.features.friends.viewmodel.FriendsViewModel
 import com.mno.jamscope.features.login.ui.LoginScreen
 import com.mno.jamscope.features.login.viewmodel.LoginViewModel
+import com.mno.jamscope.features.profile.ui.ProfileTela
+import com.mno.jamscope.features.profile.viewmodel.ProfileViewModel
+import com.mno.jamscope.features.settings.ui.SettingsTela
+import com.mno.jamscope.features.settings.viewmodel.SettingsViewModel
 import com.mno.jamscope.ui.components.LoadLibrariesScreen
 import com.mno.jamscope.ui.components.WebViewLoader
-import com.mno.jamscope.ui.screen.HomePager
-import com.mno.jamscope.ui.screen.ProfileTela
-import com.mno.jamscope.ui.screen.SettingsTela
+import com.mno.jamscope.ui.screen.JamHomePager
 import com.mno.jamscope.ui.theme.LocalWindowSizeClass
-import com.mno.jamscope.ui.viewmodel.SettingsViewModel
 
 @Composable
 fun RootHost(
@@ -70,7 +71,7 @@ fun RootHost(
         ) {
             composable<Destination.FriendsScreen> {
                 val friendsViewModel: FriendsViewModel = hiltViewModel()
-                HomePager(friendsViewModel)
+                JamHomePager(friendsViewModel)
             }
             composable<Destination.SettingsScreen> {
                 val settingsViewModel: SettingsViewModel = hiltViewModel()
@@ -79,9 +80,16 @@ fun RootHost(
                 )
             }
             composable<Destination.ProfileScreen> {
+                val profileViewModel: ProfileViewModel = hiltViewModel()
+                val state by profileViewModel.uiState.collectAsStateWithLifecycle()
                 ProfileTela(
                     listState = rememberLazyListState(),
-                    windowSizeClass = LocalWindowSizeClass.current
+                    windowSizeClass = LocalWindowSizeClass.current,
+                    state = state,
+                    onRefresh = { profileViewModel.onRefresh() },
+                    onSeeMoreClick = { context, profile ->
+                        profileViewModel.seeMore(context, profile)
+                    }
                 )
             }
             composable<Destination.WebViewScreen> {

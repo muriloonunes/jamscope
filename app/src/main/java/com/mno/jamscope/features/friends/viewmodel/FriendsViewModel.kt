@@ -3,12 +3,12 @@ package com.mno.jamscope.features.friends.viewmodel
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mno.jamscope.data.model.RecentTracks
 import com.mno.jamscope.data.model.Resource
 import com.mno.jamscope.data.model.User
 import com.mno.jamscope.data.repository.FriendsRepository
 import com.mno.jamscope.data.repository.SettingsRepository
 import com.mno.jamscope.data.repository.UserRepository
+import com.mno.jamscope.features.friends.state.FriendsState
 import com.mno.jamscope.ui.navigator.Destination
 import com.mno.jamscope.ui.navigator.Navigator
 import com.mno.jamscope.ui.theme.AppTheme
@@ -20,14 +20,11 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -38,75 +35,67 @@ class FriendsViewModel @Inject constructor(
     private val navigator: Navigator,
     private val settingsRepository: SettingsRepository,
 ) : ViewModel() {
-    private val _isRefreshing = MutableStateFlow(false)
-    val isRefreshing = _isRefreshing
-        .onStart {
-            loadCachedFriends()
-            if (shouldRefresh()) refreshFriends()
-        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
+    private val _uiState = MutableStateFlow(FriendsState())
+    val uiState: StateFlow<FriendsState> = _uiState.asStateFlow()
 
-    private val _errorMessage = MutableStateFlow("")
-    val errorMessage: StateFlow<String> = _errorMessage
-
-    private val _sortingType = MutableStateFlow(SortingType.DEFAULT)
-    val sortingType: StateFlow<SortingType> = _sortingType
-
-    private val _friends = MutableStateFlow<List<User>>(emptyList())
-    val friends: StateFlow<List<User>> =
-        _friends.combine(sortingType) { friends, sortingType ->
-            sortFriends(friends, sortingType)
-        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
-
-    private val _recentTracksMap = MutableStateFlow<Map<String, RecentTracks?>>(emptyMap())
-    val recentTracksMap: StateFlow<Map<String, RecentTracks?>> = friends.map { friendsList ->
-        friendsList.associate { it.url to it.recentTracks }
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyMap())
-
-    private val _cardBackgroundColorToggle = MutableStateFlow(true)
-    val cardBackgroundColorToggle: StateFlow<Boolean> = _cardBackgroundColorToggle
-
-    private val _playingAnimationToggle = MutableStateFlow(true)
-    val playingAnimationToggle: StateFlow<Boolean> = _playingAnimationToggle
+    private var originalFriends: List<User> = emptyList()
 
     private var lastUpdateTimestamp: Long = 0L
 
     init {
+        // Observe logout and settings toggles
         viewModelScope.launch {
-            LogoutEventBus.logoutEvents.collect {
-                resetLastUpdateTimestamp()
-            }
-            combine(
-                settingsRepository.getSwitchState("playing_animation_toggle", true),
-                settingsRepository.getSwitchState("card_background_color_toggle", true)
-            ) { playingAnimation, cardBackground ->
-                playingAnimation to cardBackground
-            }.collect { (playingAnimation, cardBackground) ->
-                _playingAnimationToggle.value = playingAnimation
-                _cardBackgroundColorToggle.value = cardBackground
-            }
+            LogoutEventBus.logoutEvents.collect { resetLastUpdateTimestamp() }
+        }
+        viewModelScope.launch {
+            settingsRepository.getSwitchState("playing_animation_toggle", true)
+                .collect { enabled ->
+                    _uiState.update { it.copy(playingAnimationEnabled = enabled) }
+                }
+        }
+        viewModelScope.launch {
+            settingsRepository.getSwitchState("card_background_color_toggle", true)
+                .collect { enabled ->
+                    _uiState.update { it.copy(cardBackgroundColorEnabled = enabled) }
+                }
+        }
+        // Restore saved sorting type first
+        viewModelScope.launch {
+            val saved = friendsRepository.getSortingType()
+            _uiState.update { it.copy(sortingType = saved) }
+            // After we have sorting type, load data
+            loadCachedFriends()
+            if (shouldRefresh()) refreshFriends()
         }
     }
 
     fun onRefresh() {
-        if (_isRefreshing.value) return
+        if (_uiState.value.isRefreshing) return
         refreshFriends()
     }
 
     private fun loadCachedFriends() {
         viewModelScope.launch {
             val cachedFriends = friendsRepository.getCachedFriends().firstOrNull()
-            if (cachedFriends.isNullOrEmpty()) {
+            originalFriends = if (cachedFriends.isNullOrEmpty()) {
                 val friendsDataStore = friendsRepository.getFriendsFromDataStore().first()
-                _friends.value = sortFriends(friendsDataStore, _sortingType.value)
+                friendsDataStore
             } else {
-                _friends.value = sortFriends(cachedFriends, _sortingType.value)
+                cachedFriends
+            }
+            val sortingType = _uiState.value.sortingType
+            val friendsSorted = sortFriends(originalFriends, sortingType)
+            _uiState.update {
+                it.copy(
+                    friends = friendsSorted,
+                    recentTracksMap = friendsSorted.associate { f -> f.url to f.recentTracks }
+                )
             }
         }
     }
 
     private fun refreshFriends() {
-        _isRefreshing.value = true
-        _errorMessage.value = ""
+        _uiState.update { it.copy(isRefreshing = true, errorMessage = "") }
         viewModelScope.launch {
             val userProfile = userRepository.getUserProfile()
             when (val result = userRepository.getUserFriends(userProfile!!.username)) {
@@ -117,10 +106,8 @@ class FriendsViewModel @Inject constructor(
                     loadRecentTracks(friends)
                     friendsRepository.cacheFriends(friends)
                 }
-
                 is Resource.Error -> {
-                    _errorMessage.value = result.message
-                    _isRefreshing.value = false
+                    _uiState.update { it.copy(errorMessage = result.message, isRefreshing = false) }
                 }
             }
             lastUpdateTimestamp = System.currentTimeMillis()
@@ -140,16 +127,31 @@ class FriendsViewModel @Inject constructor(
                 }
             }.awaitAll()
 
-            _friends.value = updatedFriends
-            _recentTracksMap.value = updatedFriends.associate { it.url to it.recentTracks }
-            _isRefreshing.value = false
+            // Update base order to the latest data first
+            originalFriends = updatedFriends
+
+            _uiState.update { state ->
+                val sorted = sortFriends(originalFriends, state.sortingType)
+                state.copy(
+                    friends = sorted,
+                    recentTracksMap = sorted.associate { it.url to it.recentTracks },
+                    isRefreshing = false
+                )
+            }
         }
     }
 
     fun onSortingTypeChanged(sortingType: SortingType) {
         viewModelScope.launch {
             friendsRepository.saveSortingType(sortingType)
-            _sortingType.value = sortingType
+            _uiState.update { state ->
+                val sorted = sortFriends(originalFriends, sortingType)
+                state.copy(
+                    sortingType = sortingType,
+                    friends = sorted,
+                    recentTracksMap = sorted.associate { it.url to it.recentTracks }
+                )
+            }
         }
     }
 
@@ -169,8 +171,7 @@ class FriendsViewModel @Inject constructor(
     }
 
     fun getSecondaryContainerColor(name: String?, isDarkTheme: Boolean): Color {
-        val colorPalette =
-            if (isDarkTheme) AppTheme.DARK else AppTheme.LIGHT
+        val colorPalette = if (isDarkTheme) AppTheme.DARK else AppTheme.LIGHT
         return ThemeAttributes.getSecondaryContainerColor(name, colorPalette)
     }
 
@@ -178,6 +179,14 @@ class FriendsViewModel @Inject constructor(
         viewModelScope.launch {
             navigator.navigate(Destination.SettingsScreen)
         }
+    }
+
+    fun showSortingSheet() {
+        _uiState.update { it.copy(isBottomSheetShown = true) }
+    }
+
+    fun hideSortingSheet() {
+        _uiState.update { it.copy(isBottomSheetShown = false) }
     }
 
     private fun resetLastUpdateTimestamp() {

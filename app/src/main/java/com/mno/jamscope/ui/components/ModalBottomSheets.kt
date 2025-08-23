@@ -25,7 +25,7 @@ import com.mno.jamscope.util.SortingType
 @Composable
 fun SortingBottomSheet(
     sortingType: SortingType,
-    onSortingTypeChanged: (SortingType) -> Unit,
+    onSortingTypeChange: (SortingType) -> Unit,
     onDismissRequest: () -> Unit
 ) {
     ModalBottomSheet(
@@ -48,7 +48,7 @@ fun SortingBottomSheet(
                     SortFilterChip(
                         sortType = sortType,
                         currentSortingType = sortingType,
-                        onSortingTypeChanged = onSortingTypeChanged
+                        onSortingTypeChanged = onSortingTypeChange
                     )
                 }
             }

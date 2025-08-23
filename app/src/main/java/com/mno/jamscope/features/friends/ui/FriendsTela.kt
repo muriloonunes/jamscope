@@ -5,40 +5,37 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.ui.graphics.Color
 import androidx.window.core.layout.WindowSizeClass
 import androidx.window.core.layout.WindowWidthSizeClass
-import com.mno.jamscope.features.friends.viewmodel.FriendsViewModel
+import com.mno.jamscope.features.friends.state.FriendsState
 import com.mno.jamscope.ui.components.FriendScreenTopAppBar
 import com.mno.jamscope.ui.components.SortingBottomSheet
+import com.mno.jamscope.ui.screen.JamPullToRefresh
+import com.mno.jamscope.util.SortingType
 import kotlinx.coroutines.delay
 
 @ExperimentalMaterial3Api
 @Composable
 fun FriendsTela(
-    friendsViewModel: FriendsViewModel,
+    state: FriendsState,
+    onRefresh: () -> Unit,
+    onSettingIconClick: () -> Unit,
+    onSortIconClick: () -> Unit,
+    onSortingTypeChange: (SortingType) -> Unit,
+    onHideSortingSheet: () -> Unit,
+    colorProvider: (String?, Boolean) -> Color,
     listState: LazyListState = LazyListState(),
     gridState: LazyGridState = LazyGridState(),
-    windowSizeClass: WindowSizeClass
+    windowSizeClass: WindowSizeClass,
 ) {
-    val sortingType by friendsViewModel.sortingType.collectAsStateWithLifecycle()
-    val refreshing by friendsViewModel.isRefreshing.collectAsStateWithLifecycle()
-    val errorMessage by friendsViewModel.errorMessage.collectAsStateWithLifecycle()
-    val recentTracksMap by friendsViewModel.recentTracksMap.collectAsStateWithLifecycle()
-    val friends by friendsViewModel.friends.collectAsStateWithLifecycle()
-    var showBottomSheet by remember { mutableStateOf(false) }
     val windowWidth = windowSizeClass.windowWidthSizeClass
 
-    LaunchedEffect(sortingType) {
+    LaunchedEffect(state.sortingType) {
         delay(600)
         if (windowWidth == WindowWidthSizeClass.COMPACT) {
             listState.scrollToItem(0)
@@ -49,28 +46,24 @@ fun FriendsTela(
 
     Column {
         FriendScreenTopAppBar(
-            onSettingIconClick = {
-                friendsViewModel.navigateToSettings()
-            },
-            onSortIconClick = {
-                showBottomSheet = true
-            }
+            onSettingIconClick = onSettingIconClick,
+            onSortIconClick = onSortIconClick
         )
-        PullToRefreshBox(
-            isRefreshing = refreshing,
-            onRefresh = {
-                friendsViewModel.onRefresh()
-            }
+        JamPullToRefresh(
+            isRefreshing = state.isRefreshing,
+            onRefresh = onRefresh
         ) {
             when (windowWidth) {
                 WindowWidthSizeClass.COMPACT -> {
                     FriendsVerticalScreen(
                         listState = listState,
                         modifier = Modifier.fillMaxSize(),
-                        errorMessage = errorMessage,
-                        friends = friends,
-                        recentTracksMap = recentTracksMap,
-                        friendsViewModel = friendsViewModel
+                        errorMessage = state.errorMessage,
+                        friends = state.friends,
+                        recentTracksMap = state.recentTracksMap,
+                        cardBackgroundToggle = state.cardBackgroundColorEnabled,
+                        playingAnimationEnabled = state.playingAnimationEnabled,
+                        colorProvider = { name, isDark -> colorProvider(name, isDark) }
                     )
                 }
 
@@ -81,10 +74,12 @@ fun FriendsTela(
                         FriendsHorizontalScreen(
                             modifier = Modifier.fillMaxSize(),
                             gridState = gridState,
-                            errorMessage = errorMessage,
-                            friends = friends,
-                            recentTracksMap = recentTracksMap,
-                            friendsViewModel = friendsViewModel
+                            errorMessage = state.errorMessage,
+                            friends = state.friends,
+                            recentTracksMap = state.recentTracksMap,
+                            cardBackgroundToggle = state.cardBackgroundColorEnabled,
+                            playingAnimationEnabled = state.playingAnimationEnabled,
+                            colorProvider = { name, isDark -> colorProvider(name, isDark) }
                         )
                     }
                 }
@@ -92,14 +87,11 @@ fun FriendsTela(
         }
     }
 
-    if (showBottomSheet) {
+    if (state.isBottomSheetShown) {
         SortingBottomSheet(
-            sortingType = sortingType,
-            onSortingTypeChanged = {
-                friendsViewModel.onSortingTypeChanged(it)
-                showBottomSheet = false
-            },
-            onDismissRequest = { showBottomSheet = false }
+            sortingType = state.sortingType,
+            onSortingTypeChange = { onSortingTypeChange(it) },
+            onDismissRequest = { onHideSortingSheet() }
         )
     }
 }

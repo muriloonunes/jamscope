@@ -20,13 +20,13 @@ import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -35,7 +35,6 @@ import androidx.compose.ui.unit.sp
 import com.mno.jamscope.R
 import com.mno.jamscope.data.model.RecentTracks
 import com.mno.jamscope.data.model.User
-import com.mno.jamscope.features.friends.viewmodel.FriendsViewModel
 import com.mno.jamscope.ui.theme.LocalThemePreference
 
 @Composable
@@ -43,7 +42,9 @@ fun FriendCard(
     friend: User,
     recentTracks: RecentTracks?,
     modifier: Modifier,
-    friendsViewModel: FriendsViewModel
+    cardBackgroundToggle: Boolean,
+    playingAnimationEnabled: Boolean,
+    colorProvider: (String?, Boolean) -> Color,
 ) {
     val themePreference = LocalThemePreference.current
     val isDarkTheme = when (themePreference) {
@@ -52,14 +53,11 @@ fun FriendCard(
         2 -> true
         else -> isSystemInDarkTheme()
     }
-    val cardBackgroundToggle by friendsViewModel.cardBackgroundColorToggle.collectAsState()
     val backgroundColor = if (cardBackgroundToggle)
-        friendsViewModel.getSecondaryContainerColor(
+        colorProvider(
             friend.url,
             isDarkTheme
         ) else MaterialTheme.colorScheme.onSecondary
-
-    val playingAnimationEnabled by friendsViewModel.playingAnimationToggle.collectAsState()
 
     var isExtended by remember { mutableStateOf(false) }
 

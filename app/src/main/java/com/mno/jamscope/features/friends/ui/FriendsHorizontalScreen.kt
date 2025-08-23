@@ -11,7 +11,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.mno.jamscope.data.model.RecentTracks
 import com.mno.jamscope.data.model.User
-import com.mno.jamscope.features.friends.viewmodel.FriendsViewModel
 import com.mno.jamscope.ui.components.FriendCard
 import com.mno.jamscope.ui.components.ShowErrorMessage
 
@@ -22,7 +21,9 @@ fun FriendsHorizontalScreen(
     errorMessage: String,
     friends: List<User>,
     recentTracksMap: Map<String, RecentTracks?>,
-    friendsViewModel: FriendsViewModel
+    cardBackgroundToggle: Boolean,
+    playingAnimationEnabled: Boolean,
+    colorProvider: (String?, Boolean) -> androidx.compose.ui.graphics.Color,
 ) {
     if (errorMessage.isNotEmpty()) {
         ShowErrorMessage(errorMessage)
@@ -50,7 +51,9 @@ fun FriendsHorizontalScreen(
                             easing = FastOutSlowInEasing
                         )
                     ),
-                friendsViewModel = friendsViewModel
+                cardBackgroundToggle = cardBackgroundToggle,
+                playingAnimationEnabled = playingAnimationEnabled,
+                colorProvider = colorProvider
             )
         }
     }
