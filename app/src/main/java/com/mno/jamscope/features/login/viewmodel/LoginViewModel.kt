@@ -41,7 +41,7 @@ class LoginViewModel @Inject constructor(
     }
 
     fun login() {
-        _state.update { it.copy(isLoading = true) }
+        _state.update { it.copy(isLoading = true, errorMessage = "") }
         viewModelScope.launch {
             val username = _state.value.username.trim()
             val password = _state.value.password.trim()

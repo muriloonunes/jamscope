@@ -9,12 +9,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.OpenInNew
 import androidx.compose.material.icons.rounded.Visibility
 import androidx.compose.material.icons.rounded.VisibilityOff
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -24,21 +27,24 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.autofill.ContentType
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentType
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.PlatformTextStyle
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.mno.jamscope.R
+import kotlin.Unit
 
 @Composable
 fun LoginHeader(
     modifier: Modifier,
-    alignment: Alignment.Horizontal
+    alignment: Alignment.Horizontal,
 ) {
     Column(
         modifier = modifier,
@@ -63,8 +69,10 @@ fun LoginForm(
     password: String,
     onPasswordChange: (String) -> Unit,
     isPasswordField: Boolean,
-    onPasswordVisibilityChange: () -> Unit
+    onPasswordVisibilityChange: () -> Unit,
+    onLoginButtonClick: () -> Unit,
 ) {
+    val keyboardController = LocalSoftwareKeyboardController.current
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -78,7 +86,8 @@ fun LoginForm(
                 )
             },
             keyboardOptions = KeyboardOptions(
-                autoCorrectEnabled = false
+                autoCorrectEnabled = false,
+                imeAction = ImeAction.Next
             ),
             maxLines = 1,
             modifier = Modifier
@@ -98,7 +107,15 @@ fun LoginForm(
                 .fillMaxWidth(0.8f)
                 .semantics { contentType = ContentType.Password },
             keyboardOptions = KeyboardOptions(
-                autoCorrectEnabled = false, keyboardType = KeyboardType.Password
+                autoCorrectEnabled = false,
+                keyboardType = KeyboardType.Password,
+                imeAction = ImeAction.Done
+            ),
+            keyboardActions = KeyboardActions(
+                onDone = {
+                    onLoginButtonClick()
+                    keyboardController?.hide()
+                }
             ),
             maxLines = 1,
             visualTransformation = if (isPasswordField) VisualTransformation.None else PasswordVisualTransformation(),
@@ -114,6 +131,7 @@ fun LoginForm(
     }
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun LoginActions(
     modifier: Modifier = Modifier,
@@ -150,6 +168,8 @@ fun LoginActions(
         }
         Button(
             enabled = username.isNotEmpty() && password.isNotEmpty(),
+            shapes = ButtonDefaults.shapes(),
+            contentPadding = ButtonDefaults.contentPaddingFor(ButtonDefaults.MediumContainerHeight),
             onClick = onLoginButtonClick
         ) {
             Text(

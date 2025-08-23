@@ -57,7 +57,8 @@ fun LoginVerticalScreen(
             password = password,
             onPasswordChange = { onPasswordChange(it) },
             isPasswordField = passwordVisibility,
-            onPasswordVisibilityChange = { onPasswordVisibilityChange() }
+            onPasswordVisibilityChange = { onPasswordVisibilityChange() },
+            onLoginButtonClick = { onLoginClick() }
         )
         Spacer(modifier = Modifier.height(16.dp))
         if (errorMessage.isNotEmpty()) {
