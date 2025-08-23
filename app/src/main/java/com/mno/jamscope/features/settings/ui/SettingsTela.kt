@@ -1,5 +1,6 @@
 package com.mno.jamscope.features.settings.ui
 
+import android.content.Context
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
@@ -21,36 +22,43 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowWidthSizeClass
 import com.mno.jamscope.R
-import com.mno.jamscope.features.settings.viewmodel.SettingsViewModel
+import com.mno.jamscope.features.settings.state.SettingsUiState
 import com.mno.jamscope.ui.theme.LocalWindowSizeClass
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsTela(
-    settingsViewModel: SettingsViewModel
+    uiState: SettingsUiState,
+    onNavigateBack: () -> Unit,
+    onSelectThemeClick: () -> Unit,
+    onLogOutClick: () -> Unit,
+    hideThemeDialog: () -> Unit,
+    hideLogOutDialog: () -> Unit,
+    setThemePreference: (Int) -> Unit,
+    onLogoutDialogClick: () -> Unit,
+    onSwitchClick: (String) -> Unit,
+    onDeleteAccountClick: (Context) -> Unit,
+    onBuyMeACoffeeClick: (Context) -> Unit,
+    onBugReportClick: (Context) -> Unit,
+    onSuggestFeatureClick: () -> Unit,
+    onShowLibrariesClick: () -> Unit,
+    onGithubProjectClick: (Context) -> Unit,
 ) {
-    val context = LocalContext.current
     val scrollBehaviour = TopAppBarDefaults.pinnedScrollBehavior()
-    val switchStates by settingsViewModel.switchStates.collectAsState()
-    val themePreference by settingsViewModel.themePreference.collectAsState()
+    val themePreference = uiState.themePreference
+    val switchStates = uiState.switchStates
     val windowSizeClass = LocalWindowSizeClass.current
 
-    var showLogOutDialog by remember { mutableStateOf(false) }
-    var showThemeDialog by remember { mutableStateOf(false) }
+    val showLogOutDialog = uiState.showLogOutDialog
+    val showThemeDialog = uiState.showThemeDialog
     val windowWidth = windowSizeClass.windowWidthSizeClass
 
     val sectionTiles = listOf(
@@ -72,9 +80,7 @@ fun SettingsTela(
                 },
                 navigationIcon = {
                     IconButton(
-                        onClick = {
-                            settingsViewModel.navigateBack()
-                        }
+                        onClick = { onNavigateBack() }
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -94,10 +100,15 @@ fun SettingsTela(
                         .padding(16.dp),
                     themePreference = themePreference,
                     switchStates = switchStates,
-                    settingsViewModel = settingsViewModel,
-                    context = context,
-                    onSelectThemeClick = { showThemeDialog = true },
-                    onLogOutClick = { showLogOutDialog = true }
+                    onSelectThemeClick = { onSelectThemeClick() },
+                    onLogOutClick = { onLogOutClick() },
+                    onSwitchClick = { onSwitchClick(it) },
+                    onDeleteAccountClick = { onDeleteAccountClick(it) },
+                    onBuyMeACoffeeClick = { onBuyMeACoffeeClick(it) },
+                    onBugReportClick = { onBugReportClick(it) },
+                    onSuggestFeatureClick = { onSuggestFeatureClick() },
+                    onShowLibrariesClick = { onShowLibrariesClick() },
+                    onGithubProjectClick = { onGithubProjectClick(it) }
                 )
             }
 
@@ -109,10 +120,15 @@ fun SettingsTela(
                     tiles = sectionTiles,
                     themePreference = themePreference,
                     switchStates = switchStates,
-                    settingsViewModel = settingsViewModel,
-                    onSelectThemeClick = { showThemeDialog = true },
-                    onLogOutClick = { showLogOutDialog = true },
-                    context = context
+                    onSelectThemeClick = { onSelectThemeClick() },
+                    onLogOutClick = { onLogOutClick() },
+                    onSwitchClick = { onSwitchClick(it) },
+                    onDeleteAccountClick = { onDeleteAccountClick(it) },
+                    onBuyMeACoffeeClick = { onBuyMeACoffeeClick(it) },
+                    onBugReportClick = { onBugReportClick(it) },
+                    onSuggestFeatureClick = { onSuggestFeatureClick() },
+                    onShowLibrariesClick = { onShowLibrariesClick() },
+                    onGithubProjectClick = { onGithubProjectClick(it) }
                 )
             }
         }
@@ -120,7 +136,7 @@ fun SettingsTela(
 
     if (showThemeDialog) {
         AlertDialog(
-            onDismissRequest = { showThemeDialog = false },
+            onDismissRequest = { hideThemeDialog() },
             title = {
                 Text(
                     text = stringResource(R.string.select_theme),
@@ -132,7 +148,7 @@ fun SettingsTela(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         RadioButton(
                             selected = themePreference == 0,
-                            onClick = { settingsViewModel.setThemePreference(0) }
+                            onClick = { setThemePreference(0) }
                         )
                         Text(
                             text = stringResource(R.string.theme_system_default_auto),
@@ -142,7 +158,7 @@ fun SettingsTela(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         RadioButton(
                             selected = themePreference == 1,
-                            onClick = { settingsViewModel.setThemePreference(1) }
+                            onClick = { setThemePreference(1) }
                         )
                         Text(
                             text = stringResource(R.string.light_theme),
@@ -152,7 +168,7 @@ fun SettingsTela(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         RadioButton(
                             selected = themePreference == 2,
-                            onClick = { settingsViewModel.setThemePreference(2) }
+                            onClick = { setThemePreference(2) }
                         )
                         Text(
                             text = stringResource(R.string.dark_theme),
@@ -163,7 +179,7 @@ fun SettingsTela(
             },
             confirmButton = {
                 TextButton(
-                    onClick = { showThemeDialog = false }
+                    onClick = { hideThemeDialog() }
                 ) { (Text(stringResource(R.string.ok))) }
             }
         )
@@ -172,7 +188,7 @@ fun SettingsTela(
 
     if (showLogOutDialog) {
         AlertDialog(
-            onDismissRequest = { showLogOutDialog = false },
+            onDismissRequest = { hideLogOutDialog() },
             icon = {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.Logout,
@@ -193,15 +209,12 @@ fun SettingsTela(
             },
             dismissButton = {
                 TextButton(
-                    onClick = { showLogOutDialog = false }
+                    onClick = { hideLogOutDialog() }
                 ) { (Text(stringResource(R.string.cancel))) }
             },
             confirmButton = {
                 Button(
-                    onClick = {
-                        settingsViewModel.logOutUser()
-                        showLogOutDialog = false
-                    }
+                    onClick = { onLogoutDialogClick() }
                 ) { (Text(stringResource(R.string.yes))) }
             }
         )

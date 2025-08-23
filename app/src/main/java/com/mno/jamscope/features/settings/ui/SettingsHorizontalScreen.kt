@@ -21,9 +21,9 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.mno.jamscope.R
-import com.mno.jamscope.features.settings.viewmodel.SettingsViewModel
 import com.mno.jamscope.ui.components.SettingSectionTitle
 import com.mno.jamscope.ui.components.SettingsHorizontalMenu
 import com.mno.jamscope.ui.components.aboutSettingsSection
@@ -35,12 +35,18 @@ fun SettingsHorizontalScreen(
     modifier: Modifier = Modifier,
     themePreference: Int,
     switchStates: Map<String, Boolean>,
-    settingsViewModel: SettingsViewModel,
     onSelectThemeClick: () -> Unit,
     onLogOutClick: () -> Unit,
     tiles: List<Int>,
-    context: Context
+    onSwitchClick: (String) -> Unit,
+    onDeleteAccountClick: (Context) -> Unit,
+    onBuyMeACoffeeClick: (Context) -> Unit,
+    onBugReportClick: (Context) -> Unit,
+    onSuggestFeatureClick: () -> Unit,
+    onShowLibrariesClick: () -> Unit,
+    onGithubProjectClick: (Context) -> Unit,
 ) {
+    val context = LocalContext.current
     var selectedTile by remember { mutableIntStateOf(tiles.first()) }
     Row(
         modifier = modifier
@@ -98,7 +104,7 @@ fun SettingsHorizontalScreen(
                             themePreference = themePreference,
                             onSelectThemeClick = onSelectThemeClick,
                             switchStates = switchStates,
-                            onSwitchClick = { settingsViewModel.toggleSwitch(it) }
+                            onSwitchClick = { onSwitchClick(it) }
                         )
                     }
 
@@ -107,7 +113,7 @@ fun SettingsHorizontalScreen(
                             SettingSectionTitle(R.string.account_setting_tile)
                         }
                         accountSettingsSection(
-                            onDeleteAccountClick = { settingsViewModel.openDeleteAccount(context) },
+                            onDeleteAccountClick = { onDeleteAccountClick(context) },
                             onLogOutClick = onLogOutClick,
                         )
                     }
@@ -117,11 +123,11 @@ fun SettingsHorizontalScreen(
                             SettingSectionTitle(R.string.about_setting_tile)
                         }
                         aboutSettingsSection(
-                            onBuyMeACoffeeClick = { settingsViewModel.openBuyMeACoffee(context) },
-                            onBugReportClick = { settingsViewModel.sendBugReportMail(context) },
-                            onSuggestFeatureClick = { settingsViewModel.navigateToWebView() },
-                            onShowLibrariesClick = { settingsViewModel.navigateToLibraries() },
-                            onGithubProjectClick = { settingsViewModel.openGithubProject(context) }
+                            onBuyMeACoffeeClick = { onBuyMeACoffeeClick(context) },
+                            onBugReportClick = { onBugReportClick(context) },
+                            onSuggestFeatureClick = { onSuggestFeatureClick() },
+                            onShowLibrariesClick = { onShowLibrariesClick() },
+                            onGithubProjectClick = { onGithubProjectClick(context) }
                         )
                     }
                 }

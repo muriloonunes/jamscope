@@ -17,6 +17,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.compose.rememberNavController
+import com.mno.jamscope.features.settings.viewmodel.SettingsViewModel
 import com.mno.jamscope.ui.navigator.NavigationAction
 import com.mno.jamscope.ui.navigator.Navigator
 import com.mno.jamscope.ui.navigator.RootHost
@@ -24,7 +25,6 @@ import com.mno.jamscope.ui.theme.LocalThemePreference
 import com.mno.jamscope.ui.theme.LocalWindowSizeClass
 import com.mno.jamscope.ui.theme.NowPlayingTheme
 import com.mno.jamscope.ui.viewmodel.NavigationViewModel
-import com.mno.jamscope.ui.viewmodel.SettingsViewModel
 import com.mno.jamscope.ui.viewmodel.SplashViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -48,10 +48,11 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            val themePreference by settingsViewModel.themePreference.collectAsState()
-            val startDestination by splashViewModel.startDestination.collectAsState()
 //            val appOpenedTimes by splashViewModel.appOpenedTimes.collectAsState()
 //            var showBottomSheet by remember { mutableStateOf(false) }
+            val settingsUiState by settingsViewModel.uiState.collectAsState()
+            val themePreference = settingsUiState.themePreference
+            val startDestination by splashViewModel.startDestination.collectAsState()
             val navController = rememberNavController()
             val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
             NowPlayingTheme(themePreference = themePreference) {

@@ -8,6 +8,7 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -75,8 +76,26 @@ fun RootHost(
             }
             composable<Destination.SettingsScreen> {
                 val settingsViewModel: SettingsViewModel = hiltViewModel()
+                val state by settingsViewModel.uiState.collectAsState()
                 SettingsTela(
-                    settingsViewModel = settingsViewModel
+                    uiState = state,
+                    onNavigateBack = { settingsViewModel.navigateBack() },
+                    onSelectThemeClick = { settingsViewModel.showThemeDialog() },
+                    onLogOutClick = { settingsViewModel.showLogOutDialog() },
+                    hideThemeDialog = { settingsViewModel.hideThemeDialog() },
+                    setThemePreference = { settingsViewModel.setThemePreference(it) },
+                    hideLogOutDialog = { settingsViewModel.hideLogOutDialog() },
+                    onLogoutDialogClick = {
+                        settingsViewModel.logOutUser()
+                        settingsViewModel.hideLogOutDialog()
+                    },
+                    onSwitchClick = { settingsViewModel.toggleSwitch(it) },
+                    onDeleteAccountClick = { settingsViewModel.openDeleteAccount(it) },
+                    onBuyMeACoffeeClick = { settingsViewModel.openBuyMeACoffee(it) },
+                    onBugReportClick = { settingsViewModel.sendBugReportMail(it) },
+                    onSuggestFeatureClick = { settingsViewModel.navigateToWebView() },
+                    onShowLibrariesClick = { settingsViewModel.navigateToLibraries() },
+                    onGithubProjectClick = { settingsViewModel.openGithubProject(it) }
                 )
             }
             composable<Destination.ProfileScreen> {
@@ -93,10 +112,16 @@ fun RootHost(
                 )
             }
             composable<Destination.WebViewScreen> {
-                WebViewLoader()
+                val settingsViewModel: SettingsViewModel = hiltViewModel()
+                WebViewLoader(
+                    onNavigateBack = { settingsViewModel.navigateBack() }
+                )
             }
             composable<Destination.LibrariesScreen> {
-                LoadLibrariesScreen()
+                val settingsViewModel: SettingsViewModel = hiltViewModel()
+                LoadLibrariesScreen(
+                    onNavigateBack = { settingsViewModel.navigateBack() }
+                )
             }
         }
     }

@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.mno.jamscope.data.repository.FriendsRepository
 import com.mno.jamscope.data.repository.SettingsRepository
 import com.mno.jamscope.data.repository.UserRepository
+import com.mno.jamscope.features.settings.state.SettingsUiState
 import com.mno.jamscope.ui.navigator.Destination
 import com.mno.jamscope.ui.navigator.Navigator
 import com.mno.jamscope.util.LogoutEventBus
@@ -17,6 +18,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -27,17 +29,14 @@ class SettingsViewModel @Inject constructor(
     private val friendsRepository: FriendsRepository,
     private val settingsRepository: SettingsRepository
 ) : ViewModel() {
-    private val _switchStates = MutableStateFlow<Map<String, Boolean>>(emptyMap())
-    val switchStates: StateFlow<Map<String, Boolean>> = _switchStates
-
-    private val _themePreference = MutableStateFlow(0)
-    val themePreference: StateFlow<Int> = _themePreference
+    private val _uiState = MutableStateFlow(SettingsUiState())
+    val uiState: StateFlow<SettingsUiState> = _uiState
 
     init {
         viewModelScope.launch {
             loadSwitchStates()
-            settingsRepository.themePreferenceFlow().collect { it ->
-                _themePreference.value = it
+            settingsRepository.themePreferenceFlow().collect { pref ->
+                _uiState.update { it.copy(themePreference = pref) }
             }
         }
     }
@@ -48,19 +47,33 @@ class SettingsViewModel @Inject constructor(
                 switch.key to settingsRepository.getSwitchState(switch.key, switch.initialState)
                     .first()
             }
-            _switchStates.value = states
+            _uiState.update { it.copy(switchStates = states) }
         }
     }
 
     fun toggleSwitch(key: String) {
-        val currentState = _switchStates.value[key] ?: return
-        val newState = !currentState
-        _switchStates.value = _switchStates.value.toMutableMap().apply {
-            this[key] = newState
-        }
+        val current = _uiState.value.switchStates[key] ?: return
+        val updated = _uiState.value.switchStates.toMutableMap().apply { this[key] = !current }
+        _uiState.update { it.copy(switchStates = updated) }
         viewModelScope.launch {
-            settingsRepository.saveSwitchState(key, newState)
+            settingsRepository.saveSwitchState(key, !current)
         }
+    }
+
+    fun showThemeDialog() {
+        _uiState.update { it.copy(showThemeDialog = true) }
+    }
+
+    fun hideThemeDialog() {
+        _uiState.update { it.copy(showThemeDialog = false) }
+    }
+
+    fun showLogOutDialog() {
+        _uiState.update { it.copy(showLogOutDialog = true) }
+    }
+
+    fun hideLogOutDialog() {
+        _uiState.update { it.copy(showLogOutDialog = false) }
     }
 
     fun logOutUser() {
@@ -108,7 +121,7 @@ class SettingsViewModel @Inject constructor(
     fun setThemePreference(theme: Int) {
         viewModelScope.launch {
             settingsRepository.saveThemePref(theme)
-            _themePreference.value = theme
+            _uiState.update { it.copy(themePreference = theme) }
         }
     }
 

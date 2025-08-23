@@ -16,39 +16,36 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.mikepenz.aboutlibraries.ui.compose.android.rememberLibraries
 import com.mikepenz.aboutlibraries.ui.compose.m3.LibrariesContainer
 import com.mno.jamscope.R
-import com.mno.jamscope.ui.viewmodel.SettingsViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoadLibrariesScreen() {
-    val settingsViewModel: SettingsViewModel = hiltViewModel()
+fun LoadLibrariesScreen(
+    onNavigateBack: () -> Unit,
+) {
     Scaffold(
         contentWindowInsets = WindowInsets.safeDrawing,
         topBar = {
-        TopAppBar(
-            title = {
-                Text(
-                    text = stringResource(R.string.show_libraries_setting),
-                )
-            },
-            navigationIcon = {
-                IconButton(
-                    onClick = {
-                        settingsViewModel.navigateBack()
-                    }
-                ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = stringResource(R.string.back)
+            TopAppBar(
+                title = {
+                    Text(
+                        text = stringResource(R.string.show_libraries_setting),
                     )
-                }
-            },
-        )
-    }) { innerPadding ->
+                },
+                navigationIcon = {
+                    IconButton(
+                        onClick = onNavigateBack
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(R.string.back)
+                        )
+                    }
+                },
+            )
+        }) { innerPadding ->
         val libraries by rememberLibraries(R.raw.aboutlibraries)
         LibrariesContainer(
             modifier = Modifier

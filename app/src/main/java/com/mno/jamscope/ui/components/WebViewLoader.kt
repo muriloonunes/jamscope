@@ -18,15 +18,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.mno.jamscope.R
-import com.mno.jamscope.ui.viewmodel.SettingsViewModel
 
 @SuppressLint("SetJavaScriptEnabled")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun WebViewLoader() {
-    val settingsViewModel: SettingsViewModel = hiltViewModel()
+fun WebViewLoader(
+    onNavigateBack: () -> Unit,
+) {
     Scaffold(topBar = {
         TopAppBar(
             title = {
@@ -36,9 +35,7 @@ fun WebViewLoader() {
             },
             navigationIcon = {
                 IconButton(
-                    onClick = {
-                        settingsViewModel.navigateBack()
-                    }
+                    onClick = onNavigateBack
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
