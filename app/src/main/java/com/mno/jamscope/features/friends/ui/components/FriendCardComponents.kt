@@ -1,4 +1,4 @@
-package com.mno.jamscope.ui.components
+package com.mno.jamscope.features.friends.ui.components
 
 import android.content.Context
 import androidx.compose.foundation.background
@@ -25,6 +25,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -47,6 +51,9 @@ import coil3.compose.AsyncImage
 import com.mno.jamscope.R
 import com.mno.jamscope.data.model.Track
 import com.mno.jamscope.data.model.User
+import com.mno.jamscope.ui.components.FullscreenImage
+import com.mno.jamscope.ui.components.LastProBadge
+import com.mno.jamscope.ui.components.LoadTrackInfo
 import com.mno.jamscope.util.Stuff.openUrl
 import com.mno.jamscope.util.forwardingPainter
 import com.mno.jamscope.util.getCountryFlag
@@ -58,6 +65,7 @@ import my.nanihadesuka.compose.ScrollbarSettings
 fun FriendImage(friend: User, forExtended: Boolean) {
     val size = if (forExtended) 100.dp else 50.dp
     val isPro = friend.subscriber == 1
+    var showFullscreenImage by remember { mutableStateOf(false) }
     AsyncImage(
         model = friend.image.firstOrNull { it.size == "large" }?.url ?: "",
         contentDescription = friend.name?.let {
@@ -74,18 +82,35 @@ fun FriendImage(friend: User, forExtended: Boolean) {
         modifier = Modifier
             .size(size)
             .then(
-                if (isPro && forExtended) {
-                    Modifier.border(
-                        width = 4.dp,
-                        color = MaterialTheme.colorScheme.primaryContainer,
-                        shape = CircleShape
-                    )
+                if (forExtended) {
+                    Modifier
+                        .clickable { showFullscreenImage = true }
+                        .then(
+                            if (isPro) {
+                                Modifier.border(
+                                    width = 4.dp,
+                                    color = MaterialTheme.colorScheme.primaryContainer,
+                                    shape = CircleShape
+                                )
+                            } else {
+                                Modifier
+                            }
+                        )
                 } else {
                     Modifier
                 }
             )
             .clip(CircleShape),
     )
+
+    if (showFullscreenImage) {
+        FullscreenImage(
+            imageUrl = friend.image.firstOrNull { it.size == "extralarge" }?.url ?: "",
+            placeholderUrl = friend.image.firstOrNull { it.size == "large" }?.url ?: "",
+            contentDescription = friend.realname.ifEmpty { friend.name } ?: "",
+            onDismissRequest = { showFullscreenImage = false }
+        )
+    }
 }
 
 @Composable
@@ -95,7 +120,7 @@ fun FriendExtendedCardTracksSection(
     recentTracks: List<Track>,
     darkerBackgroundColor: Int,
     playingAnimationEnabled: Boolean,
-    context: Context
+    context: Context,
 ) {
     Column(
         modifier = modifier
@@ -186,7 +211,7 @@ fun FriendExtendedCardTracksSection(
 fun FriendExtendedCardHeader(
     modifier: Modifier,
     friend: User,
-    windowSizeClass: WindowSizeClass
+    windowSizeClass: WindowSizeClass,
 ) {
     val windowHeight = windowSizeClass.windowHeightSizeClass
     when (windowHeight) {
@@ -231,7 +256,7 @@ fun FriendExtendedCardHeader(
 
 @Composable
 fun FriendInfo(
-    friend: User
+    friend: User,
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally

@@ -1,4 +1,4 @@
-package com.mno.jamscope.ui.components
+package com.mno.jamscope.features.friends.ui.components
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.tween
@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.sp
 import com.mno.jamscope.R
 import com.mno.jamscope.data.model.RecentTracks
 import com.mno.jamscope.data.model.User
+import com.mno.jamscope.ui.components.LoadTrackInfo
 import com.mno.jamscope.ui.theme.LocalThemePreference
 
 @Composable

@@ -9,10 +9,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.mno.jamscope.R
-import com.mno.jamscope.ui.components.SettingSectionTitle
-import com.mno.jamscope.ui.components.aboutSettingsSection
-import com.mno.jamscope.ui.components.accountSettingsSection
-import com.mno.jamscope.ui.components.personalizationSettingsSection
+import com.mno.jamscope.features.settings.ui.components.SettingSectionTitle
+import com.mno.jamscope.features.settings.ui.components.aboutSettingsSection
+import com.mno.jamscope.features.settings.ui.components.accountSettingsSection
+import com.mno.jamscope.features.settings.ui.components.personalizationSettingsSection
 import my.nanihadesuka.compose.LazyColumnScrollbar
 import my.nanihadesuka.compose.ScrollbarSettings
 

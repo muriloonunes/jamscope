@@ -23,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -77,7 +78,14 @@ fun JamHomePager(
         }
     }
 
+    var topBarContent by remember {
+        mutableStateOf<(@Composable () -> Unit)?>(
+            null
+        )
+    }
+
     Scaffold(
+        topBar = { topBarContent?.invoke() },
         contentWindowInsets = WindowInsets.safeDrawing,
         bottomBar = {
             NavigationBar {
@@ -131,7 +139,8 @@ fun JamHomePager(
                                 friendsViewModel.getSecondaryContainerColor(name, isDark)
                             },
                             listState = listState[page],
-                            windowSizeClass = windowSizeClass
+                            windowSizeClass = windowSizeClass,
+                            setTopBar = { topBarContent = it }
                         )
                     } else {
                         FriendsTela(
@@ -148,7 +157,8 @@ fun JamHomePager(
                                 friendsViewModel.getSecondaryContainerColor(name, isDark)
                             },
                             gridState = gridState[page],
-                            windowSizeClass = windowSizeClass
+                            windowSizeClass = windowSizeClass,
+                            setTopBar = { topBarContent = it }
                         )
                     }
                 }
@@ -156,6 +166,7 @@ fun JamHomePager(
                 1 -> {
                     val profileViewModel: ProfileViewModel = hiltViewModel()
                     val state by profileViewModel.uiState.collectAsStateWithLifecycle()
+                    topBarContent = null
                     ProfileTela(
                         listState = listState[page],
                         windowSizeClass = windowSizeClass,

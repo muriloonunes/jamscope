@@ -15,9 +15,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.mno.jamscope.ui.components.LoginActions
-import com.mno.jamscope.ui.components.LoginForm
-import com.mno.jamscope.ui.components.LoginHeader
+import com.mno.jamscope.features.login.ui.components.LoginActions
+import com.mno.jamscope.features.login.ui.components.LoginForm
+import com.mno.jamscope.features.login.ui.components.LoginHeader
 import com.mno.jamscope.ui.components.ShowErrorMessage
 import androidx.compose.ui.tooling.preview.Preview
 import com.mno.jamscope.ui.theme.NowPlayingTheme

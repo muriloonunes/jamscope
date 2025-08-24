@@ -99,6 +99,7 @@ dependencies {
     implementation(libs.coil.gif)
     implementation(libs.coil.network.okhttp)
     implementation(libs.glide)
+    implementation(libs.zoomable.image.coil3)
 
     // Ktor Network
     implementation(libs.ktor.client.core)

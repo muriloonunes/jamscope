@@ -43,7 +43,7 @@ class ProfileRequest @Inject constructor(
 
             try {
                 val response: ApiResponse = HttpClientProvider.client.get(requestUrl).body()
-                val largeImageUrl = response.user.image.find { it.size == "large" }?.url
+                val largeImageUrl = response.user.image.find { it.size == "extralarge" }?.url
                     ?: Stuff.DEFAULT_PROFILE_IMAGE
                 val profileUrl = response.user.url
                 val country = response.user.country

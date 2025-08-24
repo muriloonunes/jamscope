@@ -24,11 +24,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.mno.jamscope.R
-import com.mno.jamscope.ui.components.SettingSectionTitle
-import com.mno.jamscope.ui.components.SettingsHorizontalMenu
-import com.mno.jamscope.ui.components.aboutSettingsSection
-import com.mno.jamscope.ui.components.accountSettingsSection
-import com.mno.jamscope.ui.components.personalizationSettingsSection
+import com.mno.jamscope.features.settings.ui.components.SettingSectionTitle
+import com.mno.jamscope.features.settings.ui.components.SettingsHorizontalMenu
+import com.mno.jamscope.features.settings.ui.components.aboutSettingsSection
+import com.mno.jamscope.features.settings.ui.components.accountSettingsSection
+import com.mno.jamscope.features.settings.ui.components.personalizationSettingsSection
 
 @Composable
 fun SettingsHorizontalScreen(

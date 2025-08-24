@@ -59,7 +59,7 @@ agp = "8.12.1"
 # Misc
 glide = "4.16.0"
 leakcanaryAndroid = "2.14"
-
+zoomableImageCoil3 = "0.16.0"
 
 [libraries]
 # AboutLibraries
@@ -150,6 +150,7 @@ lazycolumnscrollbar = { module = "com.github.nanihadesuka:LazyColumnScrollbar", 
 leakcanary-android = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "leakcanaryAndroid" }
 lottie-compose = { module = "com.airbnb.android:lottie-compose", version.ref = "lottieCompose" }
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
+zoomable-image-coil3 = { module = "me.saket.telephoto:zoomable-image-coil3", version.ref = "zoomableImageCoil3" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

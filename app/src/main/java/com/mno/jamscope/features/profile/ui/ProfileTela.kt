@@ -16,8 +16,8 @@ import androidx.window.core.layout.WindowHeightSizeClass
 import androidx.window.core.layout.WindowSizeClass
 import com.mno.jamscope.data.model.Profile
 import com.mno.jamscope.features.profile.state.ProfileState
-import com.mno.jamscope.ui.components.ProfileHeaderSection
-import com.mno.jamscope.ui.components.ProfileTracksSection
+import com.mno.jamscope.features.profile.ui.components.ProfileHeaderSection
+import com.mno.jamscope.features.profile.ui.components.ProfileTracksSection
 import com.mno.jamscope.ui.screen.JamPullToRefresh
 
 @OptIn(ExperimentalMaterial3Api::class)

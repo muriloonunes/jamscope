@@ -1,4 +1,4 @@
-package com.mno.jamscope.ui.components
+package com.mno.jamscope.features.profile.ui.components
 
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.tween
@@ -24,6 +24,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -46,6 +50,11 @@ import coil3.compose.AsyncImage
 import com.mno.jamscope.R
 import com.mno.jamscope.data.model.Profile
 import com.mno.jamscope.data.model.Track
+import com.mno.jamscope.ui.components.FullscreenImage
+import com.mno.jamscope.ui.components.LastProBadge
+import com.mno.jamscope.ui.components.LoadTrackInfo
+import com.mno.jamscope.ui.components.ShowErrorMessage
+import com.mno.jamscope.ui.components.TrackImageLoader
 import com.mno.jamscope.util.forwardingPainter
 import com.mno.jamscope.util.getCountryFlag
 import com.mno.jamscope.util.getLocalizedCountryName
@@ -57,7 +66,7 @@ fun ProfileHeaderSection(
     modifier: Modifier = Modifier,
     imagePfp: Any?,
     userProfile: Profile?,
-    windowSizeClass: WindowSizeClass
+    windowSizeClass: WindowSizeClass,
 ) {
     val windowHeight = windowSizeClass.windowHeightSizeClass
     when (windowHeight) {
@@ -146,7 +155,8 @@ fun ProfileTracksSection(
                     .animateItem()
             ) {
                 val imageUrl = track.image?.firstOrNull { it.size == "medium" }?.url ?: ""
-                TrackImageLoader(imageUrl = imageUrl)
+                val bigImageUrl = track.image?.firstOrNull { it.size == "extralarge" }?.url ?: ""
+                TrackImageLoader(imageUrl = imageUrl, bigImageUrl = bigImageUrl)
                 LoadTrackInfo(
                     track = track,
                     forExtended = true,
@@ -196,8 +206,9 @@ fun ProfileImage(
     username: String?,
     size: Dp,
     shape: Shape,
-    isLastPro: Boolean = false
+    isLastPro: Boolean = false,
 ) {
+    var showFullscreenImage by remember { mutableStateOf(false) }
     if (currentImage is String) {
         AsyncImage(
             model = currentImage,
@@ -213,6 +224,7 @@ fun ProfileImage(
             modifier = Modifier
                 .size(size)
                 .padding(8.dp)
+                .clickable { showFullscreenImage = true }
                 .then(
                     if (isLastPro) {
                         Modifier.border(
@@ -249,6 +261,15 @@ fun ProfileImage(
                     }
                 )
                 .clip(shape)
+        )
+    }
+
+    if (showFullscreenImage) {
+        FullscreenImage(
+            imageUrl = currentImage as String,
+            placeholderUrl = "",
+            contentDescription = username!!,
+            onDismissRequest = { showFullscreenImage = false }
         )
     }
 }

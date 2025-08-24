@@ -14,6 +14,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -23,8 +27,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.mno.jamscope.R
 import com.mno.jamscope.data.model.Track
@@ -71,8 +75,8 @@ fun LoadTrackInfo(
                     Text(
                         text = stringResource(R.string.now_playing),
                         style = MaterialTheme.typography.labelLarge.copy(
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            fontSize = 13.sp
+                            color = MaterialTheme.colorScheme.onSurface,
+                            fontWeight = FontWeight.Bold
                         ),
                         maxLines = 1,
                         modifier = Modifier.align(Alignment.CenterVertically).wrapContentWidth()
@@ -85,8 +89,7 @@ fun LoadTrackInfo(
                         null
                     ),
                     style = MaterialTheme.typography.labelLarge.copy(
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        fontSize = 13.sp
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     ),
                     maxLines = 1,
                     modifier = Modifier.align(Alignment.CenterVertically).wrapContentWidth()
@@ -106,7 +109,11 @@ fun LoadTrackInfo(
 }
 
 @Composable
-fun TrackImageLoader(imageUrl: String) {
+fun TrackImageLoader(
+    imageUrl: String,
+    bigImageUrl: String
+) {
+    var showFullscreenImage by remember { mutableStateOf(false) }
     AsyncImage(
         model = imageUrl,
         contentDescription = null,
@@ -119,7 +126,17 @@ fun TrackImageLoader(imageUrl: String) {
             .padding(8.dp)
             .clip(RoundedCornerShape(16.dp))
             .size(60.dp)
-            .border(1.dp, MaterialTheme.colorScheme.onSurfaceVariant, RoundedCornerShape(16.dp)),
+            .border(1.dp, MaterialTheme.colorScheme.onSurfaceVariant, RoundedCornerShape(16.dp))
+            .clickable { showFullscreenImage = true },
         contentScale = ContentScale.Crop,
     )
+
+    if (showFullscreenImage) {
+        FullscreenImage(
+            imageUrl = bigImageUrl,
+            placeholderUrl = imageUrl,
+            contentDescription = "",
+            onDismissRequest = { showFullscreenImage = false }
+        )
+    }
 }

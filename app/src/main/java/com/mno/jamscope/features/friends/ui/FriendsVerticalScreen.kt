@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.mno.jamscope.data.model.RecentTracks
 import com.mno.jamscope.data.model.User
-import com.mno.jamscope.ui.components.FriendCard
+import com.mno.jamscope.features.friends.ui.components.FriendCard
 import com.mno.jamscope.ui.components.ShowErrorMessage
 
 @Composable

@@ -1,4 +1,4 @@
-package com.mno.jamscope.ui.components
+package com.mno.jamscope.features.login.ui.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
