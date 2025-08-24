@@ -12,7 +12,7 @@ import com.mno.jamscope.ui.navigator.Navigator
 import com.mno.jamscope.util.LogoutEventBus
 import com.mno.jamscope.util.Stuff.openUrl
 import com.mno.jamscope.util.sendReportMail
-import com.mno.jamscope.util.switches
+import com.mno.jamscope.features.settings.ui.components.switches
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow

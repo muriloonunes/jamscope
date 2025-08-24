@@ -1,13 +1,14 @@
 package com.mno.jamscope.features.friends.ui.components
 
 import android.content.Context
-import androidx.compose.foundation.background
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -20,6 +21,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.OpenInNew
 import androidx.compose.material.icons.filled.MoreHoriz
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -122,94 +125,103 @@ fun FriendExtendedCardTracksSection(
     playingAnimationEnabled: Boolean,
     context: Context,
 ) {
-    Column(
+    Card(
         modifier = modifier
+            .padding(8.dp)
+            .fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = Color(darkerBackgroundColor),
+        ),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 2.dp
+        ),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.1f))
     ) {
-        Text(
-            text = stringResource(R.string.recent_tracks),
-            style = MaterialTheme.typography.titleMedium.copy(
-                fontWeight = FontWeight.Bold,
+        Column(
+            modifier = Modifier.padding(8.dp)
+        ) {
+            Text(
+                text = stringResource(R.string.recent_tracks),
+                style = MaterialTheme.typography.titleMedium.copy(
+                    fontWeight = FontWeight.Bold,
+                )
             )
-        )
-        if (recentTracks.isNotEmpty()) {
-            val scrollState = rememberLazyListState()
-            LazyColumnScrollbar(
-                modifier = Modifier
-                    .background(
-                        color = Color(darkerBackgroundColor),
-                        shape = RoundedCornerShape(12.dp)
-                    ),
-                state = scrollState,
-                settings = ScrollbarSettings(
-                    thumbUnselectedColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                    thumbSelectedColor = MaterialTheme.colorScheme.onSurface,
-                    scrollbarPadding = 2.dp
-                ),
-            ) {
-                LazyColumn(
+            if (recentTracks.isNotEmpty()) {
+                val scrollState = rememberLazyListState()
+                LazyColumnScrollbar(
                     state = scrollState,
-                    modifier = Modifier.padding(
-                        start = 4.dp,
-                        end = 8.dp,
-                        top = 2.dp,
-                        bottom = 2.dp
+                    settings = ScrollbarSettings(
+                        thumbUnselectedColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                        thumbSelectedColor = MaterialTheme.colorScheme.onSurface,
+                        scrollbarPadding = 2.dp
                     ),
-                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    items(recentTracks) { track ->
-                        LoadTrackInfo(
-                            track = track,
-                            forExtended = true,
-                            playingAnimationEnabled = playingAnimationEnabled
-                        )
-                        HorizontalDivider(
-                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(
-                                alpha = 0.5f
+                    LazyColumn(
+                        state = scrollState,
+                        modifier = Modifier.padding(
+                            start = 4.dp,
+                            end = 8.dp,
+                            top = 2.dp,
+                            bottom = 2.dp
+                        ),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        items(recentTracks) { track ->
+                            LoadTrackInfo(
+                                track = track,
+                                forExtended = true,
+                                playingAnimationEnabled = playingAnimationEnabled
                             )
-                        )
-                    }
-                    item {
-                        Icon(
-                            imageVector = Icons.Filled.MoreHoriz,
-                            contentDescription = stringResource(R.string.see_more),
-                            modifier = Modifier.size(48.dp),
-                            tint = MaterialTheme.colorScheme.onSurface
-                        )
-                    }
-                    item {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.clickable { context.openUrl("https://www.last.fm/user/${friend.name}/library?page=2") }
-                        ) {
-                            Text(
-                                text = stringResource(R.string.see_more),
-                                textDecoration = TextDecoration.Underline
+                            HorizontalDivider(
+                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(
+                                    alpha = 0.5f
+                                )
                             )
+                        }
+                        item {
                             Icon(
-                                imageVector = Icons.AutoMirrored.Filled.OpenInNew,
+                                imageVector = Icons.Filled.MoreHoriz,
                                 contentDescription = stringResource(R.string.see_more),
-                                modifier = Modifier
-                                    .size(12.dp)
-                                    .padding(top = 2.dp)
+                                modifier = Modifier.size(48.dp),
+                                tint = MaterialTheme.colorScheme.onSurface
                             )
+                        }
+                        item {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.clickable { context.openUrl("https://www.last.fm/user/${friend.name}/library?page=2") }
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.see_more),
+                                    textDecoration = TextDecoration.Underline
+                                )
+                                Icon(
+                                    imageVector = Icons.AutoMirrored.Filled.OpenInNew,
+                                    contentDescription = stringResource(R.string.see_more),
+                                    modifier = Modifier
+                                        .size(12.dp)
+                                        .padding(top = 2.dp)
+                                )
+                            }
                         }
                     }
                 }
-            }
-        } else {
-            Text(
-                text = stringResource(id = R.string.no_recent_tracks),
-                style = MaterialTheme.typography.bodySmall.copy(
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+            } else {
+                Text(
+                    text = stringResource(id = R.string.no_recent_tracks),
+                    style = MaterialTheme.typography.bodySmall.copy(
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 )
-            )
+            }
         }
     }
 }
 
 @Composable
 fun FriendExtendedCardHeader(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     friend: User,
     windowSizeClass: WindowSizeClass,
 ) {
@@ -219,6 +231,7 @@ fun FriendExtendedCardHeader(
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = modifier
+                    .padding(8.dp),
             ) {
                 FriendImage(friend, true)
                 Spacer(modifier = Modifier.height(4.dp))
@@ -234,7 +247,8 @@ fun FriendExtendedCardHeader(
         WindowHeightSizeClass.EXPANDED, WindowHeightSizeClass.MEDIUM -> {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = modifier,
+                modifier = modifier
+                    .padding(8.dp),
             ) {
                 FriendImage(friend, true)
                 Spacer(modifier = Modifier.width(4.dp))

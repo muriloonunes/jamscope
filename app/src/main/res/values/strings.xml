@@ -109,4 +109,7 @@
     <string name="star_icon">Star icon</string>
     <string name="libraries_icon">Libraries icon</string>
     <string name="show_libraries_setting">Open-source libraries</string>
+    <string name="image_saved">Image saved in gallery</string>
+    <string name="image_not_saved">Failed to save image</string>
+    <string name="save_image_button">Save image button</string>
 </resources>

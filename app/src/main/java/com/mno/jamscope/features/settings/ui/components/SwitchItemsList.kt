@@ -1,9 +1,10 @@
-package com.mno.jamscope.util
+package com.mno.jamscope.features.settings.ui.components
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Palette
 import androidx.compose.material.icons.outlined.PlayCircleOutline
 import com.mno.jamscope.R
+import com.mno.jamscope.util.Stuff
 
 val switches = listOf(
     Stuff.SwitchItem(

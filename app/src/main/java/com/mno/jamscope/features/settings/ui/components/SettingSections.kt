@@ -12,7 +12,6 @@ import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.ModeComment
 import com.mno.jamscope.R
-import com.mno.jamscope.util.switches
 
 fun LazyListScope.personalizationSettingsSection(
     themePreference: Int,

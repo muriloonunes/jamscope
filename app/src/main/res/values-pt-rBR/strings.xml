@@ -107,4 +107,7 @@
     <string name="star_icon">Ícone de estrela</string>
     <string name="libraries_icon">Ícone de bibliotecas</string>
     <string name="show_libraries_setting">Bibliotecas de código aberto</string>
+    <string name="image_saved">Imagem salva na galeria</string>
+    <string name="image_not_saved">Falha ao salvar a imagem</string>
+    <string name="save_image_button">Botão para salvar a imagem</string>
 </resources>

@@ -2,15 +2,12 @@ package com.mno.jamscope.features.friends.ui.components
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
@@ -53,7 +50,7 @@ fun ExtendedFriendCard(
             .fillMaxHeight(0.9f)
             .fillMaxWidth(0.7f)
         else -> Modifier
-            .fillMaxHeight(0.7f)
+            .fillMaxHeight(0.8f)
             .fillMaxWidth(0.9f)
     }
 
@@ -74,21 +71,10 @@ fun ExtendedFriendCard(
                 WindowHeightSizeClass.MEDIUM, WindowHeightSizeClass.EXPANDED -> {
                     Column {
                         FriendExtendedCardHeader(
-                            modifier = Modifier
-                                .padding(8.dp),
                             friend = friend,
                             windowSizeClass = windowSizeClass
                         )
                         FriendExtendedCardTracksSection(
-                            modifier = Modifier
-                                .padding(4.dp)
-                                .border(
-                                    1.dp,
-                                    MaterialTheme.colorScheme.onSurfaceVariant,
-                                    RoundedCornerShape(16.dp)
-                                )
-                                .padding(8.dp)
-                                .fillMaxWidth(),
                             friend = friend,
                             recentTracks = recentTracks,
                             darkerBackgroundColor = darkerBackgroundColor,
@@ -105,21 +91,11 @@ fun ExtendedFriendCard(
                     ) {
                         FriendExtendedCardHeader(
                             modifier = Modifier
-                                .padding(8.dp)
                                 .align(Alignment.CenterVertically),
                             friend = friend,
                             windowSizeClass = windowSizeClass
                         )
                         FriendExtendedCardTracksSection(
-                            modifier = Modifier
-                                .padding(4.dp)
-                                .border(
-                                    1.dp,
-                                    MaterialTheme.colorScheme.onSurfaceVariant,
-                                    RoundedCornerShape(16.dp)
-                                )
-                                .padding(8.dp)
-                                .fillMaxWidth(),
                             friend = friend,
                             recentTracks = recentTracks,
                             darkerBackgroundColor = darkerBackgroundColor,
