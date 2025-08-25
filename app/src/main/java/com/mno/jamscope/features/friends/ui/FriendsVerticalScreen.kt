@@ -1,7 +1,5 @@
 package com.mno.jamscope.features.friends.ui
 
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -13,6 +11,7 @@ import androidx.compose.ui.graphics.Color
 import com.mno.jamscope.data.model.RecentTracks
 import com.mno.jamscope.data.model.User
 import com.mno.jamscope.features.friends.ui.components.FriendCard
+import com.mno.jamscope.ui.components.animations.ReorderAnimatedItem
 import com.mno.jamscope.ui.components.ShowErrorMessage
 
 @Composable
@@ -38,28 +37,17 @@ fun FriendsVerticalScreen(
             }
         }
         items(friends, key = { it.name!! }) { friend ->
-            FriendCard(
-                friend = friend,
-                recentTracks = recentTracksMap[friend.url],
-                modifier = Modifier
-                    .animateItem(
-                        fadeInSpec = tween(
-                            durationMillis = 500,
-                            easing = FastOutSlowInEasing
-                        ),
-                        placementSpec = tween(
-                            durationMillis = 500,
-                            easing = FastOutSlowInEasing
-                        ),
-                        fadeOutSpec = tween(
-                            durationMillis = 500,
-                            easing = FastOutSlowInEasing
-                        )
-                    ),
-                cardBackgroundToggle = cardBackgroundToggle,
-                playingAnimationEnabled = playingAnimationEnabled,
-                colorProvider = colorProvider
-            )
+            ReorderAnimatedItem(
+                itemKey = friend.name!!
+            ) {
+                FriendCard(
+                    friend = friend,
+                    recentTracks = recentTracksMap[friend.url],
+                    cardBackgroundToggle = cardBackgroundToggle,
+                    playingAnimationEnabled = playingAnimationEnabled,
+                    colorProvider = colorProvider
+                )
+            }
         }
     }
 }

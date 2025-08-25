@@ -151,15 +151,13 @@ fun ProfileTracksSection(
             key = { index, track -> "$index${track.name}" }) { index, track ->
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .animateItem()
             ) {
                 val imageUrl = track.image?.firstOrNull { it.size == "medium" }?.url ?: ""
                 val bigImageUrl = track.image?.firstOrNull { it.size == "extralarge" }?.url ?: ""
                 TrackImageLoader(imageUrl = imageUrl, bigImageUrl = bigImageUrl)
                 LoadTrackInfo(
                     track = track,
-                    forExtended = true,
+                    clickable = true,
                     playingAnimationEnabled = playingAnimationEnabled
                 )
             }

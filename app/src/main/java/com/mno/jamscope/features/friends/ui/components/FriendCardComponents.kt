@@ -170,7 +170,7 @@ fun FriendExtendedCardTracksSection(
                         items(recentTracks) { track ->
                             LoadTrackInfo(
                                 track = track,
-                                forExtended = true,
+                                clickable = true,
                                 playingAnimationEnabled = playingAnimationEnabled
                             )
                             HorizontalDivider(

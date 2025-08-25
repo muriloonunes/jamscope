@@ -42,7 +42,7 @@ import com.mno.jamscope.ui.theme.LocalThemePreference
 fun FriendCard(
     friend: User,
     recentTracks: RecentTracks?,
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     cardBackgroundToggle: Boolean,
     playingAnimationEnabled: Boolean,
     colorProvider: (String?, Boolean) -> Color,
@@ -128,7 +128,7 @@ fun FriendCard(
                     if (track != null) {
                         LoadTrackInfo(
                             track = track,
-                            forExtended = false,
+                            clickable = false,
                             playingAnimationEnabled = playingAnimationEnabled
                         )
                     } else {

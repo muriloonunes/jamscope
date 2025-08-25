@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.mno.jamscope.R
 import com.mno.jamscope.data.model.Track
+import com.mno.jamscope.ui.components.animations.NowPlayingAnimation
 import com.mno.jamscope.util.Stuff.searchMusicIntent
 import com.mno.jamscope.util.dateStringFormatter
 import com.mno.jamscope.util.forwardingPainter
@@ -39,12 +40,12 @@ import com.mno.jamscope.util.forwardingPainter
 @Composable
 fun LoadTrackInfo(
     track: Track,
-    forExtended: Boolean,
+    clickable: Boolean,
     playingAnimationEnabled: Boolean
 ) {
     val context = LocalContext.current
     Column(
-        modifier = Modifier.then(if (forExtended) Modifier.clickable { context.searchMusicIntent(track) } else Modifier)
+        modifier = Modifier.then(if (clickable) Modifier.clickable { context.searchMusicIntent(track) } else Modifier)
     ) {
         Text(
             text = track.name,

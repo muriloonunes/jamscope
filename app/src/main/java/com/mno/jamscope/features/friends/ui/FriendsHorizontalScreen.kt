@@ -29,6 +29,7 @@ fun FriendsHorizontalScreen(
         ShowErrorMessage(errorMessage)
     }
     LazyVerticalGrid(
+        modifier = modifier,
         state = gridState,
         columns = GridCells.Adaptive(minSize = 310.dp),
     ) {
@@ -36,7 +37,7 @@ fun FriendsHorizontalScreen(
             FriendCard(
                 friend = friend,
                 recentTracks = recentTracksMap[friend.url],
-                modifier = modifier
+                modifier = Modifier
                     .animateItem(
                         fadeInSpec = tween(
                             durationMillis = 500,

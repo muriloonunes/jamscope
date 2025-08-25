@@ -1,4 +1,4 @@
-package com.mno.jamscope.ui.components
+package com.mno.jamscope.ui.components.animations
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
