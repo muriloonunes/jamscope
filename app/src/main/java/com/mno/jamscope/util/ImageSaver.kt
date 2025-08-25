@@ -2,6 +2,7 @@ package com.mno.jamscope.util
 
 import android.content.ContentValues
 import android.content.Context
+import android.graphics.BitmapFactory
 import android.os.Build
 import android.provider.MediaStore
 import coil3.imageLoader
@@ -27,9 +28,21 @@ fun saveImageFromCoilCache(context: Context, imageUrl: String): Boolean {
     return try {
         val cacheFile: File = snapshot.data.toFile()
 
+        val options = BitmapFactory.Options().apply {
+            inJustDecodeBounds = true //ler so os metadados sem carregar a imagem na memória
+        }
+        BitmapFactory.decodeFile(cacheFile.absolutePath, options)
+        val mimeType = options.outMimeType ?: "image/jpeg"
+
+        val extension = when (mimeType) {
+            "image/gif" -> "gif"
+            else -> "jpg"
+        }
+        val displayName = "IMG_${System.currentTimeMillis()}.$extension"
+
         val contentValues = ContentValues().apply {
-            put(MediaStore.Images.Media.DISPLAY_NAME, "IMG_${System.currentTimeMillis()}.jpg")
-            put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+            put(MediaStore.Images.Media.DISPLAY_NAME, displayName)
+            put(MediaStore.Images.Media.MIME_TYPE, mimeType)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/Jamscope")
                 put(MediaStore.Images.Media.IS_PENDING, 1)
