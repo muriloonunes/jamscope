@@ -44,5 +44,4 @@ fun JamPullToRefresh(
             PullToRefreshDefaults.LoadingIndicator(state = state, isRefreshing = isRefreshing)
         }
     }
-
 }

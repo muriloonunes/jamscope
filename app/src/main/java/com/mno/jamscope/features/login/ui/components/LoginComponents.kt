@@ -113,7 +113,9 @@ fun LoginForm(
             ),
             keyboardActions = KeyboardActions(
                 onDone = {
-                    onLoginButtonClick()
+                    if (username.isNotEmpty() && password.isNotEmpty()) {
+                        onLoginButtonClick()
+                    }
                     keyboardController?.hide()
                 }
             ),

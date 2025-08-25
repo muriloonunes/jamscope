@@ -21,6 +21,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -123,18 +124,27 @@ fun JamHomePager(
         ) { page ->
             when (page) {
                 0 -> {
-                    val state by friendsViewModel.uiState.collectAsStateWithLifecycle()
+                    val sortingType by friendsViewModel.sortingType.collectAsStateWithLifecycle()
+                    val refreshing by friendsViewModel.isRefreshing.collectAsStateWithLifecycle()
+                    val errorMessage by friendsViewModel.errorMessage.collectAsStateWithLifecycle()
+                    val recentTracksMap by friendsViewModel.recentTracksMap.collectAsStateWithLifecycle()
+                    val friends by friendsViewModel.friends.collectAsStateWithLifecycle()
+                    val cardBackgroundColorEnabled by friendsViewModel.cardBackgroundColorToggle.collectAsState()
+                    val playingAnimationEnabled by friendsViewModel.playingAnimationToggle.collectAsState()
                     if (isCompact) {
                         FriendsTela(
-                            state = state,
+                            sortingType = sortingType,
+                            isRefreshing = refreshing,
+                            errorMessage = errorMessage,
+                            recentTracks = recentTracksMap,
+                            friends = friends,
+                            cardBackgroundColorEnabled = cardBackgroundColorEnabled,
+                            playingAnimationEnabled = playingAnimationEnabled,
                             onRefresh = { friendsViewModel.onRefresh() },
                             onSettingIconClick = { friendsViewModel.navigateToSettings() },
-                            onSortIconClick = { friendsViewModel.showSortingSheet() },
                             onSortingTypeChange = {
                                 friendsViewModel.onSortingTypeChanged(it)
-                                friendsViewModel.hideSortingSheet()
                             },
-                            onHideSortingSheet = { friendsViewModel.hideSortingSheet() },
                             colorProvider = { name, isDark ->
                                 friendsViewModel.getSecondaryContainerColor(name, isDark)
                             },
@@ -144,15 +154,18 @@ fun JamHomePager(
                         )
                     } else {
                         FriendsTela(
-                            state = state,
+                            sortingType = sortingType,
+                            isRefreshing = refreshing,
+                            errorMessage = errorMessage,
+                            recentTracks = recentTracksMap,
+                            friends = friends,
+                            cardBackgroundColorEnabled = cardBackgroundColorEnabled,
+                            playingAnimationEnabled = playingAnimationEnabled,
                             onRefresh = { friendsViewModel.onRefresh() },
                             onSettingIconClick = { friendsViewModel.navigateToSettings() },
-                            onSortIconClick = { friendsViewModel.showSortingSheet() },
                             onSortingTypeChange = {
                                 friendsViewModel.onSortingTypeChanged(it)
-                                friendsViewModel.hideSortingSheet()
                             },
-                            onHideSortingSheet = { friendsViewModel.hideSortingSheet() },
                             colorProvider = { name, isDark ->
                                 friendsViewModel.getSecondaryContainerColor(name, isDark)
                             },
