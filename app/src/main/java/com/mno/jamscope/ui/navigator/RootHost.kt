@@ -6,7 +6,6 @@ import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -100,11 +99,18 @@ fun RootHost(
             }
             composable<Destination.ProfileScreen> {
                 val profileViewModel: ProfileViewModel = hiltViewModel()
-                val state by profileViewModel.uiState.collectAsStateWithLifecycle()
+                val refreshing by profileViewModel.isRefreshing.collectAsStateWithLifecycle()
+                val userProfile by profileViewModel.userProfile.collectAsStateWithLifecycle()
+                val errorMessage by profileViewModel.errorMessage.collectAsStateWithLifecycle()
+                val userRecentTracks by profileViewModel.recentTracks.collectAsStateWithLifecycle()
+                val playingAnimationEnabled by profileViewModel.playingAnimationToggle.collectAsState()
                 ProfileTela(
-                    listState = rememberLazyListState(),
+                    isRefreshing = refreshing,
+                    userProfile = userProfile,
+                    errorMessage = errorMessage,
+                    recentTracks = userRecentTracks,
+                    playingAnimationEnabled = playingAnimationEnabled,
                     windowSizeClass = LocalWindowSizeClass.current,
-                    state = state,
                     onRefresh = { profileViewModel.onRefresh() },
                     onSeeMoreClick = { context, profile ->
                         profileViewModel.seeMore(context, profile)

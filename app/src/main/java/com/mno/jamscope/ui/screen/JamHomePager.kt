@@ -178,12 +178,20 @@ fun JamHomePager(
 
                 1 -> {
                     val profileViewModel: ProfileViewModel = hiltViewModel()
-                    val state by profileViewModel.uiState.collectAsStateWithLifecycle()
+                    val refreshing by profileViewModel.isRefreshing.collectAsStateWithLifecycle()
+                    val userProfile by profileViewModel.userProfile.collectAsStateWithLifecycle()
+                    val errorMessage by profileViewModel.errorMessage.collectAsStateWithLifecycle()
+                    val userRecentTracks by profileViewModel.recentTracks.collectAsStateWithLifecycle()
+                    val playingAnimationEnabled by profileViewModel.playingAnimationToggle.collectAsState()
                     topBarContent = null
                     ProfileTela(
+                        isRefreshing = refreshing,
+                        userProfile = userProfile,
+                        errorMessage = errorMessage,
+                        recentTracks = userRecentTracks,
+                        playingAnimationEnabled = playingAnimationEnabled,
                         listState = listState[page],
                         windowSizeClass = windowSizeClass,
-                        state = state,
                         onRefresh = { profileViewModel.onRefresh() },
                         onSeeMoreClick = { context, profile ->
                             profileViewModel.seeMore(context, profile)

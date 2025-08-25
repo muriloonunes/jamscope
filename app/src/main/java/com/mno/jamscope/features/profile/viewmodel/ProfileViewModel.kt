@@ -6,18 +6,19 @@ import androidx.lifecycle.viewModelScope
 import com.mno.jamscope.R
 import com.mno.jamscope.data.model.Profile
 import com.mno.jamscope.data.model.Resource
+import com.mno.jamscope.data.model.Track
 import com.mno.jamscope.data.repository.SettingsRepository
 import com.mno.jamscope.data.repository.UserRepository
-import com.mno.jamscope.features.profile.state.ProfileState
 import com.mno.jamscope.util.LogoutEventBus
 import com.mno.jamscope.util.Stuff
 import com.mno.jamscope.util.Stuff.openUrl
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -25,10 +26,27 @@ import javax.inject.Inject
 class ProfileViewModel @Inject constructor(
     private val userRepository: UserRepository,
     @param:ApplicationContext private val context: Context,
-    private val settingsRepository: SettingsRepository
+    private val settingsRepository: SettingsRepository,
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow(ProfileState())
-    val uiState: StateFlow<ProfileState> = _uiState.asStateFlow()
+    private val _isRefreshing = MutableStateFlow(false)
+    val isRefreshing = _isRefreshing
+        .onStart {
+            loadCachedProfile()
+            if (shouldRefresh()) refreshProfile()
+        }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
+
+    private val _userProfile = MutableStateFlow<Profile?>(null)
+    val userProfile: StateFlow<Profile?> = _userProfile
+
+    private val _recentTracks = MutableStateFlow<List<Track>>(emptyList())
+    val recentTracks: StateFlow<List<Track>> = _recentTracks
+
+    private val _errorMessage = MutableStateFlow("")
+    val errorMessage: StateFlow<String> = _errorMessage
+
+    private val _playingAnimationToggle = MutableStateFlow(true)
+    val playingAnimationToggle: StateFlow<Boolean> = _playingAnimationToggle
 
     private var lastUpdateTimestamp: Long = 0L
 
@@ -38,18 +56,16 @@ class ProfileViewModel @Inject constructor(
                 resetLastUpdateTimestamp()
             }
         }
-        loadCachedProfile()
-        if (shouldRefresh()) refreshProfile()
         viewModelScope.launch {
             settingsRepository.getSwitchState("playing_animation_toggle", true)
                 .collect { state ->
-                    _uiState.update { it.copy(playingAnimationEnabled = state) }
+                    _playingAnimationToggle.value = state
                 }
         }
     }
 
     fun onRefresh() {
-        if (_uiState.value.isRefreshing) return
+        if (_isRefreshing.value) return
         refreshProfile()
     }
 
@@ -57,49 +73,35 @@ class ProfileViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val userProfile = userRepository.getCachedUserProfile()
-                val recentTracks = userProfile.recentTracks?.track ?: emptyList()
-                _uiState.update {
-                    it.copy(
-                        userProfile = userProfile,
-                        recentTracks = recentTracks,
-                        imagePfp = userProfile.imageUrl ?: R.drawable.baseline_account_circle_24
-                    )
-                }
+                _userProfile.value = userProfile
+                _recentTracks.value = userProfile.recentTracks?.track ?: emptyList()
             } catch (_: IllegalStateException) {
-                _uiState.update { it.copy(errorMessage = context.getString(R.string.error_loading_profile)) }
+                _errorMessage.value = context.getString(R.string.error_loading_profile)
             }
         }
     }
 
     private fun refreshProfile() {
-        _uiState.update { it.copy(isRefreshing = true, errorMessage = "") }
+        _isRefreshing.value = true
+        _errorMessage.value = ""
         viewModelScope.launch {
             val userProfile = userRepository.getUserProfile()
             userRepository.getUserInfo(userProfile!!)
             when (val result = userRepository.getRecentTracks(userProfile)) {
                 is Resource.Success -> {
-                    val recentTracks = userProfile.recentTracks?.track ?: emptyList()
-                    _uiState.update {
-                        it.copy(
-                            userProfile = userProfile,
-                            recentTracks = recentTracks,
-                            imagePfp = userProfile.imageUrl ?: R.drawable.baseline_account_circle_24,
-                            isRefreshing = false
-                        )
-                    }
+                    _userProfile.value = userProfile
+                    _recentTracks.value = userProfile.recentTracks?.track ?: emptyList()
                     userRepository.cacheRecentTracks(
                         userProfile.profileUrl!!,
-                        recentTracks
+                        userProfile.recentTracks?.track ?: emptyList()
                     )
+                    _isRefreshing.value = false
                 }
+
                 is Resource.Error -> {
-                    _uiState.update {
-                        it.copy(
-                            userProfile = userProfile,
-                            errorMessage = result.message,
-                            isRefreshing = false
-                        )
-                    }
+                    _userProfile.value = userProfile
+                    _errorMessage.value = result.message
+                    _isRefreshing.value = false
                 }
             }
             userRepository.saveUserProfile(userProfile)
@@ -109,7 +111,7 @@ class ProfileViewModel @Inject constructor(
 
     fun seeMore(
         context: Context,
-        userProfile: Profile?
+        userProfile: Profile?,
     ) {
         context.openUrl("https://www.last.fm/user/${userProfile!!.username}/library?page=3")
     }

@@ -7,15 +7,22 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowHeightSizeClass
 import androidx.window.core.layout.WindowSizeClass
+import com.mno.jamscope.R
 import com.mno.jamscope.data.model.Profile
-import com.mno.jamscope.features.profile.state.ProfileState
+import com.mno.jamscope.data.model.Track
 import com.mno.jamscope.features.profile.ui.components.ProfileHeaderSection
 import com.mno.jamscope.features.profile.ui.components.ProfileTracksSection
 import com.mno.jamscope.ui.screen.JamPullToRefresh
@@ -23,17 +30,28 @@ import com.mno.jamscope.ui.screen.JamPullToRefresh
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileTela(
-    listState: LazyListState,
+    isRefreshing: Boolean,
+    userProfile: Profile?,
+    errorMessage: String,
+    recentTracks: List<Track>,
+    playingAnimationEnabled: Boolean,
+    listState: LazyListState = rememberLazyListState(),
     windowSizeClass: WindowSizeClass,
-    state: ProfileState,
     onRefresh: () -> Unit,
-    onSeeMoreClick: (Context, Profile?) -> Unit
+    onSeeMoreClick: (Context, Profile?) -> Unit,
 ) {
     val context = LocalContext.current
     val windowHeight = windowSizeClass.windowHeightSizeClass
 
+    var imagePfp by remember { mutableStateOf<Any?>(R.drawable.baseline_account_circle_24) }
+    LaunchedEffect(userProfile) {
+        if (userProfile != null) {
+            imagePfp = userProfile.imageUrl
+        }
+    }
+
     JamPullToRefresh(
-        isRefreshing = state.isRefreshing,
+        isRefreshing = isRefreshing,
         onRefresh = { onRefresh() }
     ) {
         when (windowHeight) {
@@ -42,8 +60,8 @@ fun ProfileTela(
                     ProfileHeaderSection(
                         modifier = Modifier
                             .fillMaxWidth(),
-                        imagePfp = state.imagePfp,
-                        userProfile = state.userProfile,
+                        imagePfp = imagePfp,
+                        userProfile = userProfile,
                         windowSizeClass = windowSizeClass
                     )
                     ProfileTracksSection(
@@ -51,13 +69,13 @@ fun ProfileTela(
                             .fillMaxSize()
                             .padding(8.dp),
                         listState = listState,
-                        errorMessage = state.errorMessage,
-                        userRecentTracks = state.recentTracks,
-                        playingAnimationEnabled = state.playingAnimationEnabled,
+                        errorMessage = errorMessage,
+                        userRecentTracks = recentTracks,
+                        playingAnimationEnabled = playingAnimationEnabled,
                         onSeeMoreClick = {
                             onSeeMoreClick(
                                 context,
-                                state.userProfile
+                                userProfile
                             )
                         }
                     )
@@ -69,8 +87,8 @@ fun ProfileTela(
                     ProfileHeaderSection(
                         modifier = Modifier
                             .weight(0.5f),
-                        imagePfp = state.imagePfp,
-                        userProfile = state.userProfile,
+                        imagePfp = imagePfp,
+                        userProfile = userProfile,
                         windowSizeClass = windowSizeClass
                     )
                     ProfileTracksSection(
@@ -78,13 +96,13 @@ fun ProfileTela(
                             .weight(2f)
                             .padding(8.dp),
                         listState = listState,
-                        errorMessage = state.errorMessage,
-                        userRecentTracks = state.recentTracks,
-                        playingAnimationEnabled = state.playingAnimationEnabled,
+                        errorMessage = errorMessage,
+                        userRecentTracks = recentTracks,
+                        playingAnimationEnabled = playingAnimationEnabled,
                         onSeeMoreClick = {
                             onSeeMoreClick(
                                 context,
-                                state.userProfile
+                                userProfile
                             )
                         }
                     )
