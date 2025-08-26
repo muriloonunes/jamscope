@@ -25,7 +25,6 @@ import com.mno.jamscope.data.model.RecentTracks
 import com.mno.jamscope.data.model.User
 import com.mno.jamscope.features.friends.ui.components.FriendScreenTopAppBar
 import com.mno.jamscope.ui.components.SortingBottomSheet
-import com.mno.jamscope.ui.components.SortingLazyRow
 import com.mno.jamscope.ui.screen.JamPullToRefresh
 import com.mno.jamscope.util.SortingType
 
@@ -56,11 +55,7 @@ fun FriendsTela(
     var showBottomSheet by remember { mutableStateOf(false) }
 
     LaunchedEffect(sortingType) {
-        if (windowWidth == WindowWidthSizeClass.COMPACT) {
-            listState.animateScrollToItem(0)
-        } else {
-            gridState.scrollToItem(0)
-        }
+        listState.animateScrollToItem(0)
     }
 
     setTopBar {
@@ -98,22 +93,18 @@ fun FriendsTela(
                     modifier = Modifier.fillMaxSize(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    SortingLazyRow(
-                        currentSortingType = sortingType,
-                        onSortingTypeChange = {
-                            onSortingTypeChange(it)
-                        },
-                    )
                     FriendsHorizontalScreen(
                         modifier = Modifier
                             .fillMaxSize(),
                         gridState = gridState,
                         errorMessage = errorMessage,
+                        sortingType = sortingType,
                         friends = friends,
                         recentTracksMap = recentTracks,
                         cardBackgroundToggle = cardBackgroundColorEnabled,
                         playingAnimationEnabled = playingAnimationEnabled,
-                        colorProvider = { name, isDark -> colorProvider(name, isDark) }
+                        colorProvider = { name, isDark -> colorProvider(name, isDark) },
+                        onSortingTypeChange = { onSortingTypeChange(it) }
                     )
                 }
             }

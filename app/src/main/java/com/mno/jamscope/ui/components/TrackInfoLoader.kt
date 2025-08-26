@@ -41,15 +41,21 @@ import com.mno.jamscope.util.forwardingPainter
 fun LoadTrackInfo(
     track: Track,
     clickable: Boolean,
-    playingAnimationEnabled: Boolean
+    playingAnimationEnabled: Boolean,
+    nowPlaying: Boolean = false,
 ) {
     val context = LocalContext.current
+    val color =
+        if (nowPlaying) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface
     Column(
         modifier = Modifier.then(if (clickable) Modifier.clickable { context.searchMusicIntent(track) } else Modifier)
     ) {
         Text(
             text = track.name,
-            style = MaterialTheme.typography.titleMedium,
+            style = MaterialTheme.typography.titleMedium.copy(
+                color = color,
+                fontWeight = FontWeight.Bold
+            ),
             maxLines = 1,
             modifier = Modifier
                 .basicMarquee()
@@ -61,7 +67,7 @@ fun LoadTrackInfo(
             Text(
                 text = track.album.name.ifEmpty { stringResource(R.string.unknown_album) },
                 style = MaterialTheme.typography.labelLarge.copy(
-                    color = MaterialTheme.colorScheme.onSurface
+                    color = color
                 ),
                 maxLines = 1,
                 modifier = Modifier
@@ -72,11 +78,13 @@ fun LoadTrackInfo(
 
             if (track.dateInfo?.formattedDate == null) {
                 // O usuário está ouvindo no momento
-                if (playingAnimationEnabled) NowPlayingAnimation() else
+                if (playingAnimationEnabled) {
+                    NowPlayingAnimation(nowPlaying)
+                } else {
                     Text(
                         text = stringResource(R.string.now_playing),
                         style = MaterialTheme.typography.labelLarge.copy(
-                            color = MaterialTheme.colorScheme.onSurface,
+                            color = color,
                             fontWeight = FontWeight.Bold
                         ),
                         maxLines = 1,
@@ -84,6 +92,7 @@ fun LoadTrackInfo(
                             .align(Alignment.CenterVertically)
                             .wrapContentWidth()
                     )
+                }
             } else {
                 Text(
                     text = dateStringFormatter(
@@ -105,7 +114,7 @@ fun LoadTrackInfo(
         Text(
             text = track.artist.name,
             style = MaterialTheme.typography.labelMedium.copy(
-                color = MaterialTheme.colorScheme.onSurface
+                color = color
             ),
             maxLines = 1,
             modifier = Modifier.basicMarquee()
@@ -117,8 +126,11 @@ fun LoadTrackInfo(
 fun TrackImageLoader(
     imageUrl: String,
     bigImageUrl: String,
+    nowPlaying: Boolean = false,
 ) {
     var showFullscreenImage by remember { mutableStateOf(false) }
+    val color =
+        if (nowPlaying) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
     AsyncImage(
         model = imageUrl,
         contentDescription = null,
@@ -131,7 +143,7 @@ fun TrackImageLoader(
             .padding(8.dp)
             .clip(RoundedCornerShape(16.dp))
             .size(60.dp)
-            .border(1.dp, MaterialTheme.colorScheme.onSurfaceVariant, RoundedCornerShape(16.dp))
+            .border(1.dp, color, RoundedCornerShape(16.dp))
             .clickable { showFullscreenImage = true },
         contentScale = ContentScale.Crop,
     )

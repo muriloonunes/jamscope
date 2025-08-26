@@ -3,6 +3,7 @@ package com.mno.jamscope.features.friends.ui
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -14,26 +15,40 @@ import com.mno.jamscope.data.model.RecentTracks
 import com.mno.jamscope.data.model.User
 import com.mno.jamscope.features.friends.ui.components.FriendCard
 import com.mno.jamscope.ui.components.ShowErrorMessage
+import com.mno.jamscope.ui.components.SortingLazyRow
+import com.mno.jamscope.util.SortingType
 
 @Composable
 fun FriendsHorizontalScreen(
     modifier: Modifier,
     gridState: LazyGridState,
     errorMessage: String,
+    sortingType: SortingType,
     friends: List<User>,
     recentTracksMap: Map<String, RecentTracks?>,
     cardBackgroundToggle: Boolean,
     playingAnimationEnabled: Boolean,
+    onSortingTypeChange: (SortingType) -> Unit,
     colorProvider: (String?, Boolean) -> Color,
 ) {
-    if (errorMessage.isNotEmpty()) {
-        ShowErrorMessage(errorMessage)
-    }
     LazyVerticalGrid(
         modifier = modifier,
         state = gridState,
         columns = GridCells.Adaptive(minSize = 310.dp),
     ) {
+        item(span = { GridItemSpan(maxLineSpan) }) {
+            SortingLazyRow(
+                currentSortingType = sortingType,
+                onSortingTypeChange = {
+                    onSortingTypeChange(it)
+                },
+            )
+        }
+        if (errorMessage.isNotEmpty()) {
+            item(span = { GridItemSpan(maxLineSpan) }) {
+                ShowErrorMessage(errorMessage)
+            }
+        }
         items(friends, key = { it.name!! }) { friend ->
             FriendCard(
                 friend = friend,

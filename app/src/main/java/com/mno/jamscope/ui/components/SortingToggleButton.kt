@@ -1,10 +1,12 @@
 package com.mno.jamscope.ui.components
 
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
@@ -30,7 +32,8 @@ fun SortToggleButton(
     shapes: ToggleButtonShapes = ToggleButtonDefaults.shapesFor(ButtonDefaults.MinHeight),
 ) {
     OutlinedToggleButton(
-        modifier = Modifier.semantics { role = Role.RadioButton },
+        modifier = Modifier.semantics { role = Role.RadioButton }
+            .padding(ButtonGroupDefaults.ConnectedSpaceBetween),
         checked = currentSortingType == sortType,
         onCheckedChange = { onSortingTypeChanged(sortType) },
         shapes = shapes

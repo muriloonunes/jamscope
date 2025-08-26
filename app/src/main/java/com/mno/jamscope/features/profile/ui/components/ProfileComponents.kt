@@ -1,8 +1,10 @@
 package com.mno.jamscope.features.profile.ui.components
 
+import android.util.Log
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -149,19 +151,35 @@ fun ProfileTracksSection(
         itemsIndexed(
             items = userRecentTracks,
             key = { index, track -> "$index${track.name}" }) { index, track ->
+            Log.d("ProfileTracksSection", "track: ${track.name} - index: $index")
+            val nowPlaying = track.dateInfo?.formattedDate == null
             Row(
                 verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .then(
+                        if (nowPlaying) Modifier
+                            .padding(2.dp)
+                            .background(
+                                color = MaterialTheme.colorScheme.primaryContainer,
+                                shape = RoundedCornerShape(8.dp)
+                            ) else Modifier
+                    )
             ) {
                 val imageUrl = track.image?.firstOrNull { it.size == "medium" }?.url ?: ""
                 val bigImageUrl = track.image?.firstOrNull { it.size == "extralarge" }?.url ?: ""
-                TrackImageLoader(imageUrl = imageUrl, bigImageUrl = bigImageUrl)
+                TrackImageLoader(
+                    imageUrl = imageUrl,
+                    bigImageUrl = bigImageUrl,
+                    nowPlaying = nowPlaying
+                )
                 LoadTrackInfo(
                     track = track,
                     clickable = true,
-                    playingAnimationEnabled = playingAnimationEnabled
+                    playingAnimationEnabled = playingAnimationEnabled,
+                    nowPlaying = nowPlaying
                 )
             }
-            if (index < userRecentTracks.size - 1) {
+            if (index < userRecentTracks.size - 1 && !nowPlaying) {
                 HorizontalDivider(
                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
                 )

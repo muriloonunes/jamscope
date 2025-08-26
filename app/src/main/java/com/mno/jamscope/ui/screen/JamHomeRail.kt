@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Group
@@ -32,6 +33,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -43,12 +45,14 @@ import com.mno.jamscope.ui.theme.LocalWindowSizeClass
 import com.mno.jamscope.ui.util.FriendsScreenCaller
 import com.mno.jamscope.ui.util.ProfileScreenCaller
 import com.mno.jamscope.ui.util.SettingsScreenCaller
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun JamHomeRail() {
     var selectedItemIndex by rememberSaveable { mutableIntStateOf(0) }
     val windowSizeClass = LocalWindowSizeClass.current
+    val coroutineScope = rememberCoroutineScope()
     val itemsBarList = listOf(
         BottomNavigationItem(
             stringResource(R.string.friends),
@@ -70,6 +74,7 @@ fun JamHomeRail() {
         )
     )
     val gridState = remember { List(itemsBarList.size) { LazyGridState() } }
+    val listState = remember { List(itemsBarList.size) { LazyListState() } }
 
     Scaffold { paddingValues ->
         Row(
@@ -85,7 +90,13 @@ fun JamHomeRail() {
                         selected = selectedItemIndex == index,
                         onClick = {
                             selectedItemIndex = index
-
+                            coroutineScope.launch {
+                                if (selectedItemIndex == 0) {
+                                    gridState[selectedItemIndex].animateScrollToItem(0)
+                                } else if (selectedItemIndex == 1) {
+                                    listState[selectedItemIndex].animateScrollToItem(0)
+                                }
+                            }
                         },
                         icon = {
                             Icon(
@@ -153,7 +164,9 @@ fun JamHomeRail() {
                         }
 
                         1 -> {
-                            ProfileScreenCaller()
+                            ProfileScreenCaller(
+                                listState = listState[selectedItemIndex],
+                            )
                         }
 
                         2 -> {
