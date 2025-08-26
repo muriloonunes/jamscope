@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.mno.jamscope.data.model.RecentTracks
 import com.mno.jamscope.data.model.User
@@ -16,14 +17,14 @@ import com.mno.jamscope.ui.components.ShowErrorMessage
 
 @Composable
 fun FriendsHorizontalScreen(
-    gridState: LazyGridState,
     modifier: Modifier,
+    gridState: LazyGridState,
     errorMessage: String,
     friends: List<User>,
     recentTracksMap: Map<String, RecentTracks?>,
     cardBackgroundToggle: Boolean,
     playingAnimationEnabled: Boolean,
-    colorProvider: (String?, Boolean) -> androidx.compose.ui.graphics.Color,
+    colorProvider: (String?, Boolean) -> Color,
 ) {
     if (errorMessage.isNotEmpty()) {
         ShowErrorMessage(errorMessage)

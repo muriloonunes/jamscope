@@ -1,6 +1,7 @@
 package com.mno.jamscope.features.settings.ui
 
 import android.content.Context
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
@@ -66,34 +67,35 @@ fun SettingsTela(
         R.string.account_setting_tile,
         R.string.about_setting_tile
     )
-    Scaffold(
-        contentWindowInsets = WindowInsets.safeDrawing,
-        modifier = Modifier
-            .fillMaxSize()
-            .nestedScroll(scrollBehaviour.nestedScrollConnection),
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = stringResource(R.string.settings),
+
+    when (windowWidth) {
+        WindowWidthSizeClass.COMPACT -> {
+            Scaffold(
+                contentWindowInsets = WindowInsets.safeDrawing,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .nestedScroll(scrollBehaviour.nestedScrollConnection),
+                topBar = {
+                    TopAppBar(
+                        title = {
+                            Text(
+                                text = stringResource(R.string.settings),
+                            )
+                        },
+                        navigationIcon = {
+                            IconButton(
+                                onClick = { onNavigateBack() }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                    contentDescription = stringResource(R.string.back)
+                                )
+                            }
+                        },
+                        scrollBehavior = scrollBehaviour
                     )
-                },
-                navigationIcon = {
-                    IconButton(
-                        onClick = { onNavigateBack() }
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.back)
-                        )
-                    }
-                },
-                scrollBehavior = scrollBehaviour
-            )
-        }
-    ) { innerPadding ->
-        when (windowWidth) {
-            WindowWidthSizeClass.COMPACT -> {
+                }
+            ) { innerPadding ->
                 SettingsVerticalScreen(
                     modifier = Modifier
                         .padding(innerPadding)
@@ -111,11 +113,12 @@ fun SettingsTela(
                     onGithubProjectClick = { onGithubProjectClick(it) }
                 )
             }
+        }
 
-            WindowWidthSizeClass.EXPANDED, WindowWidthSizeClass.MEDIUM -> {
+        WindowWidthSizeClass.EXPANDED, WindowWidthSizeClass.MEDIUM -> {
+            Box {
                 SettingsHorizontalScreen(
                     modifier = Modifier
-                        .padding(innerPadding)
                         .padding(horizontal = 16.dp),
                     tiles = sectionTiles,
                     themePreference = themePreference,

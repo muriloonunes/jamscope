@@ -143,7 +143,7 @@ fun FriendExtendedCardTracksSection(
         ) {
             Text(
                 text = stringResource(R.string.recent_tracks),
-                style = MaterialTheme.typography.titleMedium.copy(
+                style = MaterialTheme.typography.titleLarge.copy(
                     fontWeight = FontWeight.Bold,
                 )
             )
@@ -174,9 +174,10 @@ fun FriendExtendedCardTracksSection(
                                 playingAnimationEnabled = playingAnimationEnabled
                             )
                             HorizontalDivider(
+                                modifier = Modifier.padding(vertical = 5.dp),
                                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(
                                     alpha = 0.5f
-                                )
+                                ),
                             )
                         }
                         item {

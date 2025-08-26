@@ -51,7 +51,7 @@ fun ExtendedFriendCard(
             .fillMaxWidth(0.7f)
         else -> Modifier
             .fillMaxHeight(0.8f)
-            .fillMaxWidth(0.9f)
+            .fillMaxWidth(0.8f)
     }
 
     Dialog(

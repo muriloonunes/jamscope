@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
@@ -14,14 +13,10 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.outlined.Group
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -32,24 +27,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.window.core.layout.WindowWidthSizeClass
 import com.mno.jamscope.R
-import com.mno.jamscope.features.friends.ui.FriendsTela
 import com.mno.jamscope.features.friends.ui.components.BottomNavigationItem
-import com.mno.jamscope.features.friends.viewmodel.FriendsViewModel
-import com.mno.jamscope.features.profile.ui.ProfileTela
-import com.mno.jamscope.features.profile.viewmodel.ProfileViewModel
+import com.mno.jamscope.ui.components.JamBottomBar
 import com.mno.jamscope.ui.navigator.Destination
 import com.mno.jamscope.ui.theme.LocalWindowSizeClass
+import com.mno.jamscope.ui.util.FriendsScreenCaller
+import com.mno.jamscope.ui.util.ProfileScreenCaller
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun JamHomePager(
-    friendsViewModel: FriendsViewModel,
-) {
+fun JamHomePager() {
     var selectedItemIndex by rememberSaveable { mutableIntStateOf(0) }
     val itemsBarList = listOf(
         BottomNavigationItem(
@@ -66,12 +55,9 @@ fun JamHomePager(
         )
     )
     val listState = remember { List(itemsBarList.size) { LazyListState() } }
-    val gridState = remember { List(itemsBarList.size) { LazyGridState() } }
     val pagerState = rememberPagerState(initialPage = 0) { itemsBarList.size }
     val coroutineScope = rememberCoroutineScope()
     val windowSizeClass = LocalWindowSizeClass.current
-    val windowsWidth = windowSizeClass.windowWidthSizeClass
-    val isCompact = windowsWidth == WindowWidthSizeClass.COMPACT
 
     LaunchedEffect(pagerState) {
         snapshotFlow { pagerState.currentPage }.collect { page ->
@@ -89,32 +75,17 @@ fun JamHomePager(
         topBar = { topBarContent?.invoke() },
         contentWindowInsets = WindowInsets.safeDrawing,
         bottomBar = {
-            NavigationBar {
-                itemsBarList.forEachIndexed { index, item ->
-                    NavigationBarItem(
-                        selected = index == selectedItemIndex,
-                        onClick = {
-                            selectedItemIndex = index
-                            coroutineScope.launch {
-                                pagerState.animateScrollToPage(index)
-                                if (isCompact) {
-                                    listState[index].animateScrollToItem(0)
-                                } else {
-                                    gridState[index].animateScrollToItem(0)
-                                }
-                            }
-                        },
-                        icon = {
-                            Icon(
-                                imageVector = if (index == selectedItemIndex) item.selectedIcon else item.unselectedIcon,
-                                contentDescription = item.title
-                            )
-                        },
-                        label = { Text(item.title) },
-                        alwaysShowLabel = true
-                    )
+            JamBottomBar(
+                buttons = itemsBarList,
+                selectedItemIndex = selectedItemIndex,
+                onItemSelected = { index ->
+                    selectedItemIndex = index
+                    coroutineScope.launch {
+                        pagerState.animateScrollToPage(index)
+                        listState[index].animateScrollToItem(0)
+                    }
                 }
-            }
+            )
         }) { innerPadding ->
         HorizontalPager(
             state = pagerState,
@@ -124,79 +95,17 @@ fun JamHomePager(
         ) { page ->
             when (page) {
                 0 -> {
-                    val sortingType by friendsViewModel.sortingType.collectAsStateWithLifecycle()
-                    val refreshing by friendsViewModel.isRefreshing.collectAsStateWithLifecycle()
-                    val errorMessage by friendsViewModel.errorMessage.collectAsStateWithLifecycle()
-                    val recentTracksMap by friendsViewModel.recentTracksMap.collectAsStateWithLifecycle()
-                    val friends by friendsViewModel.friends.collectAsStateWithLifecycle()
-                    val cardBackgroundColorEnabled by friendsViewModel.cardBackgroundColorToggle.collectAsState()
-                    val playingAnimationEnabled by friendsViewModel.playingAnimationToggle.collectAsState()
-                    if (isCompact) {
-                        FriendsTela(
-                            sortingType = sortingType,
-                            isRefreshing = refreshing,
-                            errorMessage = errorMessage,
-                            recentTracks = recentTracksMap,
-                            friends = friends,
-                            cardBackgroundColorEnabled = cardBackgroundColorEnabled,
-                            playingAnimationEnabled = playingAnimationEnabled,
-                            onRefresh = { friendsViewModel.onRefresh() },
-                            onSettingIconClick = { friendsViewModel.navigateToSettings() },
-                            onSortingTypeChange = {
-                                friendsViewModel.onSortingTypeChanged(it)
-                            },
-                            colorProvider = { name, isDark ->
-                                friendsViewModel.getSecondaryContainerColor(name, isDark)
-                            },
-                            listState = listState[page],
-                            windowSizeClass = windowSizeClass,
-                            setTopBar = { topBarContent = it }
-                        )
-                    } else {
-                        FriendsTela(
-                            sortingType = sortingType,
-                            isRefreshing = refreshing,
-                            errorMessage = errorMessage,
-                            recentTracks = recentTracksMap,
-                            friends = friends,
-                            cardBackgroundColorEnabled = cardBackgroundColorEnabled,
-                            playingAnimationEnabled = playingAnimationEnabled,
-                            onRefresh = { friendsViewModel.onRefresh() },
-                            onSettingIconClick = { friendsViewModel.navigateToSettings() },
-                            onSortingTypeChange = {
-                                friendsViewModel.onSortingTypeChanged(it)
-                            },
-                            colorProvider = { name, isDark ->
-                                friendsViewModel.getSecondaryContainerColor(name, isDark)
-                            },
-                            gridState = gridState[page],
-                            windowSizeClass = windowSizeClass,
-                            setTopBar = { topBarContent = it }
-                        )
-                    }
+                    FriendsScreenCaller(
+                        windowSizeClass = windowSizeClass,
+                        setTopBar = { topBarContent = it },
+                        listState = listState[page]
+                    )
                 }
 
                 1 -> {
-                    val profileViewModel: ProfileViewModel = hiltViewModel()
-                    val refreshing by profileViewModel.isRefreshing.collectAsStateWithLifecycle()
-                    val userProfile by profileViewModel.userProfile.collectAsStateWithLifecycle()
-                    val errorMessage by profileViewModel.errorMessage.collectAsStateWithLifecycle()
-                    val userRecentTracks by profileViewModel.recentTracks.collectAsStateWithLifecycle()
-                    val playingAnimationEnabled by profileViewModel.playingAnimationToggle.collectAsState()
-                    topBarContent = null
-                    ProfileTela(
-                        isRefreshing = refreshing,
-                        userProfile = userProfile,
-                        errorMessage = errorMessage,
-                        recentTracks = userRecentTracks,
-                        playingAnimationEnabled = playingAnimationEnabled,
+                    ProfileScreenCaller(
                         listState = listState[page],
-                        windowSizeClass = windowSizeClass,
-                        onRefresh = { profileViewModel.onRefresh() },
-                        onSeeMoreClick = { context, profile ->
-                            profileViewModel.seeMore(context, profile)
-                        }
-                    )
+                        setTopBar = { topBarContent = it })
                 }
             }
         }

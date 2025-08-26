@@ -80,7 +80,9 @@ fun LoadTrackInfo(
                             fontWeight = FontWeight.Bold
                         ),
                         maxLines = 1,
-                        modifier = Modifier.align(Alignment.CenterVertically).wrapContentWidth()
+                        modifier = Modifier
+                            .align(Alignment.CenterVertically)
+                            .wrapContentWidth()
                     )
             } else {
                 Text(
@@ -93,7 +95,9 @@ fun LoadTrackInfo(
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     ),
                     maxLines = 1,
-                    modifier = Modifier.align(Alignment.CenterVertically).wrapContentWidth()
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                        .wrapContentWidth()
                 )
             }
         }
@@ -112,7 +116,7 @@ fun LoadTrackInfo(
 @Composable
 fun TrackImageLoader(
     imageUrl: String,
-    bigImageUrl: String
+    bigImageUrl: String,
 ) {
     var showFullscreenImage by remember { mutableStateOf(false) }
     AsyncImage(

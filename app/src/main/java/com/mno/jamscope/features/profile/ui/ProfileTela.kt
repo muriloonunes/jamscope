@@ -39,6 +39,7 @@ fun ProfileTela(
     windowSizeClass: WindowSizeClass,
     onRefresh: () -> Unit,
     onSeeMoreClick: (Context, Profile?) -> Unit,
+    setTopBar: (@Composable () -> Unit) -> Unit? = {},
 ) {
     val context = LocalContext.current
     val windowHeight = windowSizeClass.windowHeightSizeClass
@@ -48,6 +49,10 @@ fun ProfileTela(
         if (userProfile != null) {
             imagePfp = userProfile.imageUrl
         }
+    }
+
+    LaunchedEffect(Unit) {
+        setTopBar { null }
     }
 
     JamPullToRefresh(

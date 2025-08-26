@@ -1,5 +1,6 @@
 package com.mno.jamscope.features.friends.ui
 
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,6 +25,7 @@ import com.mno.jamscope.data.model.RecentTracks
 import com.mno.jamscope.data.model.User
 import com.mno.jamscope.features.friends.ui.components.FriendScreenTopAppBar
 import com.mno.jamscope.ui.components.SortingBottomSheet
+import com.mno.jamscope.ui.components.SortingLazyRow
 import com.mno.jamscope.ui.screen.JamPullToRefresh
 import com.mno.jamscope.util.SortingType
 
@@ -45,8 +47,9 @@ fun FriendsTela(
     listState: LazyListState = LazyListState(),
     gridState: LazyGridState = LazyGridState(),
     windowSizeClass: WindowSizeClass,
-    setTopBar: (@Composable () -> Unit) -> Unit?,
+    setTopBar: (@Composable () -> Unit) -> Unit? = {},
 ) {
+    Log.d("FriendsTela", windowSizeClass.toString())
     val windowWidth = windowSizeClass.windowWidthSizeClass
     val topAppBarScrollBehavior =
         TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
@@ -92,12 +95,18 @@ fun FriendsTela(
 
             WindowWidthSizeClass.EXPANDED, WindowWidthSizeClass.MEDIUM -> {
                 Column(
+                    modifier = Modifier.fillMaxSize(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+                    SortingLazyRow(
+                        currentSortingType = sortingType,
+                        onSortingTypeChange = {
+                            onSortingTypeChange(it)
+                        },
+                    )
                     FriendsHorizontalScreen(
                         modifier = Modifier
-                            .fillMaxSize()
-                            .nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
+                            .fillMaxSize(),
                         gridState = gridState,
                         errorMessage = errorMessage,
                         friends = friends,
@@ -114,7 +123,7 @@ fun FriendsTela(
 
     if (showBottomSheet) {
         SortingBottomSheet(
-            sortingType = sortingType,
+            currentSortingType = sortingType,
             onSortingTypeChange = {
                 onSortingTypeChange(it)
                 showBottomSheet = false
