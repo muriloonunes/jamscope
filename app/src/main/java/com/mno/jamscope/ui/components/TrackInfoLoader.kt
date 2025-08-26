@@ -90,6 +90,7 @@ fun LoadTrackInfo(
                         maxLines = 1,
                         modifier = Modifier
                             .align(Alignment.CenterVertically)
+                            .then(if (nowPlaying) Modifier.padding(end = 2.dp) else Modifier)
                             .wrapContentWidth()
                     )
                 }

@@ -38,6 +38,7 @@ import com.mno.jamscope.ui.theme.LocalWindowSizeClass
 @Composable
 fun SettingsTela(
     uiState: SettingsUiState,
+    onTileSelected: (Int) -> Unit,
     onNavigateBack: () -> Unit,
     onSelectThemeClick: () -> Unit,
     onLogOutClick: () -> Unit,
@@ -56,6 +57,7 @@ fun SettingsTela(
     val scrollBehaviour = TopAppBarDefaults.pinnedScrollBehavior()
     val themePreference = uiState.themePreference
     val switchStates = uiState.switchStates
+    val selectedTile = uiState.selectedTile
     val windowSizeClass = LocalWindowSizeClass.current
 
     val showLogOutDialog = uiState.showLogOutDialog
@@ -121,6 +123,8 @@ fun SettingsTela(
                     modifier = Modifier
                         .padding(horizontal = 16.dp),
                     tiles = sectionTiles,
+                    selectedTile = selectedTile,
+                    onTileSelected = { onTileSelected(it) },
                     themePreference = themePreference,
                     switchStates = switchStates,
                     onSelectThemeClick = { onSelectThemeClick() },

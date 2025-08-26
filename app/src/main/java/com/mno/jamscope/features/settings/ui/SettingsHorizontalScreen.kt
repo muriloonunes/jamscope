@@ -16,10 +16,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -38,6 +34,8 @@ fun SettingsHorizontalScreen(
     onSelectThemeClick: () -> Unit,
     onLogOutClick: () -> Unit,
     tiles: List<Int>,
+    selectedTile: Int,
+    onTileSelected: (Int) -> Unit,
     onSwitchClick: (String) -> Unit,
     onDeleteAccountClick: (Context) -> Unit,
     onBuyMeACoffeeClick: (Context) -> Unit,
@@ -47,7 +45,6 @@ fun SettingsHorizontalScreen(
     onGithubProjectClick: (Context) -> Unit,
 ) {
     val context = LocalContext.current
-    var selectedTile by remember { mutableIntStateOf(tiles.first()) }
     Row(
         modifier = modifier
     ) {
@@ -58,7 +55,7 @@ fun SettingsHorizontalScreen(
                 .padding(horizontal = 8.dp),
             tiles = tiles,
             selected = selectedTile,
-            onTileSelected = { selectedTile = it }
+            onTileSelected = { onTileSelected(it) }
         )
         VerticalDivider()
         AnimatedContent(

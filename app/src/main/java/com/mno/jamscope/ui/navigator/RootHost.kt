@@ -18,8 +18,8 @@ import androidx.window.core.layout.WindowWidthSizeClass
 import com.mno.jamscope.features.login.ui.LoginScreen
 import com.mno.jamscope.features.login.viewmodel.LoginViewModel
 import com.mno.jamscope.features.settings.viewmodel.SettingsViewModel
-import com.mno.jamscope.ui.components.LoadLibrariesScreen
-import com.mno.jamscope.ui.components.WebViewLoader
+import com.mno.jamscope.features.settings.ui.LoadLibrariesScreen
+import com.mno.jamscope.features.settings.ui.WebViewLoader
 import com.mno.jamscope.ui.screen.JamHomePager
 import com.mno.jamscope.ui.screen.JamHomeRail
 import com.mno.jamscope.ui.theme.LocalWindowSizeClass

@@ -91,6 +91,7 @@ fun SettingsScreenCaller() {
     val state by settingsViewModel.uiState.collectAsState()
     SettingsTela(
         uiState = state,
+        onTileSelected = { settingsViewModel.onTileSelect(it) },
         onNavigateBack = { settingsViewModel.navigateBack() },
         onSelectThemeClick = { settingsViewModel.showThemeDialog() },
         onLogOutClick = { settingsViewModel.showLogOutDialog() },

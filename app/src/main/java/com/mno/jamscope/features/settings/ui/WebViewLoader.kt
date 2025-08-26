@@ -1,4 +1,4 @@
-package com.mno.jamscope.ui.components
+package com.mno.jamscope.features.settings.ui
 
 import android.annotation.SuppressLint
 import android.view.ViewGroup

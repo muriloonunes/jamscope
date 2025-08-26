@@ -1,4 +1,4 @@
-package com.mno.jamscope.ui.components
+package com.mno.jamscope.features.settings.ui
 
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize

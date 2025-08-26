@@ -118,6 +118,10 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
+    fun onTileSelect(newTile: Int) {
+        _uiState.update { it.copy(selectedTile = newTile) }
+    }
+
     fun setThemePreference(theme: Int) {
         viewModelScope.launch {
             settingsRepository.saveThemePref(theme)
