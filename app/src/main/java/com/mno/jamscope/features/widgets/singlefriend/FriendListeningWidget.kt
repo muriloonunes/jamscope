@@ -53,9 +53,10 @@ import coil3.request.SuccessResult
 import coil3.toBitmap
 import com.mno.jamscope.R
 import com.mno.jamscope.data.model.User
+import com.mno.jamscope.features.widgets.WidgetDataStoreManager
+import com.mno.jamscope.features.widgets.theme.JamscopeWidgetTheme
 import com.mno.jamscope.util.Stuff
 import com.mno.jamscope.util.dateStringFormatter
-import com.mno.jamscope.features.widgets.WidgetDataStoreManager
 import com.mno.jamscope.worker.FriendListeningWidgetWorker
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -65,9 +66,11 @@ class FriendListeningWidget : GlanceAppWidget() {
     override val sizeMode = SizeMode.Single
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         provideContent {
-            WidgetDesign(
-                context
-            )
+            JamscopeWidgetTheme {
+                WidgetDesign(
+                    context
+                )
+            }
         }
     }
 

@@ -57,6 +57,7 @@ import com.mno.jamscope.data.model.User
 import com.mno.jamscope.util.Stuff
 import com.mno.jamscope.util.dateStringFormatter
 import com.mno.jamscope.features.widgets.WidgetDataStoreManager
+import com.mno.jamscope.features.widgets.theme.JamscopeWidgetTheme
 import com.mno.jamscope.worker.FriendGroupWidgetWorker
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -66,17 +67,19 @@ class FriendGroupWidget : GlanceAppWidget() {
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         provideContent {
             val friendsList = WidgetDataStoreManager.getFriendsGroup(currentState())
-            Box(
-                modifier = GlanceModifier.background(GlanceTheme.colors.surface).cornerRadius(Stuff.WIDGET_CORNER_RADIUS)
-            ) {
-                LazyColumn(
-                    modifier = GlanceModifier.fillMaxSize()
+            JamscopeWidgetTheme {
+                Box(
+                    modifier = GlanceModifier.background(GlanceTheme.colors.surface).cornerRadius(Stuff.WIDGET_CORNER_RADIUS)
                 ) {
-                    items(friendsList) { friend ->
-                        WidgetDesign(context, friend)
-                    }
-                    item {
-                        LastUpdatedManager()
+                    LazyColumn(
+                        modifier = GlanceModifier.fillMaxSize()
+                    ) {
+                        items(friendsList) { friend ->
+                            WidgetDesign(context, friend)
+                        }
+                        item {
+                            LastUpdatedManager()
+                        }
                     }
                 }
             }
