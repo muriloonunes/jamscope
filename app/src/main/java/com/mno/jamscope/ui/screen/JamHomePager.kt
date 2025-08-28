@@ -2,7 +2,6 @@ package com.mno.jamscope.ui.screen
 
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.pager.HorizontalPager
@@ -89,9 +88,9 @@ fun JamHomePager() {
         }) { innerPadding ->
         HorizontalPager(
             state = pagerState,
+            contentPadding = innerPadding,
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
         ) { page ->
             when (page) {
                 0 -> {

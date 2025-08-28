@@ -1,7 +1,7 @@
 package com.mno.jamscope.features.profile.ui.components
 
-import android.util.Log
 import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -10,7 +10,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -144,6 +146,9 @@ fun ProfileTracksSection(
         state = listState
     ) {
         item {
+            Spacer(Modifier.height(1.dp))
+        }
+        item {
             if (errorMessage.isNotEmpty()) {
                 ShowErrorMessage(errorMessage)
             }
@@ -151,18 +156,32 @@ fun ProfileTracksSection(
         itemsIndexed(
             items = userRecentTracks,
             key = { index, track -> "$index${track.name}" }) { index, track ->
-            Log.d("ProfileTracksSection", "track: ${track.name} - index: $index")
             val nowPlaying = track.dateInfo?.formattedDate == null
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
+                    .animateItem(
+                        fadeInSpec = tween(
+                            durationMillis = 500,
+                            easing = FastOutSlowInEasing
+                        ),
+                        placementSpec = tween(
+                            durationMillis = 500,
+                            easing = FastOutSlowInEasing
+                        ),
+                        fadeOutSpec = tween(
+                            durationMillis = 500,
+                            easing = FastOutSlowInEasing
+                        )
+                    )
                     .then(
                         if (nowPlaying) Modifier
                             .padding(2.dp)
                             .background(
                                 color = MaterialTheme.colorScheme.primaryContainer,
                                 shape = RoundedCornerShape(8.dp)
-                            ) else Modifier
+                            )
+                        else Modifier
                     )
             ) {
                 val imageUrl = track.image?.firstOrNull { it.size == "medium" }?.url ?: ""

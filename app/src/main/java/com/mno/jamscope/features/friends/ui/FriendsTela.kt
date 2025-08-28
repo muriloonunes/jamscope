@@ -1,7 +1,6 @@
 package com.mno.jamscope.features.friends.ui
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.grid.LazyGridState
@@ -14,7 +13,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -70,41 +68,34 @@ fun FriendsTela(
     ) {
         when (windowWidth) {
             WindowWidthSizeClass.COMPACT -> {
-                Column {
-                    FriendsVerticalScreen(
-                        listState = listState,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
-                        errorMessage = errorMessage,
-                        friends = friends,
-                        recentTracksMap = recentTracks,
-                        cardBackgroundToggle = cardBackgroundColorEnabled,
-                        playingAnimationEnabled = playingAnimationEnabled,
-                        colorProvider = { name, isDark -> colorProvider(name, isDark) },
-                    )
-                }
+                FriendsVerticalScreen(
+                    listState = listState,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
+                    errorMessage = errorMessage,
+                    friends = friends,
+                    recentTracksMap = recentTracks,
+                    cardBackgroundToggle = cardBackgroundColorEnabled,
+                    playingAnimationEnabled = playingAnimationEnabled,
+                    colorProvider = { name, isDark -> colorProvider(name, isDark) },
+                )
             }
 
             WindowWidthSizeClass.EXPANDED, WindowWidthSizeClass.MEDIUM -> {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    FriendsHorizontalScreen(
-                        modifier = Modifier
-                            .fillMaxSize(),
-                        gridState = gridState,
-                        errorMessage = errorMessage,
-                        sortingType = sortingType,
-                        friends = friends,
-                        recentTracksMap = recentTracks,
-                        cardBackgroundToggle = cardBackgroundColorEnabled,
-                        playingAnimationEnabled = playingAnimationEnabled,
-                        colorProvider = { name, isDark -> colorProvider(name, isDark) },
-                        onSortingTypeChange = { onSortingTypeChange(it) }
-                    )
-                }
+                FriendsHorizontalScreen(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    gridState = gridState,
+                    errorMessage = errorMessage,
+                    sortingType = sortingType,
+                    friends = friends,
+                    recentTracksMap = recentTracks,
+                    cardBackgroundToggle = cardBackgroundColorEnabled,
+                    playingAnimationEnabled = playingAnimationEnabled,
+                    colorProvider = { name, isDark -> colorProvider(name, isDark) },
+                    onSortingTypeChange = { onSortingTypeChange(it) }
+                )
             }
         }
     }
