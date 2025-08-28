@@ -20,20 +20,20 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.mno.jamscope.R
-import com.mno.jamscope.databinding.FriendListeningWidgetConfigureBinding
-import com.mno.jamscope.databinding.FriendsListItemBinding
 import com.mno.jamscope.data.model.User
-import com.mno.jamscope.ui.viewmodel.ConfigWidgetScreenViewModel
+import com.mno.jamscope.databinding.FriendsListItemBinding
+import com.mno.jamscope.databinding.SmallFriendListeningWidgetConfigureBinding
 import com.mno.jamscope.features.widgets.WidgetDataStoreManager
 import com.mno.jamscope.features.widgets.singlefriend.FriendListeningWidget
 import com.mno.jamscope.features.widgets.singlefriend.startListeningUpdateWorker
+import com.mno.jamscope.ui.viewmodel.ConfigWidgetScreenViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class FriendListeningWidgetConfigureActivity : AppCompatActivity() {
     private var appWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID
-    private lateinit var binding: FriendListeningWidgetConfigureBinding
+    private lateinit var binding: SmallFriendListeningWidgetConfigureBinding
     private val configScreenWidgetViewModel: ConfigWidgetScreenViewModel by viewModels()
     private lateinit var adapter: FriendsAdapter
     private var selectedFriend: User? = null
@@ -44,7 +44,7 @@ class FriendListeningWidgetConfigureActivity : AppCompatActivity() {
         // Set the result to CANCELED.  This will cause the widget host to cancel
         // out of the widget placement if the user presses the back button.
         setResult(RESULT_CANCELED)
-        binding = FriendListeningWidgetConfigureBinding.inflate(layoutInflater)
+        binding = SmallFriendListeningWidgetConfigureBinding.inflate(layoutInflater)
         setContentView(binding.root)
         ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())

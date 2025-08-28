@@ -19,7 +19,7 @@ import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 import androidx.window.core.layout.WindowSizeClass
 
-private val lightScheme = lightColorScheme(
+val lightScheme = lightColorScheme(
     primary = primaryLight,
     onPrimary = onPrimaryLight,
     primaryContainer = primaryContainerLight,
@@ -57,7 +57,7 @@ private val lightScheme = lightColorScheme(
     surfaceContainerHighest = surfaceContainerHighestLight,
 )
 
-private val darkScheme = darkColorScheme(
+val darkScheme = darkColorScheme(
     primary = primaryDark,
     onPrimary = onPrimaryDark,
     primaryContainer = primaryContainerDark,
