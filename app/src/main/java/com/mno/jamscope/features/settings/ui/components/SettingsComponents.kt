@@ -11,11 +11,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -26,9 +28,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.mno.jamscope.R
 
 @Composable
@@ -37,7 +41,7 @@ fun SettingSwitch(
     @StringRes iconDesc: Int,
     @StringRes name: Int,
     state: Boolean,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Surface(
         color = Color.Transparent,
@@ -81,7 +85,7 @@ fun SettingsClickableComp(
     @StringRes name: Int,
     showIcon: Boolean,
     @StringRes subtitle: Int?,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Surface(
         color = Color.Transparent,
@@ -156,7 +160,7 @@ fun SettingsHorizontalMenu(
     modifier: Modifier = Modifier,
     tiles: List<Int>,
     selected: Int,
-    onTileSelected: (Int) -> Unit
+    onTileSelected: (Int) -> Unit,
 ) {
     LazyColumn(
         modifier = modifier,
@@ -180,7 +184,7 @@ fun SettingsHorizontalMenu(
 
 @Composable
 fun SettingSectionTitle(
-    @StringRes name: Int
+    @StringRes name: Int,
 ) {
     Text(
         text = stringResource(id = name),
@@ -195,7 +199,7 @@ fun SettingMenuItem(
     @StringRes name: Int,
     modifier: Modifier = Modifier,
     selected: Boolean,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     val backgroundColor = if (selected)
         MaterialTheme.colorScheme.surfaceContainerHigh
@@ -215,4 +219,35 @@ fun SettingMenuItem(
             .clickable { onClick() }
             .padding(horizontal = 16.dp, vertical = 12.dp)
     )
+}
+
+@Composable
+fun SettingDialogRow(
+    modifier: Modifier = Modifier,
+    text: String,
+    selected: Boolean,
+    onClick: () -> Unit,
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .selectable(
+                selected = selected,
+                onClick = onClick,
+                role = Role.RadioButton,
+                enabled = true
+            ),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        RadioButton(
+            selected = selected,
+            onClick = null
+        )
+        Text(
+            text = text,
+            modifier = Modifier
+                .padding(start = 8.dp),
+            fontSize = 16.sp
+        )
+    }
 }

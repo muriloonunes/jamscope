@@ -1,13 +1,14 @@
 package com.mno.jamscope.features.settings.ui
 
 import android.content.Context
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Logout
@@ -16,7 +17,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowWidthSizeClass
 import com.mno.jamscope.R
 import com.mno.jamscope.features.settings.state.SettingsUiState
+import com.mno.jamscope.features.settings.ui.components.SettingDialogRow
 import com.mno.jamscope.ui.theme.LocalWindowSizeClass
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -151,7 +152,27 @@ fun SettingsTela(
                 )
             },
             text = {
-                Column {
+                Column(
+                    modifier = Modifier.selectableGroup(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    SettingDialogRow(
+                        text = stringResource(R.string.theme_system_default_auto),
+                        selected = themePreference == 0,
+                        onClick = { setThemePreference(0) }
+                    )
+                    SettingDialogRow(
+                        text = stringResource(R.string.light_theme),
+                        selected = themePreference == 1,
+                        onClick = { setThemePreference(1) }
+                    )
+                    SettingDialogRow(
+                        text = stringResource(R.string.dark_theme),
+                        selected = themePreference == 2,
+                        onClick = { setThemePreference(2) }
+                    )
+                    /*
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         RadioButton(
                             selected = themePreference == 0,
@@ -159,7 +180,10 @@ fun SettingsTela(
                         )
                         Text(
                             text = stringResource(R.string.theme_system_default_auto),
-                            modifier = Modifier.padding(start = 8.dp)
+                            modifier = Modifier
+                                .padding(start = 8.dp)
+                                .clickable { setThemePreference(0) },
+                            fontSize = 16.sp
                         )
                     }
                     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -169,7 +193,10 @@ fun SettingsTela(
                         )
                         Text(
                             text = stringResource(R.string.light_theme),
-                            modifier = Modifier.padding(start = 8.dp)
+                            modifier = Modifier
+                                .padding(start = 8.dp)
+                                .clickable { setThemePreference(1) },
+                            fontSize = 16.sp
                         )
                     }
                     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -179,9 +206,13 @@ fun SettingsTela(
                         )
                         Text(
                             text = stringResource(R.string.dark_theme),
-                            modifier = Modifier.padding(start = 8.dp)
+                            modifier = Modifier
+                                .padding(start = 8.dp)
+                                .clickable { setThemePreference(2) },
+                            fontSize = 16.sp
                         )
                     }
+                     */
                 }
             },
             confirmButton = {
