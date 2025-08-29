@@ -9,7 +9,7 @@ import com.mno.jamscope.data.model.Resource
 import com.mno.jamscope.data.model.Track
 import com.mno.jamscope.data.repository.SettingsRepository
 import com.mno.jamscope.data.repository.UserRepository
-import com.mno.jamscope.util.LogoutEventBus
+import com.mno.jamscope.data.flows.LogoutEventBus
 import com.mno.jamscope.util.Stuff
 import com.mno.jamscope.util.Stuff.openUrl
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,7 +27,8 @@ class ProfileViewModel @Inject constructor(
     private val userRepository: UserRepository,
     @param:ApplicationContext private val context: Context,
     private val settingsRepository: SettingsRepository,
-) : ViewModel() {
+    private val logoutBus: LogoutEventBus,
+    ) : ViewModel() {
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing = _isRefreshing
         .onStart {
@@ -52,7 +53,7 @@ class ProfileViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            LogoutEventBus.logoutEvents.collect {
+            logoutBus.logoutEvents.collect {
                 resetLastUpdateTimestamp()
             }
         }

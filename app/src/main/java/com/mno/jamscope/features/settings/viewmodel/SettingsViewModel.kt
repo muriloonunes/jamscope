@@ -9,7 +9,7 @@ import com.mno.jamscope.data.repository.UserRepository
 import com.mno.jamscope.features.settings.state.SettingsUiState
 import com.mno.jamscope.ui.navigator.Destination
 import com.mno.jamscope.ui.navigator.Navigator
-import com.mno.jamscope.util.LogoutEventBus
+import com.mno.jamscope.data.flows.LogoutEventBus
 import com.mno.jamscope.util.Stuff.openUrl
 import com.mno.jamscope.util.sendReportMail
 import com.mno.jamscope.features.settings.ui.components.switches
@@ -27,7 +27,8 @@ class SettingsViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val navigator: Navigator,
     private val friendsRepository: FriendsRepository,
-    private val settingsRepository: SettingsRepository
+    private val settingsRepository: SettingsRepository,
+    private val logoutBus: LogoutEventBus
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(SettingsUiState())
     val uiState: StateFlow<SettingsUiState> = _uiState
@@ -81,7 +82,7 @@ class SettingsViewModel @Inject constructor(
             userRepository.clearUserSession()
             friendsRepository.deleteFriends()
             settingsRepository.clearPrefs()
-            LogoutEventBus.sendLogoutEvent()
+            logoutBus.send()
             delay(500)
             navigateToLogin()
         }

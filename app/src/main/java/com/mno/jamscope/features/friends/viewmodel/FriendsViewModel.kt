@@ -3,6 +3,7 @@ package com.mno.jamscope.features.friends.viewmodel
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mno.jamscope.data.flows.LogoutEventBus
 import com.mno.jamscope.data.model.RecentTracks
 import com.mno.jamscope.data.model.Resource
 import com.mno.jamscope.data.model.User
@@ -13,7 +14,6 @@ import com.mno.jamscope.ui.navigator.Destination
 import com.mno.jamscope.ui.navigator.Navigator
 import com.mno.jamscope.ui.theme.AppTheme
 import com.mno.jamscope.ui.theme.ThemeAttributes
-import com.mno.jamscope.util.LogoutEventBus
 import com.mno.jamscope.util.SortingType
 import com.mno.jamscope.util.Stuff
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -37,6 +37,7 @@ class FriendsViewModel @Inject constructor(
     private val friendsRepository: FriendsRepository,
     private val navigator: Navigator,
     private val settingsRepository: SettingsRepository,
+    private val logoutBus: LogoutEventBus,
 ) : ViewModel() {
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing = _isRefreshing
@@ -72,7 +73,7 @@ class FriendsViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            LogoutEventBus.logoutEvents.collect {
+            logoutBus.logoutEvents.collect {
                 resetLastUpdateTimestamp()
             }
         }
