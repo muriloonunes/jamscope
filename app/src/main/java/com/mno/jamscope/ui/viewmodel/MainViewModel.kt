@@ -5,16 +5,21 @@ import androidx.lifecycle.viewModelScope
 import com.mno.jamscope.data.repository.ApiRepository
 import com.mno.jamscope.data.repository.UserRepository
 import com.mno.jamscope.ui.navigator.Destination
+import com.mno.jamscope.ui.navigator.NavigationAction
+import com.mno.jamscope.ui.navigator.Navigator
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class SplashViewModel @Inject constructor(
+class MainViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val apiRepository: ApiRepository,
+    private val navigator: Navigator
 //    private val settingsRepository: SettingsRepository
 ) : ViewModel() {
     private val _isLoading = MutableStateFlow(true)
@@ -22,6 +27,9 @@ class SplashViewModel @Inject constructor(
 
     private val _startDestination = MutableStateFlow<Destination?>(null)
     val startDestination get() = _startDestination.asStateFlow()
+
+    private val _navActions = MutableSharedFlow<NavigationAction>()
+    val navActions: SharedFlow<NavigationAction> = _navActions
 
 //    private val _appOpenedTimes = MutableStateFlow(0)
 //    val appOpenedTimes: StateFlow<Int> = _appOpenedTimes
@@ -43,6 +51,11 @@ class SplashViewModel @Inject constructor(
             } else {
                 _startDestination.value = Destination.LoginRoute
                 _isLoading.value = false
+            }
+        }
+        viewModelScope.launch {
+            navigator.navigationActions.collect { action ->
+                _navActions.emit(action)
             }
         }
     }

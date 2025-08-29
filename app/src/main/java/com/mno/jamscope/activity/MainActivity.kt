@@ -24,23 +24,20 @@ import com.mno.jamscope.ui.navigator.RootHost
 import com.mno.jamscope.ui.theme.LocalThemePreference
 import com.mno.jamscope.ui.theme.LocalWindowSizeClass
 import com.mno.jamscope.ui.theme.NowPlayingTheme
-import com.mno.jamscope.ui.viewmodel.NavigationViewModel
-import com.mno.jamscope.ui.viewmodel.SplashViewModel
+import com.mno.jamscope.ui.viewmodel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
     @Inject
     lateinit var navigator: Navigator
 
-    private val splashViewModel by viewModels<SplashViewModel>()
+    private val mainViewModel by viewModels<MainViewModel>()
 
     private val settingsViewModel by viewModels<SettingsViewModel>()
-
-    //uhm...?
-    private val navigationViewModel by viewModels<NavigationViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setupSplashScreen()
@@ -52,7 +49,7 @@ class MainActivity : ComponentActivity() {
 //            var showBottomSheet by remember { mutableStateOf(false) }
             val settingsUiState by settingsViewModel.uiState.collectAsState()
             val themePreference = settingsUiState.themePreference
-            val startDestination by splashViewModel.startDestination.collectAsState()
+            val startDestination by mainViewModel.startDestination.collectAsState()
             val navController = rememberNavController()
             val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
             NowPlayingTheme(themePreference = themePreference) {
@@ -68,7 +65,7 @@ class MainActivity : ComponentActivity() {
 //                            }
 //                        }
                         LaunchedEffect(Unit) {
-                            navigationViewModel.navActions.collect { action ->
+                            mainViewModel.navActions.collect { action ->
                                 when (action) {
                                     is NavigationAction.Navigate -> {
                                         navController.navigate(
@@ -99,7 +96,7 @@ class MainActivity : ComponentActivity() {
         var keepSplashScreenOn = true
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                splashViewModel.isLoading.collect {
+                mainViewModel.isLoading.collect {
                     keepSplashScreenOn = it
                 }
             }
