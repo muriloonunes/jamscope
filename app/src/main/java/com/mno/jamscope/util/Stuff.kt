@@ -26,7 +26,7 @@ object Stuff {
     val WIDGET_CORNER_RADIUS = 16.dp
     const val LAST_KEY = Token.LAST_FM_API_KEY
     const val LAST_SECRET = Token.LAST_FM_SECRET
-    const val REFRESHING_TIME = 900000L // 1.5 minutes
+    const val REFRESHING_TIME = 90000L // 1.5 minutes
     const val EMAIL = "murideveloper@protonmail.com"
     const val BASE_URL = "https://ws.audioscrobbler.com/2.0/?"
     const val FORMAT_JSON = "format=json"
