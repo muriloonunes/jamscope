@@ -32,6 +32,8 @@ object Stuff {
     const val FORMAT_JSON = "format=json"
     const val DEFAULT_PROFILE_IMAGE =
         "https://lastfm.freetls.fastly.net/i/u/64s/2a96cbd8b46e442fc41c2b86b821562f.png"
+
+    const val FROM_WIDGET = "FROM_WIDGET"
     val JSON = Json { ignoreUnknownKeys = true }
 
     fun Context.openUrl(url: String) {
@@ -95,7 +97,7 @@ object Stuff {
     fun getAppExitReasons(
         afterTime: Long = -1,
         printAll: Boolean = false,
-        context: Context
+        context: Context,
     ): List<ApplicationExitInfo> {
         return try {
             val activityManager =
@@ -144,6 +146,6 @@ object Stuff {
         @param:StringRes val name: Int,
         val icon: ImageVector,
         @param:StringRes val iconDesc: Int,
-        val initialState: Boolean
+        val initialState: Boolean,
     )
 }

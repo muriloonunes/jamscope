@@ -1,5 +1,6 @@
 package com.mno.jamscope.activity
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -25,6 +26,7 @@ import com.mno.jamscope.ui.theme.LocalThemePreference
 import com.mno.jamscope.ui.theme.LocalWindowSizeClass
 import com.mno.jamscope.ui.theme.NowPlayingTheme
 import com.mno.jamscope.ui.viewmodel.MainViewModel
+import com.mno.jamscope.util.Stuff
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -43,6 +45,7 @@ class MainActivity : ComponentActivity() {
         setupSplashScreen()
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
+        handleWidgetIntent(intent)
 
         setContent {
 //            val appOpenedTimes by splashViewModel.appOpenedTimes.collectAsState()
@@ -90,6 +93,19 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        handleWidgetIntent(intent)
+    }
+
+    private fun handleWidgetIntent(intent: Intent?) {
+        val friendName = intent?.getStringExtra(Stuff.FROM_WIDGET)
+        if (!friendName.isNullOrEmpty()) {
+            mainViewModel.handleWidgetIntent(friendName)
+        }
+        intent?.removeExtra(Stuff.FROM_WIDGET)
     }
 
     private fun setupSplashScreen() {

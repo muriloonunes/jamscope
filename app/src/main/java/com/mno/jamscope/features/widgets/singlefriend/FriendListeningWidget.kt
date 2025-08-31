@@ -7,8 +7,12 @@ import android.util.Log
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.glance.GlanceId
+import androidx.glance.GlanceModifier
 import androidx.glance.LocalSize
 import androidx.glance.action.ActionParameters
+import androidx.glance.action.actionParametersOf
+import androidx.glance.action.actionStartActivity
+import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.SizeMode
 import androidx.glance.appwidget.action.ActionCallback
@@ -24,9 +28,11 @@ import coil3.request.ImageRequest
 import coil3.request.SuccessResult
 import coil3.toBitmap
 import com.mno.jamscope.R
+import com.mno.jamscope.activity.MainActivity
 import com.mno.jamscope.features.widgets.singlefriend.ui.LargeWidgetDesign
 import com.mno.jamscope.features.widgets.singlefriend.ui.SmallWidgetDesign
 import com.mno.jamscope.features.widgets.theme.JamscopeWidgetTheme
+import com.mno.jamscope.util.Stuff
 import com.mno.jamscope.worker.FriendListeningWidgetWorker
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -85,6 +91,16 @@ suspend fun loadBitmap(url: String, context: Context): Bitmap? {
             return@withContext null
         }
     }
+}
+
+fun GlanceModifier.clickableWidget(name: String?): GlanceModifier {
+    return this.clickable(
+        onClick = actionStartActivity<MainActivity>(
+            parameters = actionParametersOf(
+                ActionParameters.Key<String>(Stuff.FROM_WIDGET) to (name ?: "")
+            )
+        )
+    )
 }
 
 val NETWORK_CONSTRAINTS =

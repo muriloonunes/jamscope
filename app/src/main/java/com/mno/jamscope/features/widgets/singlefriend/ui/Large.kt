@@ -21,6 +21,7 @@ import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.padding
 import androidx.glance.text.TextStyle
 import com.mno.jamscope.features.widgets.WidgetDataStoreManager
+import com.mno.jamscope.features.widgets.singlefriend.clickableWidget
 import com.mno.jamscope.features.widgets.singlefriend.loadBitmap
 import com.mno.jamscope.util.Stuff
 
@@ -44,7 +45,8 @@ fun LargeWidgetDesign(context: Context) {
             .fillMaxSize()
             .background(GlanceTheme.colors.surface)
             .padding(2.dp)
-            .cornerRadius(Stuff.WIDGET_CORNER_RADIUS),
+            .cornerRadius(Stuff.WIDGET_CORNER_RADIUS)
+            .clickableWidget(friend?.name),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         ProfileWidgetImage(friend, imageBitmap)

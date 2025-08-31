@@ -2,6 +2,7 @@ package com.mno.jamscope.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mno.jamscope.data.flows.WidgetIntentBus
 import com.mno.jamscope.data.repository.ApiRepository
 import com.mno.jamscope.data.repository.UserRepository
 import com.mno.jamscope.ui.navigator.Destination
@@ -19,7 +20,8 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val apiRepository: ApiRepository,
-    private val navigator: Navigator
+    private val navigator: Navigator,
+    private val widgetIntentBus: WidgetIntentBus,
 //    private val settingsRepository: SettingsRepository
 ) : ViewModel() {
     private val _isLoading = MutableStateFlow(true)
@@ -57,6 +59,12 @@ class MainViewModel @Inject constructor(
             navigator.navigationActions.collect { action ->
                 _navActions.emit(action)
             }
+        }
+    }
+
+    fun handleWidgetIntent(name: String?) {
+        viewModelScope.launch {
+            widgetIntentBus.emit(name)
         }
     }
 }

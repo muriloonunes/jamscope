@@ -1,16 +1,19 @@
 package com.mno.jamscope.ui.util
 
+import android.util.Log
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.window.core.layout.WindowSizeClass
+import androidx.window.core.layout.WindowWidthSizeClass
 import com.mno.jamscope.features.friends.ui.FriendsTela
 import com.mno.jamscope.features.friends.viewmodel.FriendsViewModel
 import com.mno.jamscope.features.profile.ui.ProfileTela
@@ -62,6 +65,35 @@ fun FriendsScreenCaller(
     val friends by friendsViewModel.friends.collectAsStateWithLifecycle()
     val cardBackgroundColorEnabled by friendsViewModel.cardBackgroundColorToggle.collectAsState()
     val playingAnimationEnabled by friendsViewModel.playingAnimationToggle.collectAsState()
+    val friendToScrollTo by friendsViewModel.friendToScroll.collectAsStateWithLifecycle()
+
+    LaunchedEffect(sortingType) {
+        listState.animateScrollToItem(0)
+    }
+
+    LaunchedEffect(friendToScrollTo, friends) {
+        friendToScrollTo?.let { name ->
+            if (friends.isNotEmpty()) {
+                Log.d("FriendsScreenCaller", "Scrolling to friend: $name")
+                val index = friends.indexOfFirst { it.name == name }
+                if (index != -1) {
+                    try {
+                        if (windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.COMPACT) {
+                            listState.animateScrollToItem(index)
+                        } else {
+                            gridState.animateScrollToItem(index)
+                        }
+                    } finally {
+                        //caso animateScroll lance um erro, improvável, mas mais seguro
+                        friendsViewModel.onScrolledToFriend()
+                    }
+                } else {
+                    friendsViewModel.onScrolledToFriend()
+                }
+            }
+        }
+    }
+
     FriendsTela(
         sortingType = sortingType,
         isRefreshing = refreshing,

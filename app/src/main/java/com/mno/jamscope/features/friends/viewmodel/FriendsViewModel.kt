@@ -1,9 +1,11 @@
 package com.mno.jamscope.features.friends.viewmodel
 
+import android.util.Log
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mno.jamscope.data.flows.LogoutEventBus
+import com.mno.jamscope.data.flows.WidgetIntentBus
 import com.mno.jamscope.data.model.RecentTracks
 import com.mno.jamscope.data.model.Resource
 import com.mno.jamscope.data.model.User
@@ -22,6 +24,7 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
@@ -38,6 +41,7 @@ class FriendsViewModel @Inject constructor(
     private val navigator: Navigator,
     private val settingsRepository: SettingsRepository,
     private val logoutBus: LogoutEventBus,
+    private val widgetIntentBus: WidgetIntentBus,
 ) : ViewModel() {
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing = _isRefreshing
@@ -69,6 +73,9 @@ class FriendsViewModel @Inject constructor(
     private val _playingAnimationToggle = MutableStateFlow(true)
     val playingAnimationToggle: StateFlow<Boolean> = _playingAnimationToggle
 
+    private val _friendToScroll = MutableStateFlow<String?>(null)
+    val friendToScroll = _friendToScroll.asStateFlow()
+
     private var lastUpdateTimestamp: Long = 0L
 
     init {
@@ -89,6 +96,14 @@ class FriendsViewModel @Inject constructor(
             }.collect { (playingAnimation, cardBackground) ->
                 _playingAnimationToggle.value = playingAnimation
                 _cardBackgroundColorToggle.value = cardBackground
+            }
+        }
+        viewModelScope.launch {
+            widgetIntentBus.widgetClick.collect { name ->
+                if (!name.isNullOrEmpty()) {
+                    _friendToScroll.value = name
+                    Log.d("FriendsVM", "Emitted scroll event for friend: $name")
+                }
             }
         }
     }
@@ -172,6 +187,10 @@ class FriendsViewModel @Inject constructor(
 
     fun shouldRefresh(): Boolean {
         return System.currentTimeMillis() - lastUpdateTimestamp > Stuff.REFRESHING_TIME
+    }
+
+    fun onScrolledToFriend() {
+        _friendToScroll.value = null
     }
 
     fun getSecondaryContainerColor(name: String?, isDarkTheme: Boolean): Color {
