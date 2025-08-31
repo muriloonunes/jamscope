@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -57,6 +58,7 @@ import com.mno.jamscope.data.model.User
 import com.mno.jamscope.ui.components.FullscreenImage
 import com.mno.jamscope.ui.components.LastProBadge
 import com.mno.jamscope.ui.components.LoadTrackInfo
+import com.mno.jamscope.ui.theme.LocalThemePreference
 import com.mno.jamscope.util.Stuff.openUrl
 import com.mno.jamscope.util.forwardingPainter
 import com.mno.jamscope.util.getCountryFlag
@@ -125,6 +127,14 @@ fun FriendExtendedCardTracksSection(
     playingAnimationEnabled: Boolean,
     context: Context,
 ) {
+    val themePreference = LocalThemePreference.current
+    val isDarkTheme = when (themePreference) {
+        0 -> isSystemInDarkTheme()
+        1 -> false
+        2 -> true
+        else -> isSystemInDarkTheme()
+    }
+    val textColor = if (isDarkTheme) Color.White else Color.Black
     Card(
         modifier = modifier
             .padding(8.dp)
@@ -145,6 +155,7 @@ fun FriendExtendedCardTracksSection(
                 text = stringResource(R.string.recent_tracks),
                 style = MaterialTheme.typography.titleLarge.copy(
                     fontWeight = FontWeight.Bold,
+                    color = textColor
                 )
             )
             if (recentTracks.isNotEmpty()) {
@@ -171,7 +182,8 @@ fun FriendExtendedCardTracksSection(
                             LoadTrackInfo(
                                 track = track,
                                 clickable = true,
-                                playingAnimationEnabled = playingAnimationEnabled
+                                playingAnimationEnabled = playingAnimationEnabled,
+                                textColor = textColor
                             )
                             HorizontalDivider(
                                 modifier = Modifier.padding(vertical = 5.dp),
@@ -273,6 +285,14 @@ fun FriendExtendedCardHeader(
 fun FriendInfo(
     friend: User,
 ) {
+    val themePreference = LocalThemePreference.current
+    val isDarkTheme = when (themePreference) {
+        0 -> isSystemInDarkTheme()
+        1 -> false
+        2 -> true
+        else -> isSystemInDarkTheme()
+    }
+    val textColor = if (isDarkTheme) Color.White else Color.Black
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -286,7 +306,8 @@ fun FriendInfo(
                 text = friendNameWithLink,
                 style = MaterialTheme.typography.titleLarge.copy(
                     fontWeight = FontWeight.Bold,
-                    platformStyle = PlatformTextStyle(includeFontPadding = false)
+                    platformStyle = PlatformTextStyle(includeFontPadding = false),
+                    color = textColor
                 ),
                 textAlign = TextAlign.Center,
                 textDecoration = TextDecoration.Underline,
@@ -303,7 +324,8 @@ fun FriendInfo(
                     text = friendNameWithLink,
                     style = MaterialTheme.typography.titleLarge.copy(
                         fontWeight = FontWeight.Bold,
-                        platformStyle = PlatformTextStyle(includeFontPadding = false)
+                        platformStyle = PlatformTextStyle(includeFontPadding = false),
+                        color = textColor
                     ),
                     textDecoration = TextDecoration.Underline,
                     maxLines = 1,
@@ -314,14 +336,14 @@ fun FriendInfo(
         if (friend.realname.isNotEmpty() && friend.name != null) {
             Text(
                 text = friend.name,
-                style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
+                style = MaterialTheme.typography.bodySmall.copy(color = textColor.copy(alpha = 0.9f)),
                 textAlign = TextAlign.Center,
             )
         }
         friend.country?.takeIf { it.isNotEmpty() && it != "None" }?.let { country ->
             Text(
                 text = "${getLocalizedCountryName(country)} ${getCountryFlag(country)}",
-                style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
+                style = MaterialTheme.typography.bodySmall.copy(color = textColor.copy(0.9f)),
                 textAlign = TextAlign.Center,
             )
         }

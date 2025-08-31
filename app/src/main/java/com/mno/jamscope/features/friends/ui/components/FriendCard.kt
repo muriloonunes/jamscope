@@ -58,7 +58,7 @@ fun FriendCard(
         colorProvider(
             friend.url,
             isDarkTheme
-        ) else MaterialTheme.colorScheme.onSecondary
+        ) else MaterialTheme.colorScheme.onTertiary
 
     var isExtended by remember { mutableStateOf(false) }
 
@@ -70,7 +70,7 @@ fun FriendCard(
             onDismissRequest = { isExtended = false }
         )
     }
-
+    val textColor = if (isDarkTheme) Color.White else Color.Black
     ElevatedCard(
         modifier = modifier
             .padding(8.dp)
@@ -99,7 +99,8 @@ fun FriendCard(
                         text = it,
                         style = MaterialTheme.typography.bodySmall.copy(
                             fontWeight = FontWeight.Bold,
-                            fontSize = 14.sp
+                            fontSize = 14.sp,
+                            color = textColor
                         ),
                         textAlign = TextAlign.Center,
                         maxLines = 1,
@@ -129,13 +130,14 @@ fun FriendCard(
                         LoadTrackInfo(
                             track = track,
                             clickable = false,
-                            playingAnimationEnabled = playingAnimationEnabled
+                            playingAnimationEnabled = playingAnimationEnabled,
+                            textColor = textColor
                         )
                     } else {
                         Text(
                             text = stringResource(id = R.string.no_recent_tracks),
                             style = MaterialTheme.typography.bodySmall.copy(
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                color = textColor
                             )
                         )
                     }

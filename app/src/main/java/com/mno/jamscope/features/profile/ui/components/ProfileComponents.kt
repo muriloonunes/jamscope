@@ -195,7 +195,8 @@ fun ProfileTracksSection(
                     track = track,
                     clickable = true,
                     playingAnimationEnabled = playingAnimationEnabled,
-                    nowPlaying = nowPlaying
+                    nowPlaying = nowPlaying,
+                    textColor = MaterialTheme.colorScheme.onSurface
                 )
             }
             if (index < userRecentTracks.size - 1 && !nowPlaying) {

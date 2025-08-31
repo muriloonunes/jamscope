@@ -31,8 +31,8 @@
     <string name="sort_button">Abrir a página inferior de \'organizar por\'</string>
     <string name="sort_by">Organizar por</string>
     <string name="recently_played">Ouviram recentemente</string>
-    <string name="alphabetically">Ordem alfabética</string>
-    <string name="default_sort">Ordem padrão</string>
+    <string name="alphabetically">Alfabético</string>
+    <string name="default_sort">Padrão</string>
     <string name="selected">Selecionado</string>
     <string name="friend_listening_widget">Veja o que um amigo está escutando!</string>
     <string name="select_friend_widget">Selecione um amigo para colocar no widget</string>

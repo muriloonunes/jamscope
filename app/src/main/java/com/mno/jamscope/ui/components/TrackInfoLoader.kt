@@ -21,6 +21,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
@@ -43,10 +44,11 @@ fun LoadTrackInfo(
     clickable: Boolean,
     playingAnimationEnabled: Boolean,
     nowPlaying: Boolean = false,
+    textColor: Color,
 ) {
     val context = LocalContext.current
     val color =
-        if (nowPlaying) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface
+        if (nowPlaying) MaterialTheme.colorScheme.onPrimaryContainer else textColor
     Column(
         modifier = Modifier.then(if (clickable) Modifier.clickable { context.searchMusicIntent(track) } else Modifier)
     ) {
@@ -102,7 +104,11 @@ fun LoadTrackInfo(
                         null
                     ),
                     style = MaterialTheme.typography.labelLarge.copy(
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = when (textColor) {
+                            Color.Black -> Color.Black.copy(alpha = 0.7f)
+                            Color.White -> Color.White.copy(alpha = 0.7f)
+                            else -> MaterialTheme.colorScheme.onSurfaceVariant
+                        }
                     ),
                     maxLines = 1,
                     modifier = Modifier
