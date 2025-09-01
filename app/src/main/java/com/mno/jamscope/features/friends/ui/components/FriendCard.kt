@@ -20,6 +20,7 @@ import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,6 +46,8 @@ fun FriendCard(
     modifier: Modifier = Modifier,
     cardBackgroundToggle: Boolean,
     playingAnimationEnabled: Boolean,
+    friendToExtend: String?,
+    onExtendedHandled: () -> Unit,
     colorProvider: (String?, Boolean) -> Color,
 ) {
     val themePreference = LocalThemePreference.current
@@ -62,12 +65,21 @@ fun FriendCard(
 
     var isExtended by remember { mutableStateOf(false) }
 
+    LaunchedEffect(friendToExtend, friend.name) {
+        if (friendToExtend == friend.name) {
+            isExtended = true
+        }
+    }
+
     if (isExtended) {
         ExtendedFriendCard(
             friend = friend,
             backgroundColor = backgroundColor,
             playingAnimationEnabled = playingAnimationEnabled,
-            onDismissRequest = { isExtended = false }
+            onDismissRequest = {
+                isExtended = false
+                onExtendedHandled()
+            }
         )
     }
     val textColor = if (isDarkTheme) Color.White else Color.Black

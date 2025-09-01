@@ -17,6 +17,7 @@ import com.mno.jamscope.data.model.RecentTracks
 import com.mno.jamscope.data.model.User
 import com.mno.jamscope.features.friends.ui.components.FriendCard
 import com.mno.jamscope.ui.components.ShowErrorMessage
+import com.mno.jamscope.ui.components.animations.highlightIf
 
 @Composable
 fun FriendsVerticalScreen(
@@ -27,6 +28,8 @@ fun FriendsVerticalScreen(
     recentTracksMap: Map<String, RecentTracks?>,
     cardBackgroundToggle: Boolean,
     playingAnimationEnabled: Boolean,
+    friendToExtend: String?,
+    onExtendedHandled: () -> Unit,
     colorProvider: (String?, Boolean) -> Color,
 ) {
     LazyColumn(
@@ -46,24 +49,28 @@ fun FriendsVerticalScreen(
         }
         items(friends, key = { it.name!! }) { friend ->
             FriendCard(
-                modifier = Modifier.animateItem(
-                    fadeInSpec = tween(
-                        durationMillis = 500,
-                        easing = FastOutSlowInEasing
+                modifier = Modifier
+                    .highlightIf(friend.name == friendToExtend, onExtendedHandled)
+                    .animateItem(
+                        fadeInSpec = tween(
+                            durationMillis = 500,
+                            easing = FastOutSlowInEasing
+                        ),
+                        placementSpec = tween(
+                            durationMillis = 500,
+                            easing = FastOutSlowInEasing
+                        ),
+                        fadeOutSpec = tween(
+                            durationMillis = 500,
+                            easing = FastOutSlowInEasing
+                        )
                     ),
-                    placementSpec = tween(
-                        durationMillis = 500,
-                        easing = FastOutSlowInEasing
-                    ),
-                    fadeOutSpec = tween(
-                        durationMillis = 500,
-                        easing = FastOutSlowInEasing
-                    )
-                ),
                 friend = friend,
                 recentTracks = recentTracksMap[friend.url],
                 cardBackgroundToggle = cardBackgroundToggle,
                 playingAnimationEnabled = playingAnimationEnabled,
+                friendToExtend = friendToExtend,
+                onExtendedHandled = onExtendedHandled,
                 colorProvider = colorProvider
             )
         }

@@ -66,6 +66,7 @@ fun FriendsScreenCaller(
     val cardBackgroundColorEnabled by friendsViewModel.cardBackgroundColorToggle.collectAsState()
     val playingAnimationEnabled by friendsViewModel.playingAnimationToggle.collectAsState()
     val friendToScrollTo by friendsViewModel.friendToScroll.collectAsStateWithLifecycle()
+    val friendToOpen by friendsViewModel.friendToOpen.collectAsStateWithLifecycle()
 
     LaunchedEffect(sortingType) {
         listState.animateScrollToItem(0)
@@ -89,6 +90,7 @@ fun FriendsScreenCaller(
                     }
                 } else {
                     friendsViewModel.onScrolledToFriend()
+                    friendsViewModel.onFriendOpened()
                 }
             }
         }
@@ -102,6 +104,8 @@ fun FriendsScreenCaller(
         friends = friends,
         cardBackgroundColorEnabled = cardBackgroundColorEnabled,
         playingAnimationEnabled = playingAnimationEnabled,
+        friendToExtend = friendToOpen,
+        onExtendedHandled = { friendsViewModel.onFriendOpened() },
         onRefresh = { friendsViewModel.onRefresh() },
         onSettingIconClick = { friendsViewModel.navigateToSettings() },
         onSortingTypeChange = {

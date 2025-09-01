@@ -76,6 +76,13 @@ class FriendsViewModel @Inject constructor(
     private val _friendToScroll = MutableStateFlow<String?>(null)
     val friendToScroll = _friendToScroll.asStateFlow()
 
+    //talvez é desnecessário usar dois state flow que vao segurar o mesmo valor
+    //mas garante que os eventos nao se misturem
+    private val _friendToOpen = MutableStateFlow<String?>(null)
+    val friendToOpen = _friendToOpen.asStateFlow()
+
+
+
     private var lastUpdateTimestamp: Long = 0L
 
     init {
@@ -102,6 +109,7 @@ class FriendsViewModel @Inject constructor(
             widgetIntentBus.widgetClick.collect { name ->
                 if (!name.isNullOrEmpty()) {
                     _friendToScroll.value = name
+                    _friendToOpen.value = name
                     Log.d("FriendsVM", "Emitted scroll event for friend: $name")
                 }
             }
@@ -191,6 +199,10 @@ class FriendsViewModel @Inject constructor(
 
     fun onScrolledToFriend() {
         _friendToScroll.value = null
+    }
+
+    fun onFriendOpened() {
+        _friendToOpen.value = null
     }
 
     fun getSecondaryContainerColor(name: String?, isDarkTheme: Boolean): Color {

@@ -35,6 +35,8 @@ fun FriendsTela(
     friends: List<User>,
     cardBackgroundColorEnabled: Boolean,
     playingAnimationEnabled: Boolean,
+    friendToExtend: String?,
+    onExtendedHandled: () -> Unit,
     onRefresh: () -> Unit,
     onSettingIconClick: () -> Unit,
     onSortingTypeChange: (SortingType) -> Unit,
@@ -71,6 +73,8 @@ fun FriendsTela(
                     errorMessage = errorMessage,
                     friends = friends,
                     recentTracksMap = recentTracks,
+                    friendToExtend = friendToExtend,
+                    onExtendedHandled = onExtendedHandled,
                     cardBackgroundToggle = cardBackgroundColorEnabled,
                     playingAnimationEnabled = playingAnimationEnabled,
                     colorProvider = { name, isDark -> colorProvider(name, isDark) },
@@ -88,6 +92,8 @@ fun FriendsTela(
                     recentTracksMap = recentTracks,
                     cardBackgroundToggle = cardBackgroundColorEnabled,
                     playingAnimationEnabled = playingAnimationEnabled,
+                    friendToExtend = friendToExtend,
+                    onExtendedHandled = onExtendedHandled,
                     colorProvider = { name, isDark -> colorProvider(name, isDark) },
                     onSortingTypeChange = { onSortingTypeChange(it) }
                 )

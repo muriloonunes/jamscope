@@ -16,6 +16,7 @@ import com.mno.jamscope.data.model.User
 import com.mno.jamscope.features.friends.ui.components.FriendCard
 import com.mno.jamscope.ui.components.ShowErrorMessage
 import com.mno.jamscope.ui.components.SortingLazyRow
+import com.mno.jamscope.ui.components.animations.highlightIf
 import com.mno.jamscope.util.SortingType
 
 @Composable
@@ -28,6 +29,8 @@ fun FriendsHorizontalScreen(
     recentTracksMap: Map<String, RecentTracks?>,
     cardBackgroundToggle: Boolean,
     playingAnimationEnabled: Boolean,
+    friendToExtend: String?,
+    onExtendedHandled: () -> Unit,
     onSortingTypeChange: (SortingType) -> Unit,
     colorProvider: (String?, Boolean) -> Color,
 ) {
@@ -54,6 +57,10 @@ fun FriendsHorizontalScreen(
                 friend = friend,
                 recentTracks = recentTracksMap[friend.url],
                 modifier = Modifier
+                    .highlightIf(
+                        condition = friend.name == friendToExtend,
+                        onExtendedHandled = onExtendedHandled
+                    )
                     .animateItem(
                         fadeInSpec = tween(
                             durationMillis = 500,
@@ -70,6 +77,8 @@ fun FriendsHorizontalScreen(
                     ),
                 cardBackgroundToggle = cardBackgroundToggle,
                 playingAnimationEnabled = playingAnimationEnabled,
+                friendToExtend = friendToExtend,
+                onExtendedHandled = onExtendedHandled,
                 colorProvider = colorProvider
             )
         }
