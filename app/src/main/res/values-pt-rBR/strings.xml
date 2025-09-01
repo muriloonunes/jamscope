@@ -22,6 +22,7 @@
     <string name="no_friends">Você não possui amigos adicionados no last.fm!\nObs: geralmente, isso é um erro do last.fm. Recarregar a página deve resolvê-lo</string>
     <string name="no_recent_tracks">Sem músicas recentes</string>
     <string name="unknown_album">Álbum desconhecido</string>
+    <string name="minute_ago">%d minuto atrás</string>
     <string name="minutes_ago">Há %d min.</string>
     <string name="one_hour_ago">Há 1 hora</string>
     <string name="hours_ago">Há %d horas</string>

@@ -16,7 +16,14 @@ fun dateStringFormatter(dataIso: String, forWidget: Boolean, context: Context?):
     val duration = java.time.Duration.between(dataFormatada, currentTime)
 
     return when {
-        //menos de  1hora
+        duration.abs().toMinutes() < 2 -> if (forWidget) context!!.getString(
+            R.string.minute_ago,
+            duration.abs().toMinutes()
+        ) else stringResource(
+            R.string.minute_ago,
+            duration.abs().toMinutes()
+        )
+        //menos de 1hora
         duration.abs().toMinutes() < 60 -> if (forWidget) context!!.getString(
             R.string.minutes_ago,
             duration.abs().toMinutes()
