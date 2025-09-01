@@ -59,6 +59,7 @@ import com.mno.jamscope.ui.components.LastProBadge
 import com.mno.jamscope.ui.components.LoadTrackInfo
 import com.mno.jamscope.ui.components.ShowErrorMessage
 import com.mno.jamscope.ui.components.TrackImageLoader
+import com.mno.jamscope.ui.components.animations.shimmerAnimation
 import com.mno.jamscope.util.forwardingPainter
 import com.mno.jamscope.util.getCountryFlag
 import com.mno.jamscope.util.getLocalizedCountryName
@@ -181,6 +182,7 @@ fun ProfileTracksSection(
                                 color = MaterialTheme.colorScheme.primaryContainer,
                                 shape = RoundedCornerShape(8.dp)
                             )
+                            .shimmerAnimation()
                         else Modifier
                     )
             ) {

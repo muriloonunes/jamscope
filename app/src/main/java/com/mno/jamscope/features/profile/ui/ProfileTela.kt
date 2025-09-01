@@ -72,7 +72,7 @@ fun ProfileTela(
                     ProfileTracksSection(
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(8.dp),
+                            .padding(horizontal = 8.dp),
                         listState = listState,
                         errorMessage = errorMessage,
                         userRecentTracks = recentTracks,
