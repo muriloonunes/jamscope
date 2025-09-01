@@ -1,14 +1,14 @@
 package com.mno.jamscope.features.profile.ui
 
 import android.content.Context
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -16,6 +16,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowHeightSizeClass
@@ -24,6 +25,7 @@ import com.mno.jamscope.R
 import com.mno.jamscope.data.model.Profile
 import com.mno.jamscope.data.model.Track
 import com.mno.jamscope.features.profile.ui.components.ProfileHeaderSection
+import com.mno.jamscope.features.profile.ui.components.ProfileScreenTopAppBar
 import com.mno.jamscope.features.profile.ui.components.ProfileTracksSection
 import com.mno.jamscope.ui.screen.JamPullToRefresh
 
@@ -43,6 +45,8 @@ fun ProfileTela(
 ) {
     val context = LocalContext.current
     val windowHeight = windowSizeClass.windowHeightSizeClass
+    val scrollBehavior =
+        TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
 
     var imagePfp by remember { mutableStateOf<Any?>(R.drawable.baseline_account_circle_24) }
     LaunchedEffect(userProfile) {
@@ -51,8 +55,17 @@ fun ProfileTela(
         }
     }
 
-    LaunchedEffect(Unit) {
-        setTopBar { null }
+    setTopBar {
+        ProfileScreenTopAppBar(
+            imagePfp = imagePfp,
+            username = userProfile?.username,
+            realName = userProfile?.realname,
+            subscriber = userProfile?.subscriber,
+            profileUrl = userProfile?.profileUrl,
+            country = userProfile?.country,
+            playcount = userProfile?.playcount,
+            scrollBehavior = scrollBehavior
+        )
     }
 
     JamPullToRefresh(
@@ -61,30 +74,34 @@ fun ProfileTela(
     ) {
         when (windowHeight) {
             WindowHeightSizeClass.MEDIUM, WindowHeightSizeClass.EXPANDED -> {
-                Column(modifier = Modifier.fillMaxWidth()) {
-                    ProfileHeaderSection(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        imagePfp = imagePfp,
-                        userProfile = userProfile,
-                        windowSizeClass = windowSizeClass
-                    )
-                    ProfileTracksSection(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(horizontal = 8.dp),
-                        listState = listState,
-                        errorMessage = errorMessage,
-                        userRecentTracks = recentTracks,
-                        playingAnimationEnabled = playingAnimationEnabled,
-                        onSeeMoreClick = {
-                            onSeeMoreClick(
-                                context,
-                                userProfile
-                            )
-                        }
-                    )
-                }
+//                    ProfileHeaderSection(
+//                        modifier = Modifier
+//                            .fillMaxWidth(),
+//                        imagePfp = imagePfp,
+//                        username = userProfile?.username,
+//                        realName = userProfile?.realname,
+//                        subscriber = userProfile?.subscriber,
+//                        profileUrl = userProfile?.profileUrl,
+//                        country = userProfile?.country,
+//                        playcount = userProfile?.playcount,
+//                        windowSizeClass = windowSizeClass
+//                    )
+                ProfileTracksSection(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .nestedScroll(scrollBehavior.nestedScrollConnection)
+                        .padding(horizontal = 8.dp),
+                    listState = listState,
+                    errorMessage = errorMessage,
+                    userRecentTracks = recentTracks,
+                    playingAnimationEnabled = playingAnimationEnabled,
+                    onSeeMoreClick = {
+                        onSeeMoreClick(
+                            context,
+                            userProfile
+                        )
+                    }
+                )
             }
 
             WindowHeightSizeClass.COMPACT -> {
@@ -93,7 +110,12 @@ fun ProfileTela(
                         modifier = Modifier
                             .weight(0.5f),
                         imagePfp = imagePfp,
-                        userProfile = userProfile,
+                        username = userProfile?.username,
+                        realName = userProfile?.realname,
+                        subscriber = userProfile?.subscriber,
+                        profileUrl = userProfile?.profileUrl,
+                        country = userProfile?.country,
+                        playcount = userProfile?.playcount,
                         windowSizeClass = windowSizeClass
                     )
                     ProfileTracksSection(

@@ -71,7 +71,7 @@ fun JamHomePager() {
     }
 
     Scaffold(
-        topBar = { if (selectedItemIndex == 0) topBarContent?.invoke() else topBarContent = null },
+        topBar = { topBarContent?.invoke() },
         contentWindowInsets = WindowInsets.safeDrawing,
         bottomBar = {
             JamBottomBar(
