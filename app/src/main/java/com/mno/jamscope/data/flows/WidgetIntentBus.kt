@@ -16,4 +16,8 @@ class WidgetIntentBus @Inject constructor() {
     suspend fun emit(name: String?) {
         _widgetClick.emit(name)
     }
+
+    suspend fun consume() {
+        _widgetClick.emit(null)
+    }
 }

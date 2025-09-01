@@ -1,6 +1,5 @@
 package com.mno.jamscope.ui.util
 
-import android.util.Log
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
@@ -75,7 +74,6 @@ fun FriendsScreenCaller(
     LaunchedEffect(friendToScrollTo, friends) {
         friendToScrollTo?.let { name ->
             if (friends.isNotEmpty()) {
-                Log.d("FriendsScreenCaller", "Scrolling to friend: $name")
                 val index = friends.indexOfFirst { it.name == name }
                 if (index != -1) {
                     try {

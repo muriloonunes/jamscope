@@ -1,6 +1,5 @@
 package com.mno.jamscope.features.friends.viewmodel
 
-import android.util.Log
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -110,7 +109,7 @@ class FriendsViewModel @Inject constructor(
                 if (!name.isNullOrEmpty()) {
                     _friendToScroll.value = name
                     _friendToOpen.value = name
-                    Log.d("FriendsVM", "Emitted scroll event for friend: $name")
+                    widgetIntentBus.consume()
                 }
             }
         }
