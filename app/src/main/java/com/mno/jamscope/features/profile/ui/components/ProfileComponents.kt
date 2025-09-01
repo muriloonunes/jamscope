@@ -39,6 +39,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -52,7 +53,6 @@ import androidx.window.core.layout.WindowHeightSizeClass
 import androidx.window.core.layout.WindowSizeClass
 import coil3.compose.AsyncImage
 import com.mno.jamscope.R
-import com.mno.jamscope.data.model.Profile
 import com.mno.jamscope.data.model.Track
 import com.mno.jamscope.ui.components.FullscreenImage
 import com.mno.jamscope.ui.components.LastProBadge
@@ -70,7 +70,12 @@ import java.util.Locale
 fun ProfileHeaderSection(
     modifier: Modifier = Modifier,
     imagePfp: Any?,
-    userProfile: Profile?,
+    username: String?,
+    realName: String?,
+    subscriber: Int?,
+    profileUrl: String?,
+    country: String?,
+    playcount: Long?,
     windowSizeClass: WindowSizeClass,
 ) {
     val windowHeight = windowSizeClass.windowHeightSizeClass
@@ -86,17 +91,22 @@ fun ProfileHeaderSection(
                 ) { currentImage ->
                     ProfileImage(
                         currentImage = currentImage,
-                        username = userProfile?.username,
+                        username = username,
                         size = 120.dp,
                         shape = CircleShape,
-                        isLastPro = userProfile?.subscriber == 1
+                        isLastPro = subscriber == 1
                     )
                 }
-                if (userProfile != null) {
+                if (username != null) {
                     ProfileInfo(
                         modifier = Modifier
                             .fillMaxWidth(),
-                        userProfile = userProfile
+                        username = username,
+                        realName = realName,
+                        profileUrl = profileUrl,
+                        subscriber = subscriber,
+                        country = country,
+                        playcount = playcount
                     )
                 }
             }
@@ -113,16 +123,21 @@ fun ProfileHeaderSection(
                 ) { currentImage ->
                     ProfileImage(
                         currentImage = currentImage,
-                        username = userProfile?.username,
+                        username = username,
                         size = 160.dp,
                         shape = RoundedCornerShape(20.dp)
                     )
                 }
-                if (userProfile != null) {
+                if (username != null) {
                     ProfileInfo(
                         modifier = Modifier
                             .fillMaxWidth(),
-                        userProfile = userProfile,
+                        username = username,
+                        realName = realName,
+                        profileUrl = profileUrl,
+                        subscriber = subscriber,
+                        country = country,
+                        playcount = playcount,
                         alignment = Alignment.CenterHorizontally,
                     )
                 }
@@ -315,68 +330,92 @@ fun ProfileImage(
 @Composable
 fun ProfileInfo(
     modifier: Modifier = Modifier,
-    userProfile: Profile,
+    username: String?,
+    realName: String?,
+    profileUrl: String?,
+    subscriber: Int?,
+    country: String?,
+    playcount: Long?,
     alignment: Alignment.Horizontal = Alignment.Start,
 ) {
     Column(
         modifier = modifier,
         horizontalAlignment = alignment
     ) {
-        val text = if (userProfile.realname.isNotEmpty()) {
-            buildAnnotatedString {
-                withLink(LinkAnnotation.Url(url = userProfile.profileUrl!!)) {
-                    withStyle(
-                        style = MaterialTheme.typography.bodyLarge.copy(
-                            fontWeight = FontWeight.Bold,
-                            textDecoration = TextDecoration.Underline
-                        )
-                            .toSpanStyle()
-                    ) {
-                        append(userProfile.realname)
-                    }
-                }
-                append(" • ")
-                withLink(LinkAnnotation.Url(url = userProfile.profileUrl!!)) {
-                    withStyle(
-                        style = MaterialTheme.typography.bodyLarge.copy(
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            textDecoration = TextDecoration.Underline
-                        )
-                            .toSpanStyle()
-                    ) {
-                        append(userProfile.username)
-                    }
-                }
-            }
-        } else {
-            buildAnnotatedString {
-                withLink(LinkAnnotation.Url(url = userProfile.profileUrl!!)) {
-                    append(userProfile.username)
-                }
-            }
-        }
+        val text = buildProfileTitleAnnotated(
+            realName = realName,
+            username = username,
+            profileUrl = profileUrl
+        )
         Text(
             text = text,
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.bodyLarge
         )
-        if (userProfile.subscriber == 1) {
+        if (subscriber == 1) {
             LastProBadge()
         }
-        userProfile.country?.takeIf { it.isNotEmpty() && it != "None" }
+        country?.takeIf { it.isNotEmpty() && it != "None" }
             ?.let { country ->
                 Text(
                     text = "${getLocalizedCountryName(country)} ${getCountryFlag(country)}",
                     style = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
                 )
             }
-        userProfile.playcount?.let { userPlaycount ->
+        playcount?.let { userPlaycount ->
             val numberFormat = NumberFormat.getNumberInstance(Locale.getDefault())
             val playcount = numberFormat.format(userPlaycount)
             Text(
                 text = stringResource(R.string.scrobbles, playcount),
                 style = MaterialTheme.typography.bodyLarge,
             )
+        }
+    }
+}
+
+@Composable
+fun buildProfileTitleAnnotated(
+    realName: String?,
+    username: String?,
+    profileUrl: String?
+): AnnotatedString {
+    return if (!realName.isNullOrEmpty()) {
+        buildAnnotatedString {
+            if (profileUrl != null) {
+                withLink(LinkAnnotation.Url(url = profileUrl)) {
+                    withStyle(
+                        style = MaterialTheme.typography.bodyLarge.copy(
+                            fontWeight = FontWeight.Bold,
+                            textDecoration = TextDecoration.Underline
+                        ).toSpanStyle()
+                    ) {
+                        append(realName)
+                    }
+                }
+                append(" • ")
+                withLink(LinkAnnotation.Url(url = profileUrl)) {
+                    withStyle(
+                        style = MaterialTheme.typography.bodyLarge.copy(
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            textDecoration = TextDecoration.Underline
+                        ).toSpanStyle()
+                    ) {
+                        append(username ?: "")
+                    }
+                }
+            } else {
+                append("$realName • ${username ?: ""}")
+            }
+        }
+    } else {
+        buildAnnotatedString {
+            if (profileUrl != null) {
+                withLink(LinkAnnotation.Url(url = profileUrl)) {
+                    append(username ?: "User")
+                }
+            } else {
+                append(username ?: "User")
+            }
         }
     }
 }
