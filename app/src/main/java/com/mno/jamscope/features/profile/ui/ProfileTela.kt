@@ -66,7 +66,12 @@ fun ProfileTela(
                         modifier = Modifier
                             .fillMaxWidth(),
                         imagePfp = imagePfp,
-                        userProfile = userProfile,
+                        username = userProfile?.username,
+                        realName = userProfile?.realname,
+                        subscriber = userProfile?.subscriber,
+                        profileUrl = userProfile?.profileUrl,
+                        country = userProfile?.country,
+                        playcount = userProfile?.playcount,
                         windowSizeClass = windowSizeClass
                     )
                     ProfileTracksSection(
@@ -93,7 +98,12 @@ fun ProfileTela(
                         modifier = Modifier
                             .weight(0.5f),
                         imagePfp = imagePfp,
-                        userProfile = userProfile,
+                        username = userProfile?.username,
+                        realName = userProfile?.realname,
+                        subscriber = userProfile?.subscriber,
+                        profileUrl = userProfile?.profileUrl,
+                        country = userProfile?.country,
+                        playcount = userProfile?.playcount,
                         windowSizeClass = windowSizeClass
                     )
                     ProfileTracksSection(
