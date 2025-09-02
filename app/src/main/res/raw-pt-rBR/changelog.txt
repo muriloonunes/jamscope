@@ -1,0 +1,10 @@
+- Novo widget grande para ver o que seu amigo está escutando
+- Intercambiável com o widget pequeno (antigo)
+- O design do widget pequeno (antigo) foi ajustado
+- O widget agora é clicável para ver o card do seu amigo
+- Adicionados elementos do M3 Expressive
+- Cores mais vibrantes nos cards
+- Pequenos ajustes visuais em várias partes da UI
+- Novo design na página do perfil para quando você está escutando uma música
+- É possíve abrir as fotos de perfil em tela cheia e salvá-las na galeria
+- Criada essa tela de changelog :)

@@ -2,6 +2,7 @@ package com.mno.jamscope.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mno.jamscope.BuildConfig
 import com.mno.jamscope.data.flows.WidgetIntentBus
 import com.mno.jamscope.data.repository.ApiRepository
 import com.mno.jamscope.data.repository.UserRepository
@@ -33,6 +34,9 @@ class MainViewModel @Inject constructor(
     private val _navActions = MutableSharedFlow<NavigationAction>()
     val navActions: SharedFlow<NavigationAction> = _navActions
 
+    private val _showChangelog = MutableStateFlow(false)
+    val showChangelog = _showChangelog.asStateFlow()
+
 //    private val _appOpenedTimes = MutableStateFlow(0)
 //    val appOpenedTimes: StateFlow<Int> = _appOpenedTimes
 
@@ -52,7 +56,13 @@ class MainViewModel @Inject constructor(
                 }
             } else {
                 _startDestination.value = Destination.LoginRoute
-                _isLoading.value = false
+            }
+            _isLoading.value = false
+            val appVersion = userRepository.getAppVersion()
+            val versionCode = BuildConfig.VERSION_CODE
+            if ((appVersion < versionCode) && isLoggedIn) {
+                _showChangelog.value = true
+                saveAppVersion(versionCode)
             }
         }
         viewModelScope.launch {
@@ -65,6 +75,18 @@ class MainViewModel @Inject constructor(
     fun handleWidgetIntent(name: String?) {
         viewModelScope.launch {
             widgetIntentBus.emit(name)
+        }
+    }
+
+    fun onDismissChangelog() {
+        _showChangelog.value = false
+        val versionCode = BuildConfig.VERSION_CODE
+        saveAppVersion(versionCode)
+    }
+
+    private fun saveAppVersion(version: Int) {
+        viewModelScope.launch {
+            userRepository.saveAppVersion(version)
         }
     }
 }

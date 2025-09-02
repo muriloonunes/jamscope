@@ -48,6 +48,7 @@ class UserDataStoreManager @Inject constructor(
         dataStore.edit { preferences ->
             preferences.remove(PreferencesKeys.PROFILE_JSON)
             preferences.remove(PreferencesKeys.SORTING_TYPE)
+            preferences.remove(PreferencesKeys.APP_VERSION)
         }
     }
 
@@ -66,5 +67,17 @@ class UserDataStoreManager @Inject constructor(
                 SortingType.DEFAULT
             }
         }.first()
+    }
+
+    suspend fun getAppVersion(): Int {
+        return dataStore.data.map { preferences ->
+            preferences[PreferencesKeys.APP_VERSION] ?: 0
+        }.first()
+    }
+
+    suspend fun saveAppVersion(version: Int) {
+        dataStore.edit { preferences ->
+            preferences[PreferencesKeys.APP_VERSION] = version
+        }
     }
 }

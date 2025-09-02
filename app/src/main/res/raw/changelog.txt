@@ -1,0 +1,10 @@
+- New large widget to see what your friend is listening to
+- Interchangeable with the small (old) widget
+- The design of the small (old) widget has been adjusted
+- The widget is now clickable to see your friend's card
+- Introduced M3 Expressive elements
+- New, more vibrant colors on cards
+- Small visual adjustments to various parts of the UI
+- New design on the profile page for when a song is being listened to
+- Profile pictures are now expandable and can be saved to the gallery
+- This changelog screen has been created :)

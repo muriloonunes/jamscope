@@ -21,6 +21,8 @@ import com.mno.jamscope.R
 import com.mno.jamscope.data.model.Token
 import com.mno.jamscope.data.model.Track
 import kotlinx.serialization.json.Json
+import java.io.BufferedReader
+import java.io.InputStreamReader
 
 object Stuff {
     val WIDGET_CORNER_RADIUS = 16.dp
@@ -33,8 +35,32 @@ object Stuff {
     const val DEFAULT_PROFILE_IMAGE =
         "https://lastfm.freetls.fastly.net/i/u/64s/2a96cbd8b46e442fc41c2b86b821562f.png"
 
+    const val GITHUB_RELEASES_LINK = "https://github.com/muriloonunes/jamscope/releases/tag/v"
+
     const val FROM_WIDGET = "FROM_WIDGET"
     val JSON = Json { ignoreUnknownKeys = true }
+
+    fun Context.readChangelog(): String {
+        return try {
+            val resourceId = R.raw.changelog
+            if (resourceId == 0) {
+                this.getString(R.string.changelog_not_found)
+            }
+            val inputStream = this.resources.openRawResource(resourceId)
+            val reader = BufferedReader(InputStreamReader(inputStream))
+            val changelog = StringBuilder()
+            var line: String? = reader.readLine()
+            while (line != null) {
+                changelog.append(line).append("\n")
+                line = reader.readLine()
+            }
+            reader.close()
+            changelog.toString().trimEnd()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            this.getString(R.string.changelog_not_found)
+        }
+    }
 
     fun Context.openUrl(url: String) {
         val intent = Intent(Intent.ACTION_VIEW, url.toUri())

@@ -112,4 +112,8 @@
     <string name="image_not_saved">Falha ao salvar a imagem</string>
     <string name="save_image_button">Botão para salvar a imagem</string>
     <string name="song_by_artist">"%1$s, de %2$s"</string>
+    <string name="changelog">Changelog</string>
+    <string name="dismiss">Dispensar</string>
+    <string name="changelog_not_found">Changelog não encontrado</string>
+    <string name="full_changelog">Changelog completo no GitHub</string>
 </resources>

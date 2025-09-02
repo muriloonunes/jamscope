@@ -54,7 +54,7 @@ lottieCompose = "6.6.7"
 junit = "4.13.2"
 
 # Gradle
-agp = "8.12.1"
+agp = "8.12.2"
 
 # Misc
 glide = "4.16.0"

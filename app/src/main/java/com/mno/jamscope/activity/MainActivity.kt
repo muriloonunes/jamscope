@@ -15,10 +15,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.compose.rememberNavController
 import com.mno.jamscope.features.settings.viewmodel.SettingsViewModel
+import com.mno.jamscope.ui.components.ChangelogDialog
 import com.mno.jamscope.ui.navigator.NavigationAction
 import com.mno.jamscope.ui.navigator.Navigator
 import com.mno.jamscope.ui.navigator.RootHost
@@ -55,6 +57,7 @@ class MainActivity : ComponentActivity() {
             val startDestination by mainViewModel.startDestination.collectAsState()
             val navController = rememberNavController()
             val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
+            val showChangelog by mainViewModel.showChangelog.collectAsStateWithLifecycle()
             NowPlayingTheme(themePreference = themePreference) {
                 CompositionLocalProvider(
                     LocalThemePreference provides themePreference,
@@ -89,6 +92,11 @@ class MainActivity : ComponentActivity() {
 //                                onDismissRequest = { showBottomSheet = false }
 //                            )
 //                        }
+                        if (showChangelog) {
+                            ChangelogDialog {
+                                mainViewModel.onDismissChangelog()
+                            }
+                        }
                     }
                 }
             }

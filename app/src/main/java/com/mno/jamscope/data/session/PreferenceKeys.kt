@@ -8,4 +8,5 @@ object PreferencesKeys {
     val SORTING_TYPE = intPreferencesKey("sorting_type")
     val THEME = intPreferencesKey("theme")
     val APP_OPENED = intPreferencesKey("app_opened")
+    val APP_VERSION = intPreferencesKey("app_version")
 }

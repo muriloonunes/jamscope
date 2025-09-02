@@ -93,4 +93,12 @@ class UserRepository @Inject constructor(
         userProfileDao.deleteRecentTracksForUser(userUrl)
         userProfileDao.insertRecentTracks(trackEntities)
     }
+
+    suspend fun getAppVersion(): Int {
+        return userDataStoreManager.getAppVersion()
+    }
+
+    suspend fun saveAppVersion(version: Int) {
+        userDataStoreManager.saveAppVersion(version)
+    }
 }
