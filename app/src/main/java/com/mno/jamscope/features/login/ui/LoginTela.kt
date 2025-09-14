@@ -34,7 +34,7 @@ fun LoginScreen(
     val topSpacerHeight = if (
         (windowsWidth == WindowWidthSizeClass.EXPANDED && windowsHeight == WindowHeightSizeClass.MEDIUM) ||
         windowsWidth == WindowWidthSizeClass.MEDIUM
-    ) 128.dp else 64.dp
+    ) 128.dp else 32.dp
 
     Scaffold(
         contentWindowInsets = WindowInsets.safeDrawing

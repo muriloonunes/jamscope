@@ -36,9 +36,11 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.mno.jamscope.R
+import com.mno.jamscope.ui.theme.LoginTypography
 import kotlin.Unit
 
 @Composable
@@ -52,11 +54,13 @@ fun LoginHeader(
     ) {
         Text(
             text = stringResource(R.string.welcome),
-            style = MaterialTheme.typography.headlineSmall
+            style = LoginTypography.headlineSmall
         )
+//        Spacer(Modifier.height(16.dp))
         Text(
             text = stringResource(R.string.login_please),
-            style = MaterialTheme.typography.bodyLarge
+            style = LoginTypography.bodyLarge,
+            textAlign = TextAlign.Center
         )
     }
 }
@@ -82,7 +86,8 @@ fun LoginForm(
             onValueChange = onUsernameChange,
             label = {
                 Text(
-                    stringResource(R.string.username)
+                    text = stringResource(R.string.username),
+                    style = LoginTypography.bodySmall
                 )
             },
             keyboardOptions = KeyboardOptions(
@@ -100,7 +105,8 @@ fun LoginForm(
             onValueChange = onPasswordChange,
             label = {
                 Text(
-                    stringResource(R.string.password)
+                    text = stringResource(R.string.password),
+                    style = LoginTypography.bodySmall
                 )
             },
             modifier = Modifier
@@ -154,7 +160,7 @@ fun LoginActions(
         ) {
             Text(
                 text = stringResource(R.string.create_account),
-                style = MaterialTheme.typography.bodyMedium.copy(
+                style = LoginTypography.bodySmall.copy(
                     color = MaterialTheme.colorScheme.surfaceTint,
                     platformStyle = PlatformTextStyle(includeFontPadding = false)
                 ),
@@ -175,7 +181,8 @@ fun LoginActions(
             onClick = onLoginButtonClick
         ) {
             Text(
-                text = stringResource(R.string.login)
+                text = stringResource(R.string.login),
+                style = LoginTypography.bodySmall
             )
         }
     }

@@ -1,6 +1,6 @@
 [versions]
 # AndroidX
-activityCompose = "1.10.1"
+activityCompose = "1.11.0"
 appcompat = "1.7.1"
 coreKtx = "1.17.0"
 coreSplashscreen = "1.0.1"
@@ -10,7 +10,7 @@ junitVersion = "1.3.0"
 kotlinxCoroutinesTest = "1.10.2"
 lifecycleRuntimeKtx = "2.9.3"
 mockk = "1.14.5"
-navigationCompose = "2.9.3"
+navigationCompose = "2.9.4"
 recyclerview = "1.4.0"
 roomRuntime = "2.7.2"
 workRuntimeKtx = "2.10.3"
@@ -18,10 +18,11 @@ materialComponent = "1.14.0-alpha04"
 
 # Compose
 adaptive = "1.1.0"
-composeBom = "2025.08.01"
-material3 = "1.5.0-alpha03"
-runtimeLivedata = "1.9.0"
+composeBom = "2025.09.00"
+material3 = "1.5.0-alpha04"
+runtimeLivedata = "1.9.1"
 uiTestJunit4Android = "1.9.0"
+google-fonts = "1.9.1"
 
 # Coil
 coilCompose = "3.3.0"
@@ -36,14 +37,14 @@ glance = "1.2.0-beta01"
 
 # Hilt
 hiltAndroidCompiler = "2.57.1"
-hiltCompiler = "1.2.0"
+hiltCompiler = "1.3.0"
 
 # Kotlin
-kotlin = "2.2.10"
+kotlin = "2.2.20"
 kotlinxSerializationJson = "1.9.0"
 
 # Ktor
-ktor = "3.2.3"
+ktor = "3.3.0"
 
 # Other UI Libraries
 aboutlibrariesCore = "12.2.4"
@@ -54,10 +55,10 @@ lottieCompose = "6.6.7"
 junit = "4.13.2"
 
 # Gradle
-agp = "8.12.2"
+agp = "8.12.3"
 
 # Misc
-glide = "4.16.0"
+glide = "5.0.5"
 leakcanaryAndroid = "2.14"
 zoomableImageCoil3 = "0.16.0"
 
@@ -96,6 +97,7 @@ androidx-ui-test-junit4-android = { group = "androidx.compose.ui", name = "ui-te
 androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" } # Part of Compose BOM
 androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" } # Part of Compose BOM
 androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" } # Part of Compose BOM
+androidx-ui-google-fonts = { group = "androidx.compose.ui", name = "ui-text-google-fonts", version.ref = "google-fonts" }
 
 # Coil (Image Loading)
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coilCompose" }
