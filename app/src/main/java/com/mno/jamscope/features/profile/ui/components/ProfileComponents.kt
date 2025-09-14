@@ -9,6 +9,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -37,6 +38,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
@@ -49,6 +51,7 @@ import androidx.compose.ui.text.withLink
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.lerp
 import androidx.window.core.layout.WindowHeightSizeClass
 import androidx.window.core.layout.WindowSizeClass
 import coil3.compose.AsyncImage
@@ -154,12 +157,14 @@ fun ProfileTracksSection(
     userRecentTracks: List<Track>,
     playingAnimationEnabled: Boolean,
     onSeeMoreClick: () -> Unit,
+    contentPadding: Dp = 0.dp,
 ) {
     LazyColumn(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top,
-        state = listState
+        state = listState,
+        contentPadding = PaddingValues(top = contentPadding)
     ) {
         item {
             Spacer(Modifier.height(1.dp))
@@ -337,9 +342,16 @@ fun ProfileInfo(
     country: String?,
     playcount: Long?,
     alignment: Alignment.Horizontal = Alignment.Start,
+    collapseFraction: Float = 0f,
+    scale: Float = 1f,
 ) {
+    val titleContainerHeight = lerp(72.dp, 24.dp, collapseFraction)
     Column(
-        modifier = modifier,
+        modifier = modifier
+            .then(
+                if (collapseFraction > 0.7f) Modifier.height(titleContainerHeight)
+                else Modifier
+            ),
         horizontalAlignment = alignment
     ) {
         val text = buildProfileTitleAnnotated(
@@ -352,23 +364,40 @@ fun ProfileInfo(
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.bodyLarge
         )
-        if (subscriber == 1) {
-            LastProBadge()
-        }
-        country?.takeIf { it.isNotEmpty() && it != "None" }
-            ?.let { country ->
-                Text(
-                    text = "${getLocalizedCountryName(country)} ${getCountryFlag(country)}",
-                    style = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
-                )
+        if (collapseFraction < 0.9f) {
+            val progress = ((collapseFraction - 0.3f) / 0.4f).coerceIn(0f, 1f)
+            Column(
+                modifier = Modifier
+                    .graphicsLayer {
+                        // Move para cima progressivamente
+                        translationY = -progress * 40.dp.toPx()
+                        // Também diminui alpha junto, pra não sumir seco
+                        alpha = 1f - progress
+                    }
+                    .graphicsLayer {
+                        scaleX = scale
+                        scaleY = scale
+                    }
+            ) {
+                if (subscriber == 1) {
+                    LastProBadge()
+                }
+                country?.takeIf { it.isNotEmpty() && it != "None" }
+                    ?.let { country ->
+                        Text(
+                            text = "${getLocalizedCountryName(country)} ${getCountryFlag(country)}",
+                            style = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
+                        )
+                    }
+                playcount?.let { userPlaycount ->
+                    val numberFormat = NumberFormat.getNumberInstance(Locale.getDefault())
+                    val playcount = numberFormat.format(userPlaycount)
+                    Text(
+                        text = stringResource(R.string.scrobbles, playcount),
+                        style = MaterialTheme.typography.bodyLarge,
+                    )
+                }
             }
-        playcount?.let { userPlaycount ->
-            val numberFormat = NumberFormat.getNumberInstance(Locale.getDefault())
-            val playcount = numberFormat.format(userPlaycount)
-            Text(
-                text = stringResource(R.string.scrobbles, playcount),
-                style = MaterialTheme.typography.bodyLarge,
-            )
         }
     }
 }
@@ -377,7 +406,7 @@ fun ProfileInfo(
 fun buildProfileTitleAnnotated(
     realName: String?,
     username: String?,
-    profileUrl: String?
+    profileUrl: String?,
 ): AnnotatedString {
     return if (!realName.isNullOrEmpty()) {
         buildAnnotatedString {
