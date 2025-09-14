@@ -18,6 +18,7 @@ import com.mno.jamscope.ui.theme.ThemeAttributes
 import com.mno.jamscope.util.SortingType
 import com.mno.jamscope.util.Stuff
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -80,8 +81,6 @@ class FriendsViewModel @Inject constructor(
     private val _friendToOpen = MutableStateFlow<String?>(null)
     val friendToOpen = _friendToOpen.asStateFlow()
 
-
-
     private var lastUpdateTimestamp: Long = 0L
 
     init {
@@ -139,11 +138,16 @@ class FriendsViewModel @Inject constructor(
             val userProfile = userRepository.getUserProfile()
             when (val result = userRepository.getUserFriends(userProfile!!.username)) {
                 is Resource.Success -> {
-                    val friends = result.data
+                    val friends = result.data //this still has no 'recentTracks' data
+                    fetchAndProcessRecentTracks(friends)
+                    val friendsWithTracks = fetchAndProcessRecentTracks(friends)
                     userProfile.friends = friends
                     userRepository.saveUserProfile(userProfile)
-                    loadRecentTracks(friends)
-                    friendsRepository.cacheFriends(friends)
+                    _friends.value = friendsWithTracks
+                    _recentTracksMap.value = friendsWithTracks.associate { it.url to it.recentTracks }
+                    friendsRepository.cacheFriends(friendsWithTracks)
+
+                    _isRefreshing.value = false
                 }
 
                 is Resource.Error -> {
@@ -155,23 +159,17 @@ class FriendsViewModel @Inject constructor(
         }
     }
 
-    private fun loadRecentTracks(friends: List<User>) {
-        viewModelScope.launch {
-            val updatedFriends = friends.map { friend ->
-                async {
-                    friendsRepository.getRecentTracks(friend)
-                    friendsRepository.cacheRecentTracks(
-                        friend.url,
-                        friend.recentTracks?.track ?: emptyList()
-                    )
-                    friend
-                }
-            }.awaitAll()
-
-            _friends.value = updatedFriends
-            _recentTracksMap.value = updatedFriends.associate { it.url to it.recentTracks }
-            _isRefreshing.value = false
-        }
+    private suspend fun fetchAndProcessRecentTracks(friends: List<User>): List<User> {
+        return friends.map { friend ->
+            viewModelScope.async(Dispatchers.IO) {
+                friendsRepository.getRecentTracks(friend)
+                friendsRepository.cacheRecentTracks(
+                    friend.url,
+                    friend.recentTracks?.track ?: emptyList()
+                )
+                friend
+            }
+        }.awaitAll()
     }
 
     fun onSortingTypeChanged(sortingType: SortingType) {
