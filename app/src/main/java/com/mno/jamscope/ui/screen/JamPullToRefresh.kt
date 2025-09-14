@@ -20,6 +20,7 @@ fun JamPullToRefresh(
     onRefresh: () -> Unit,
     state: PullToRefreshState = rememberPullToRefreshState(),
     isRefreshing: Boolean,
+    enabled: Boolean = true,
     content: @Composable BoxScope.() -> Unit,
 ) {
     //https://composables.com/docs/androidx.compose.material3/material3/components/ContainedLoadingIndicator
@@ -30,7 +31,7 @@ fun JamPullToRefresh(
     }
     Box(
         modifier = modifier
-            .pullToRefresh(state = state, isRefreshing = isRefreshing, onRefresh = onRefresh)
+            .pullToRefresh(state = state, isRefreshing = isRefreshing, onRefresh = onRefresh, enabled = enabled)
     ) {
         content()
         Box(
