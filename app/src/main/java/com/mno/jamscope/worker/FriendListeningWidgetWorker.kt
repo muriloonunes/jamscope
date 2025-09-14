@@ -29,12 +29,13 @@ class FriendListeningWidgetWorker(
                 val prefs = FriendListeningWidget().getAppWidgetState<Preferences>(appContext, glanceId)
                 val friend = WidgetDataStoreManager.getFriend(prefs)
 
-                friend?.let {
-                    repository.getRecentTracks(it)
-                    updateWidgetState(glanceId, it)
-                } ?: run {
-                    return Result.failure()
+                if (friend == null) {
+                    Log.e("FriendListeningWidgetWorker", "No friend found in widget state for glanceId: $glanceId")
+                    continue
                 }
+
+                repository.getRecentTracks(friend)
+                updateWidgetState(glanceId, friend)
             }
             return Result.success()
         } catch (e: Exception) {

@@ -4,7 +4,7 @@
     android:description="@string/friend_listening_widget"
     android:minWidth="180dp"
     android:minHeight="50dp"
-    android:maxResizeHeight="150dp"
+    android:maxResizeHeight="225dp"
     android:previewLayout="@layout/large_friend_listening_widget_preview"
     android:resizeMode="horizontal|vertical"
     android:targetCellWidth="4"

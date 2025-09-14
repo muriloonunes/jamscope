@@ -4,8 +4,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Sort
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarScrollBehavior
@@ -25,26 +27,38 @@ fun FriendScreenTopAppBar(
     TopAppBar(
         title = { Text("") },
         navigationIcon = {
-            IconButton(
+            FilledIconButton (
                 onClick = onSettingIconClick,
+                colors = IconButtonDefaults.iconButtonColors(
+                    containerColor = MaterialTheme.colorScheme.onSurface.copy(
+                        alpha = 0.8f
+                    )
+                )
             ) {
                 Icon(
                     imageVector = Icons.Default.Settings,
-                    contentDescription = stringResource(R.string.open_settings_screen)
+                    contentDescription = stringResource(R.string.open_settings_screen),
+                    tint = MaterialTheme.colorScheme.surface
                 )
             }
         },
         actions = {
-            IconButton(
+            FilledIconButton(
+                modifier = Modifier.align(Alignment.CenterVertically),
                 onClick = onSortIconClick,
-                modifier = Modifier.align(Alignment.CenterVertically)
+                colors = IconButtonDefaults.iconButtonColors(
+                    containerColor = MaterialTheme.colorScheme.onSurface.copy(
+                        alpha = 0.8f
+                    )
+                )
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.Sort,
-                    contentDescription = stringResource(R.string.sort_button)
+                    contentDescription = stringResource(R.string.sort_button),
+                    tint = MaterialTheme.colorScheme.surface
                 )
             }
         },
-        scrollBehavior = scrollBehavior
+        scrollBehavior = scrollBehavior,
     )
 }

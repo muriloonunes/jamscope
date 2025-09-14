@@ -9,8 +9,10 @@
     <include
         domain="sharedpref"
         path="." />
-    <exclude
-        domain="sharedpref"
-        path="device.xml" />
-    <include domain="file" path="datastore/."/>
+    <include
+        domain="database"
+        path="." />
+    <include
+        domain="file"
+        path="." />
 </full-backup-content>

@@ -3,6 +3,7 @@ package com.mno.jamscope.features.widgets.singlefriend.ui
 import android.content.Context
 import android.graphics.Bitmap
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.glance.ColorFilter
@@ -19,11 +20,9 @@ import androidx.glance.layout.Alignment
 import androidx.glance.layout.Box
 import androidx.glance.layout.Column
 import androidx.glance.layout.Row
-import androidx.glance.layout.Spacer
 import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.padding
 import androidx.glance.layout.size
-import androidx.glance.layout.width
 import androidx.glance.layout.wrapContentWidth
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
@@ -36,7 +35,10 @@ import com.mno.jamscope.util.dateStringFormatter
 
 @Composable
 fun ProfileWidgetImage(
-    friend: User?, imageBitmap: Bitmap?,
+    friend: User?,
+    imageBitmap: Bitmap?,
+    size: Dp = 60.dp,
+    cornerRadius: Dp = 50.dp,
 ) {
     val imageDescription = friend?.name?.let {
         LocalContext.current.getString(R.string.profile_pic_description, it)
@@ -48,7 +50,7 @@ fun ProfileWidgetImage(
             Image(
                 provider = ImageProvider(it),
                 contentDescription = imageDescription,
-                modifier = GlanceModifier.cornerRadius(50.dp).size(60.dp)
+                modifier = GlanceModifier.cornerRadius(cornerRadius).size(size)
             )
         }
     } ?: run {
@@ -68,14 +70,13 @@ fun FriendWidgetInfo(
     context: Context,
     forSmall: Boolean,
 ) {
-    val horizontalAlignment = if (forSmall) Alignment.Start else Alignment.CenterHorizontally
     val modifier = if (forSmall) {
         GlanceModifier.padding(start = 8.dp, end = 2.dp)
     } else {
         GlanceModifier
     }
     Column(
-        horizontalAlignment = horizontalAlignment,
+        horizontalAlignment = Alignment.Start,
         modifier = modifier
     ) {
         when {
@@ -111,23 +112,13 @@ private fun FriendListeningDetails(
 ) {
     val track = friend.recentTracks?.track?.firstOrNull()
 
-    Text(
-        text = context.getString(
-            R.string.friend_listening_to,
-            friend.realname.ifEmpty { friend.name!! }),
-        style = textStyle.copy(
-            fontWeight = FontWeight.Bold
-        ),
-        maxLines = 1,
-    )
-
+    FriendNameText(context, friend.realname, friend.name ?: "", textStyle)
     track?.let { it ->
         val dateString = track.dateInfo?.formattedDate?.let {
             dateStringFormatter(it, true, context)
         } ?: context.getString(R.string.now)
 
         if (forSmall) {
-//            Text(text = it.name, style = textStyle, maxLines = 1)
             Text(
                 text = context.getString(R.string.song_by_artist, it.name, it.artist.name),
                 style = textStyle,
@@ -138,28 +129,41 @@ private fun FriendListeningDetails(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    //·
+//                    ·
 //                    text = "${it.album.name} — ${it.artist.name}",
                     text = it.album.name,
                     style = textStyle,
                     maxLines = 1,
                     modifier = GlanceModifier.defaultWeight()
                 )
-
                 DateText(dateString)
             }
+            LastUpdatedManager(true)
         } else {
-            Text(
-                text = context.getString(R.string.song_by_artist, it.name, it.artist.name),
-                style = textStyle,
-                maxLines = 1
-            )
-//            Text(text = it.artist.name, style = textStyle, maxLines = 1)
+            Text(text = it.name, style = textStyle, maxLines = 2)
+            Text(text = it.artist.name, style = textStyle, maxLines = 1)
             Text(text = it.album.name, style = textStyle, maxLines = 1)
             DateText(dateString, false)
         }
-        LastUpdatedManager(forSmall)
     } ?: NoRecentTracks(textStyle, context)
+}
+
+@Composable
+fun FriendNameText(
+    context: Context,
+    realname: String,
+    name: String?,
+    textStyle: TextStyle,
+) {
+    Text(
+        text = context.getString(
+            R.string.friend_listening_to,
+            realname.ifEmpty { name!! }),
+        style = textStyle.copy(
+            fontWeight = FontWeight.Bold
+        ),
+        maxLines = 1,
+    )
 }
 
 @Composable
@@ -179,13 +183,19 @@ private fun DateText(
 }
 
 @Composable
-private fun LastUpdatedManager(
+fun LastUpdatedManager(
     forSmall: Boolean,
 ) {
     val lastUpdated = WidgetDataStoreManager.getLastUpdated(currentState())
+    val textSize = if (forSmall) 13.sp else 16.sp
+    val horizontalAlignment = if (forSmall) Alignment.CenterHorizontally else Alignment.Start
     Row(
-        modifier = GlanceModifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = GlanceModifier
+            .fillMaxWidth()
+            .then(
+                if (forSmall) GlanceModifier else GlanceModifier.padding(horizontal = 8.dp)
+            ),
+        horizontalAlignment = horizontalAlignment,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
@@ -194,13 +204,10 @@ private fun LastUpdatedManager(
                 R.string.last_updated_on,
                 lastUpdated
             ),
-            style = TextStyle(GlanceTheme.colors.onSurfaceVariant, fontSize = 13.sp),
+            style = TextStyle(GlanceTheme.colors.onSurfaceVariant, fontSize = textSize),
             maxLines = 1,
-            modifier = if (forSmall) GlanceModifier.defaultWeight() else GlanceModifier
+            modifier = GlanceModifier.defaultWeight()
         )
-        if (!forSmall) {
-            Spacer(GlanceModifier.width(12.dp))
-        }
         Image(
             provider = ImageProvider(R.drawable.round_refresh_24),
             contentDescription = LocalContext.current.getString(R.string.refresh_button),
