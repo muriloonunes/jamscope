@@ -59,7 +59,6 @@ fun LoginHeader(
 //        Spacer(Modifier.height(16.dp))
         Text(
             text = stringResource(R.string.login_please),
-            style = LoginTypography.bodyLarge,
             textAlign = TextAlign.Center
         )
     }
@@ -87,7 +86,6 @@ fun LoginForm(
             label = {
                 Text(
                     text = stringResource(R.string.username),
-                    style = LoginTypography.bodySmall
                 )
             },
             keyboardOptions = KeyboardOptions(
@@ -106,7 +104,6 @@ fun LoginForm(
             label = {
                 Text(
                     text = stringResource(R.string.password),
-                    style = LoginTypography.bodySmall
                 )
             },
             modifier = Modifier
@@ -160,7 +157,7 @@ fun LoginActions(
         ) {
             Text(
                 text = stringResource(R.string.create_account),
-                style = LoginTypography.bodySmall.copy(
+                style = MaterialTheme.typography.bodySmall.copy(
                     color = MaterialTheme.colorScheme.surfaceTint,
                     platformStyle = PlatformTextStyle(includeFontPadding = false)
                 ),

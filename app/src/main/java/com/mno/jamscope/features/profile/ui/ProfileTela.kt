@@ -157,6 +157,7 @@ fun ProfileTela(
     ) {
         when (windowHeight) {
             WindowHeightSizeClass.MEDIUM, WindowHeightSizeClass.EXPANDED -> {
+                //phones/portrait mode
                 val currentTopBarHeightDp = with(density) { topBarHeight.value.toDp() }
                 Box(
                     modifier = Modifier
@@ -197,6 +198,7 @@ fun ProfileTela(
             }
 
             WindowHeightSizeClass.COMPACT -> {
+                //tablets/landscape mode
                 Row(modifier = Modifier.fillMaxSize()) {
                     ProfileHeaderSection(
                         modifier = Modifier
@@ -208,7 +210,6 @@ fun ProfileTela(
                         profileUrl = userProfile?.profileUrl,
                         country = userProfile?.country,
                         playcount = userProfile?.playcount,
-                        windowSizeClass = windowSizeClass
                     )
                     ProfileTracksSection(
                         modifier = Modifier

@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.OpenInNew
@@ -52,8 +51,6 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.lerp
-import androidx.window.core.layout.WindowHeightSizeClass
-import androidx.window.core.layout.WindowSizeClass
 import coil3.compose.AsyncImage
 import com.mno.jamscope.R
 import com.mno.jamscope.data.model.Track
@@ -79,72 +76,34 @@ fun ProfileHeaderSection(
     profileUrl: String?,
     country: String?,
     playcount: Long?,
-    windowSizeClass: WindowSizeClass,
 ) {
-    val windowHeight = windowSizeClass.windowHeightSizeClass
-    when (windowHeight) {
-        WindowHeightSizeClass.MEDIUM, WindowHeightSizeClass.EXPANDED -> {
-            Row(
-                modifier = modifier,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Crossfade(
-                    targetState = imagePfp,
-                    animationSpec = tween(durationMillis = 500)
-                ) { currentImage ->
-                    ProfileImage(
-                        currentImage = currentImage,
-                        username = username,
-                        size = 120.dp,
-                        shape = CircleShape,
-                        isLastPro = subscriber == 1
-                    )
-                }
-                if (username != null) {
-                    ProfileInfo(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        username = username,
-                        realName = realName,
-                        profileUrl = profileUrl,
-                        subscriber = subscriber,
-                        country = country,
-                        playcount = playcount
-                    )
-                }
-            }
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Crossfade(
+            targetState = imagePfp,
+            animationSpec = tween(durationMillis = 500)
+        ) { currentImage ->
+            ProfileImage(
+                currentImage = currentImage,
+                username = username,
+                size = 160.dp,
+                shape = RoundedCornerShape(20.dp)
+            )
         }
-
-        WindowHeightSizeClass.COMPACT -> {
-            Column(
-                modifier = modifier,
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                Crossfade(
-                    targetState = imagePfp,
-                    animationSpec = tween(durationMillis = 500)
-                ) { currentImage ->
-                    ProfileImage(
-                        currentImage = currentImage,
-                        username = username,
-                        size = 160.dp,
-                        shape = RoundedCornerShape(20.dp)
-                    )
-                }
-                if (username != null) {
-                    ProfileInfo(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        username = username,
-                        realName = realName,
-                        profileUrl = profileUrl,
-                        subscriber = subscriber,
-                        country = country,
-                        playcount = playcount,
-                        alignment = Alignment.CenterHorizontally,
-                    )
-                }
-            }
+        if (username != null) {
+            ProfileInfo(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                username = username,
+                realName = realName,
+                profileUrl = profileUrl,
+                subscriber = subscriber,
+                country = country,
+                playcount = playcount,
+                alignment = Alignment.CenterHorizontally,
+            )
         }
     }
 }
@@ -211,7 +170,6 @@ fun ProfileTracksSection(
                 TrackImageLoader(
                     imageUrl = imageUrl,
                     bigImageUrl = bigImageUrl,
-                    nowPlaying = nowPlaying
                 )
                 LoadTrackInfo(
                     track = track,

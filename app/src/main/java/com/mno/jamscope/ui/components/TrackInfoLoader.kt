@@ -1,7 +1,6 @@
 package com.mno.jamscope.ui.components
 
 import androidx.compose.foundation.basicMarquee
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -133,11 +132,8 @@ fun LoadTrackInfo(
 fun TrackImageLoader(
     imageUrl: String,
     bigImageUrl: String,
-    nowPlaying: Boolean = false,
 ) {
     var showFullscreenImage by remember { mutableStateOf(false) }
-    val color =
-        if (nowPlaying) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
     AsyncImage(
         model = imageUrl,
         contentDescription = null,
@@ -150,7 +146,6 @@ fun TrackImageLoader(
             .padding(8.dp)
             .clip(RoundedCornerShape(16.dp))
             .size(60.dp)
-            .border(1.dp, color, RoundedCornerShape(16.dp))
             .clickable { showFullscreenImage = true },
         contentScale = ContentScale.Crop,
     )
