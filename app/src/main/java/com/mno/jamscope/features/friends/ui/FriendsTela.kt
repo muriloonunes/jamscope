@@ -20,7 +20,6 @@ import androidx.window.core.layout.WindowWidthSizeClass
 import com.mno.jamscope.data.model.RecentTracks
 import com.mno.jamscope.data.model.User
 import com.mno.jamscope.features.friends.ui.components.FriendScreenTopAppBar
-import com.mno.jamscope.ui.components.SortingBottomSheet
 import com.mno.jamscope.ui.screen.JamPullToRefresh
 import com.mno.jamscope.util.SortingType
 
@@ -49,13 +48,14 @@ fun FriendsTela(
     val windowWidth = windowSizeClass.windowWidthSizeClass
     val topAppBarScrollBehavior =
         TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
-    var showBottomSheet by remember { mutableStateOf(false) }
+    var showSortingRow by remember { mutableStateOf(false) }
 
     setTopBar {
         FriendScreenTopAppBar(
             onSettingIconClick = onSettingIconClick,
-            onSortIconClick = { showBottomSheet = true },
-            scrollBehavior = topAppBarScrollBehavior
+            onSortIconClick = { showSortingRow = !showSortingRow },
+            scrollBehavior = topAppBarScrollBehavior,
+            showingSortingRow = showSortingRow,
         )
     }
 
@@ -78,6 +78,9 @@ fun FriendsTela(
                     cardBackgroundToggle = cardBackgroundColorEnabled,
                     playingAnimationEnabled = playingAnimationEnabled,
                     colorProvider = { name, isDark -> colorProvider(name, isDark) },
+                    showSortingRow = showSortingRow,
+                    sortingType = sortingType,
+                    onSortingTypeChange = { onSortingTypeChange(it) }
                 )
             }
 
@@ -102,14 +105,14 @@ fun FriendsTela(
     }
 
 
-    if (showBottomSheet) {
-        SortingBottomSheet(
-            currentSortingType = sortingType,
-            onSortingTypeChange = {
-                onSortingTypeChange(it)
-                showBottomSheet = false
-            },
-            onDismissRequest = { showBottomSheet = false }
-        )
-    }
+//    if (showBottomSheet) {
+//        SortingBottomSheet(
+//            currentSortingType = sortingType,
+//            onSortingTypeChange = {
+//                onSortingTypeChange(it)
+//                showBottomSheet = false
+//            },
+//            onDismissRequest = { showBottomSheet = false }
+//        )
+//    }
 }

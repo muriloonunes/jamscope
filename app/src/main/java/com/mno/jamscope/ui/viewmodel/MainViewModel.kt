@@ -63,6 +63,9 @@ class MainViewModel @Inject constructor(
             if ((appVersion < versionCode) && isLoggedIn) {
                 _showChangelog.value = true
                 saveAppVersion(versionCode)
+            } else if (appVersion < versionCode) {
+                _showChangelog.value = false
+                saveAppVersion(versionCode)
             }
         }
         viewModelScope.launch {

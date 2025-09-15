@@ -29,7 +29,7 @@
     <string name="one_day_ago">Há 1 dia</string>
     <string name="days_ago">Há %d dias</string>
     <string name="now_playing">Ouvindo agora</string>
-    <string name="sort_button">Abrir a página inferior de \'organizar por\'</string>
+    <string name="sort_button">Abrir a seção de \'organizar por\'</string>
     <string name="sort_by">Organizar por</string>
     <string name="recently_played">Ouviram recentemente</string>
     <string name="alphabetically">Alfabético</string>

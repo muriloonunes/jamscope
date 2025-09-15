@@ -17,7 +17,9 @@ import com.mno.jamscope.data.model.RecentTracks
 import com.mno.jamscope.data.model.User
 import com.mno.jamscope.features.friends.ui.components.FriendCard
 import com.mno.jamscope.ui.components.ShowErrorMessage
+import com.mno.jamscope.ui.components.SortingLazyRow
 import com.mno.jamscope.ui.components.animations.highlightIf
+import com.mno.jamscope.util.SortingType
 
 @Composable
 fun FriendsVerticalScreen(
@@ -31,6 +33,9 @@ fun FriendsVerticalScreen(
     friendToExtend: String?,
     onExtendedHandled: () -> Unit,
     colorProvider: (String?, Boolean) -> Color,
+    showSortingRow: Boolean,
+    sortingType: SortingType,
+    onSortingTypeChange: (SortingType) -> Unit,
 ) {
     LazyColumn(
         state = listState,
@@ -45,6 +50,16 @@ fun FriendsVerticalScreen(
         item {
             if (errorMessage.isNotEmpty()) {
                 ShowErrorMessage(errorMessage)
+            }
+        }
+        item {
+            if (showSortingRow) {
+                SortingLazyRow(
+                    currentSortingType = sortingType,
+                    onSortingTypeChange = {
+                        onSortingTypeChange(it)
+                    },
+                )
             }
         }
         items(friends, key = { it.name!! }) { friend ->
