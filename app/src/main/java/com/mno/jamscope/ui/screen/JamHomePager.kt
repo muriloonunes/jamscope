@@ -1,7 +1,10 @@
 package com.mno.jamscope.ui.screen
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.pager.HorizontalPager
@@ -24,11 +27,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import com.mno.jamscope.R
 import com.mno.jamscope.features.friends.ui.components.BottomNavigationItem
-import com.mno.jamscope.ui.components.JamBottomBar
+import com.mno.jamscope.ui.components.JamFloatingBottomBar
 import com.mno.jamscope.ui.navigator.Destination
 import com.mno.jamscope.ui.theme.LocalWindowSizeClass
 import com.mno.jamscope.ui.util.FriendsScreenCaller
@@ -59,7 +64,7 @@ fun JamHomePager() {
     val windowSizeClass = LocalWindowSizeClass.current
 
     LaunchedEffect(pagerState) {
-        snapshotFlow { pagerState.currentPage }.collect { page ->
+        snapshotFlow { pagerState.settledPage }.collect { page ->
             selectedItemIndex = page
         }
     }
@@ -73,8 +78,31 @@ fun JamHomePager() {
     Scaffold(
         topBar = { topBarContent?.invoke() },
         contentWindowInsets = WindowInsets.safeDrawing,
-        bottomBar = {
-            JamBottomBar(
+    ) { innerPadding ->
+        Box(modifier = Modifier.padding(innerPadding)) {
+            HorizontalPager(
+                state = pagerState,
+                modifier = Modifier
+                    .fillMaxSize()
+            ) { page ->
+                when (page) {
+                    0 -> {
+                        FriendsScreenCaller(
+                            windowSizeClass = windowSizeClass,
+                            setTopBar = { topBarContent = it },
+                            listState = listState[page]
+                        )
+                    }
+
+                    1 -> {
+                        ProfileScreenCaller(
+                            listState = listState[page],
+                            setTopBar = { topBarContent = it })
+                    }
+                }
+            }
+            JamFloatingBottomBar(
+                modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 8.dp),
                 buttons = itemsBarList,
                 selectedItemIndex = selectedItemIndex,
                 onItemSelected = { index ->
@@ -85,28 +113,6 @@ fun JamHomePager() {
                     }
                 }
             )
-        }) { innerPadding ->
-        HorizontalPager(
-            state = pagerState,
-            contentPadding = innerPadding,
-            modifier = Modifier
-                .fillMaxSize()
-        ) { page ->
-            when (page) {
-                0 -> {
-                    FriendsScreenCaller(
-                        windowSizeClass = windowSizeClass,
-                        setTopBar = { topBarContent = it },
-                        listState = listState[page]
-                    )
-                }
-
-                1 -> {
-                    ProfileScreenCaller(
-                        listState = listState[page],
-                        setTopBar = { topBarContent = it })
-                }
-            }
         }
     }
 }
