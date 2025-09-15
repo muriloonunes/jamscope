@@ -39,7 +39,9 @@ android {
             signingConfig = signingConfigs.getByName("debug")
         }
         debug {
+            applicationIdSuffix = ".debug"
             isDebuggable = true
+            resValue("string", "app_name", "DJamscope")
         }
     }
     compileOptions {
