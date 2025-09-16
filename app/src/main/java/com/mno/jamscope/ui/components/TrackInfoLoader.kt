@@ -144,7 +144,7 @@ fun TrackImageLoader(
         placeholder = ColorPainter(color = MaterialTheme.colorScheme.surfaceContainerHigh),
         modifier = Modifier
             .padding(8.dp)
-            .clip(RoundedCornerShape(16.dp))
+            .clip(RoundedCornerShape(8.dp))
             .size(60.dp)
             .clickable { showFullscreenImage = true },
         contentScale = ContentScale.Crop,

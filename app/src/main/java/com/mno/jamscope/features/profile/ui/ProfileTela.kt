@@ -6,6 +6,7 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
@@ -43,6 +44,7 @@ import com.mno.jamscope.data.model.Track
 import com.mno.jamscope.features.profile.ui.components.CollapsingProfileTopBar
 import com.mno.jamscope.features.profile.ui.components.ProfileHeaderSection
 import com.mno.jamscope.features.profile.ui.components.ProfileTracksSection
+import com.mno.jamscope.ui.components.bottomBarPadding
 import com.mno.jamscope.ui.screen.JamPullToRefresh
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
@@ -178,7 +180,10 @@ fun ProfileTela(
                                 userProfile
                             )
                         },
-                        contentPadding = currentTopBarHeightDp
+                        contentPadding = PaddingValues(
+                            top = currentTopBarHeightDp,
+                            bottom = bottomBarPadding
+                        )
                     )
                     CollapsingProfileTopBar(
                         modifier = Modifier

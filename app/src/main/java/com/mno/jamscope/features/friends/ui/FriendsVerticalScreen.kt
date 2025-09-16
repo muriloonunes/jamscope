@@ -3,6 +3,7 @@ package com.mno.jamscope.features.friends.ui
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
@@ -19,6 +20,7 @@ import com.mno.jamscope.features.friends.ui.components.FriendCard
 import com.mno.jamscope.ui.components.ShowErrorMessage
 import com.mno.jamscope.ui.components.SortingLazyRow
 import com.mno.jamscope.ui.components.animations.highlightIf
+import com.mno.jamscope.ui.components.bottomBarPadding
 import com.mno.jamscope.util.SortingType
 
 @Composable
@@ -42,6 +44,7 @@ fun FriendsVerticalScreen(
         modifier = modifier,
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally,
+        contentPadding = PaddingValues(bottom = bottomBarPadding)
     ) {
         item {
             //isso aqui impede o bug de scroll "infinito"

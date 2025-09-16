@@ -13,6 +13,7 @@ import androidx.compose.material.icons.outlined.Group
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -22,7 +23,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -65,6 +65,23 @@ fun JamHomeScaffold() {
 
     Scaffold(
         topBar = { topBarContent?.invoke() },
+        floatingActionButton = {
+            JamFloatingBottomBar(
+                modifier = Modifier
+                    .padding(horizontal = 4.dp),
+                buttons = itemsBarList,
+                selectedItemIndex = selectedItemIndex,
+                onItemSelected = { index ->
+                    selectedItemIndex = index
+                    coroutineScope.launch {
+                        if (index >= 0 && index < listState.size) {
+                            listState[index].animateScrollToItem(0)
+                        }
+                    }
+                }
+            )
+        },
+        floatingActionButtonPosition = FabPosition.Center,
         contentWindowInsets = WindowInsets.safeDrawing,
     ) { innerPadding ->
         Box(
@@ -87,22 +104,6 @@ fun JamHomeScaffold() {
                         setTopBar = { topBarContent = it })
                 }
             }
-            JamFloatingBottomBar(
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(bottom = 8.dp)
-                    .padding(horizontal = 4.dp),
-                buttons = itemsBarList,
-                selectedItemIndex = selectedItemIndex,
-                onItemSelected = { index ->
-                    selectedItemIndex = index
-                    coroutineScope.launch {
-                        if (index >= 0 && index < listState.size) {
-                            listState[index].animateScrollToItem(0)
-                        }
-                    }
-                }
-            )
         }
     }
 }

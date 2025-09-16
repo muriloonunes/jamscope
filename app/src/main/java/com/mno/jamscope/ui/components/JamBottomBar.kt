@@ -1,14 +1,13 @@
 package com.mno.jamscope.ui.components
 
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FlexibleBottomAppBar
-import androidx.compose.material3.FloatingToolbarDefaults
 import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -44,6 +43,8 @@ fun JamBottomBar(
     }
 }
 
+val bottomBarPadding = 98.dp
+
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun JamFloatingBottomBar(
@@ -52,13 +53,15 @@ fun JamFloatingBottomBar(
     selectedItemIndex: Int,
     onItemSelected: (index: Int) -> Unit,
 ) {
+    val bottomBarHeight = 84.dp
     HorizontalFloatingToolbar(
-        modifier = modifier.height(84.dp),
+        modifier = modifier.height(bottomBarHeight),
         expanded = true,
 //        colors = FloatingToolbarDefaults.vibrantFloatingToolbarColors()
     ) {
         buttons.forEachIndexed { index, item ->
             NavigationBarItem(
+                colors = NavigationBarItemDefaults.colors(),
                 selected = index == selectedItemIndex,
                 onClick = { onItemSelected(index) },
                 icon = {
