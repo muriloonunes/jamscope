@@ -120,11 +120,12 @@ fun FriendsScreenCaller(
 }
 
 @Composable
-fun SettingsScreenCaller() {
+fun SettingsScreenCaller(showTopAppBar: Boolean) {
     val settingsViewModel: SettingsViewModel = hiltViewModel()
     val state by settingsViewModel.uiState.collectAsState()
     SettingsTela(
         uiState = state,
+        showTopAppBar = showTopAppBar,
         onTileSelected = { settingsViewModel.onTileSelect(it) },
         onNavigateBack = { settingsViewModel.navigateBack() },
         onSelectThemeClick = { settingsViewModel.showThemeDialog() },

@@ -3,16 +3,16 @@ package com.mno.jamscope.features.settings.viewmodel
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mno.jamscope.data.flows.LogoutEventBus
 import com.mno.jamscope.data.repository.FriendsRepository
 import com.mno.jamscope.data.repository.SettingsRepository
 import com.mno.jamscope.data.repository.UserRepository
+import com.mno.jamscope.features.settings.domain.model.getPersonalizationSwitches
 import com.mno.jamscope.features.settings.state.SettingsUiState
 import com.mno.jamscope.ui.navigator.Destination
 import com.mno.jamscope.ui.navigator.Navigator
-import com.mno.jamscope.data.flows.LogoutEventBus
 import com.mno.jamscope.util.Stuff.openUrl
 import com.mno.jamscope.util.sendReportMail
-import com.mno.jamscope.features.settings.ui.components.switches
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -43,8 +43,9 @@ class SettingsViewModel @Inject constructor(
     }
 
     private fun loadSwitchStates() {
+        val personalizationSwitches = getPersonalizationSwitches()
         viewModelScope.launch {
-            val states = switches.associate { switch ->
+            val states = personalizationSwitches.associate { switch ->
                 switch.key to settingsRepository.getSwitchState(switch.key, switch.initialState)
                     .first()
             }

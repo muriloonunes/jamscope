@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -29,6 +30,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.window.core.layout.WindowHeightSizeClass
 import androidx.window.core.layout.WindowWidthSizeClass
 import com.mno.jamscope.R
 import com.mno.jamscope.features.settings.state.SettingsUiState
@@ -39,6 +41,7 @@ import com.mno.jamscope.ui.theme.LocalWindowSizeClass
 @Composable
 fun SettingsTela(
     uiState: SettingsUiState,
+    showTopAppBar: Boolean,
     onTileSelected: (Int) -> Unit,
     onNavigateBack: () -> Unit,
     onSelectThemeClick: () -> Unit,
@@ -55,7 +58,6 @@ fun SettingsTela(
     onShowLibrariesClick: () -> Unit,
     onGithubProjectClick: (Context) -> Unit,
 ) {
-    val scrollBehaviour = TopAppBarDefaults.pinnedScrollBehavior()
     val themePreference = uiState.themePreference
     val switchStates = uiState.switchStates
     val selectedTile = uiState.selectedTile
@@ -63,6 +65,7 @@ fun SettingsTela(
 
     val showLogOutDialog = uiState.showLogOutDialog
     val showThemeDialog = uiState.showThemeDialog
+    val windowHeight = windowSizeClass.windowHeightSizeClass
     val windowWidth = windowSizeClass.windowWidthSizeClass
 
     val sectionTiles = listOf(
@@ -71,38 +74,11 @@ fun SettingsTela(
         R.string.about_setting_tile
     )
 
-    when (windowWidth) {
-        WindowWidthSizeClass.COMPACT -> {
-            Scaffold(
-                contentWindowInsets = WindowInsets.safeDrawing,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .nestedScroll(scrollBehaviour.nestedScrollConnection),
-                topBar = {
-                    TopAppBar(
-                        title = {
-                            Text(
-                                text = stringResource(R.string.settings),
-                            )
-                        },
-                        navigationIcon = {
-                            IconButton(
-                                onClick = { onNavigateBack() }
-                            ) {
-                                Icon(
-                                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                    contentDescription = stringResource(R.string.back)
-                                )
-                            }
-                        },
-                        scrollBehavior = scrollBehaviour
-                    )
-                }
-            ) { innerPadding ->
+    val settingsScreenContent: @Composable (Modifier) -> Unit = { modifier ->
+        when (windowWidth) {
+            WindowWidthSizeClass.COMPACT -> {
                 SettingsVerticalScreen(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .padding(16.dp),
+                    modifier = modifier,
                     themePreference = themePreference,
                     switchStates = switchStates,
                     onSelectThemeClick = { onSelectThemeClick() },
@@ -116,13 +92,9 @@ fun SettingsTela(
                     onGithubProjectClick = { onGithubProjectClick(it) }
                 )
             }
-        }
-
-        WindowWidthSizeClass.EXPANDED, WindowWidthSizeClass.MEDIUM -> {
-            Box {
+            WindowWidthSizeClass.EXPANDED, WindowWidthSizeClass.MEDIUM -> {
                 SettingsHorizontalScreen(
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp),
+                    modifier = modifier,
                     tiles = sectionTiles,
                     selectedTile = selectedTile,
                     onTileSelected = { onTileSelected(it) },
@@ -139,6 +111,27 @@ fun SettingsTela(
                     onGithubProjectClick = { onGithubProjectClick(it) }
                 )
             }
+        }
+    }
+
+    if (showTopAppBar) {
+        SettingsScaffold(
+            onNavigateBack = { onNavigateBack() }
+        ) { innerPadding ->
+            val contentModifier = if (windowWidth != WindowWidthSizeClass.COMPACT && windowHeight != WindowHeightSizeClass.COMPACT) {
+                Modifier.padding(innerPadding).padding(horizontal = 16.dp)
+            } else {
+                Modifier.padding(innerPadding)
+            }
+            settingsScreenContent(contentModifier)
+        }
+    } else {
+        if (windowWidth != WindowWidthSizeClass.COMPACT && windowHeight != WindowHeightSizeClass.COMPACT) {
+            Box(modifier = Modifier.fillMaxSize()) {
+                settingsScreenContent(Modifier.padding(horizontal = 16.dp))
+            }
+        } else {
+            settingsScreenContent(Modifier.fillMaxSize())
         }
     }
 
@@ -172,47 +165,6 @@ fun SettingsTela(
                         selected = themePreference == 2,
                         onClick = { setThemePreference(2) }
                     )
-                    /*
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        RadioButton(
-                            selected = themePreference == 0,
-                            onClick = { setThemePreference(0) }
-                        )
-                        Text(
-                            text = stringResource(R.string.theme_system_default_auto),
-                            modifier = Modifier
-                                .padding(start = 8.dp)
-                                .clickable { setThemePreference(0) },
-                            fontSize = 16.sp
-                        )
-                    }
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        RadioButton(
-                            selected = themePreference == 1,
-                            onClick = { setThemePreference(1) }
-                        )
-                        Text(
-                            text = stringResource(R.string.light_theme),
-                            modifier = Modifier
-                                .padding(start = 8.dp)
-                                .clickable { setThemePreference(1) },
-                            fontSize = 16.sp
-                        )
-                    }
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        RadioButton(
-                            selected = themePreference == 2,
-                            onClick = { setThemePreference(2) }
-                        )
-                        Text(
-                            text = stringResource(R.string.dark_theme),
-                            modifier = Modifier
-                                .padding(start = 8.dp)
-                                .clickable { setThemePreference(2) },
-                            fontSize = 16.sp
-                        )
-                    }
-                     */
                 }
             },
             confirmButton = {
@@ -222,7 +174,6 @@ fun SettingsTela(
             }
         )
     }
-
 
     if (showLogOutDialog) {
         AlertDialog(
@@ -259,3 +210,39 @@ fun SettingsTela(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun SettingsScaffold(
+    onNavigateBack: () -> Unit,
+    content: @Composable (innerPadding: PaddingValues) -> Unit,
+) {
+    val scrollBehaviour = TopAppBarDefaults.pinnedScrollBehavior()
+    Scaffold(
+        contentWindowInsets = WindowInsets.safeDrawing,
+        modifier = Modifier
+            .fillMaxSize()
+            .nestedScroll(scrollBehaviour.nestedScrollConnection),
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = stringResource(R.string.settings),
+                    )
+                },
+                navigationIcon = {
+                    IconButton(
+                        onClick = { onNavigateBack() }
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(R.string.back)
+                        )
+                    }
+                },
+                scrollBehavior = scrollBehaviour
+            )
+        }
+    ) { innerPadding ->
+        content(innerPadding)
+    }
+}

@@ -81,7 +81,7 @@ fun RootHost(
                 }
             }
             composable<Destination.SettingsScreen> {
-                SettingsScreenCaller()
+                SettingsScreenCaller(showTopAppBar = true)
             }
             composable<Destination.ProfileScreen> {
                 ProfileScreenCaller()

@@ -12,8 +12,6 @@ import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
-import androidx.annotation.StringRes
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
@@ -166,12 +164,4 @@ object Stuff {
             Toast.makeText(this, getString(R.string.no_music_player), Toast.LENGTH_SHORT).show()
         }
     }
-
-    data class SwitchItem(
-        val key: String,
-        @param:StringRes val name: Int,
-        val icon: ImageVector,
-        @param:StringRes val iconDesc: Int,
-        val initialState: Boolean,
-    )
 }

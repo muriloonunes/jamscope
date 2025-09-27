@@ -9,6 +9,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,7 +21,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.mno.jamscope.R
-import com.mno.jamscope.features.settings.ui.components.SettingSectionTitle
 import com.mno.jamscope.features.settings.ui.components.SettingsHorizontalMenu
 import com.mno.jamscope.features.settings.ui.components.aboutSettingsSection
 import com.mno.jamscope.features.settings.ui.components.accountSettingsSection
@@ -90,13 +90,11 @@ fun SettingsHorizontalScreen(
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(horizontal = 8.dp)
+                    .padding(horizontal = 8.dp),
+                contentPadding = PaddingValues(bottom = 16.dp)
             ) {
                 when (tile) {
                     R.string.personalization_setting_title -> {
-                        item {
-                            SettingSectionTitle(R.string.personalization_setting_title)
-                        }
                         personalizationSettingsSection(
                             themePreference = themePreference,
                             onSelectThemeClick = onSelectThemeClick,
@@ -106,9 +104,6 @@ fun SettingsHorizontalScreen(
                     }
 
                     R.string.account_setting_tile -> {
-                        item {
-                            SettingSectionTitle(R.string.account_setting_tile)
-                        }
                         accountSettingsSection(
                             onDeleteAccountClick = { onDeleteAccountClick(context) },
                             onLogOutClick = onLogOutClick,
@@ -116,9 +111,6 @@ fun SettingsHorizontalScreen(
                     }
 
                     R.string.about_setting_tile -> {
-                        item {
-                            SettingSectionTitle(R.string.about_setting_tile)
-                        }
                         aboutSettingsSection(
                             onBuyMeACoffeeClick = { onBuyMeACoffeeClick(context) },
                             onBugReportClick = { onBugReportClick(context) },
