@@ -114,6 +114,6 @@
     <string name="song_by_artist">"%1$s, de %2$s"</string>
     <string name="changelog">Changelog</string>
     <string name="dismiss">Dispensar</string>
-    <string name="changelog_not_found">Changelog não encontrado</string>
+    <string name="not_found">%1$s não encontrado</string>
     <string name="full_changelog">Changelog completo no GitHub</string>
 </resources>

@@ -11,6 +11,7 @@ import android.os.Build
 import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
+import androidx.annotation.RawRes
 import androidx.annotation.RequiresApi
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
@@ -38,13 +39,15 @@ object Stuff {
     const val FROM_WIDGET = "FROM_WIDGET"
     val JSON = Json { ignoreUnknownKeys = true }
 
-    fun Context.readChangelog(): String {
+    fun Context.readRawFile(
+        @RawRes fileRes: Int,
+        expectedFileName: String,
+    ): String {
         return try {
-            val resourceId = R.raw.changelog
-            if (resourceId == 0) {
-                this.getString(R.string.changelog_not_found)
+            if (fileRes == 0) {
+                this.getString(R.string.not_found, expectedFileName)
             }
-            val inputStream = this.resources.openRawResource(resourceId)
+            val inputStream = this.resources.openRawResource(fileRes)
             val reader = BufferedReader(InputStreamReader(inputStream))
             val changelog = StringBuilder()
             var line: String? = reader.readLine()
@@ -56,7 +59,7 @@ object Stuff {
             changelog.toString().trimEnd()
         } catch (e: Exception) {
             e.printStackTrace()
-            this.getString(R.string.changelog_not_found)
+            this.getString(R.string.not_found, expectedFileName)
         }
     }
 

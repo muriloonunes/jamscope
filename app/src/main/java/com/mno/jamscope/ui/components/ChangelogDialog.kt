@@ -22,14 +22,14 @@ import androidx.compose.ui.text.withStyle
 import com.mno.jamscope.BuildConfig
 import com.mno.jamscope.R
 import com.mno.jamscope.util.Stuff.GITHUB_RELEASES_LINK
-import com.mno.jamscope.util.Stuff.readChangelog
+import com.mno.jamscope.util.Stuff.readRawFile
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChangelogDialog(onDismissRequest: () -> Unit) {
     val context = LocalContext.current
     val changelogText = remember {
-        context.readChangelog()
+        context.readRawFile(fileRes = R.raw.changelog, expectedFileName = "changelog")
     }
     val scrollState = rememberScrollState()
     AlertDialog(
