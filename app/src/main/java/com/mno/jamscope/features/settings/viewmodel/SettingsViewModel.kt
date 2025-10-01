@@ -12,7 +12,8 @@ import com.mno.jamscope.features.settings.state.SettingsUiState
 import com.mno.jamscope.ui.navigator.Destination
 import com.mno.jamscope.ui.navigator.Navigator
 import com.mno.jamscope.util.Stuff.openUrl
-import com.mno.jamscope.util.sendReportMail
+import com.mno.jamscope.util.Stuff.sendMail
+import com.mno.jamscope.util.Stuff.sendReportMail
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,7 +29,7 @@ class SettingsViewModel @Inject constructor(
     private val navigator: Navigator,
     private val friendsRepository: FriendsRepository,
     private val settingsRepository: SettingsRepository,
-    private val logoutBus: LogoutEventBus
+    private val logoutBus: LogoutEventBus,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(SettingsUiState())
     val uiState: StateFlow<SettingsUiState> = _uiState
@@ -108,9 +109,15 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    fun navigateToLibraries() {
+    fun navigateToLibrariesLicenseScreen(screenType: String) {
         viewModelScope.launch {
-            navigator.navigate(Destination.LibrariesScreen)
+            navigator.navigate(Destination.LibrariesLicenseScreen(screenType))
+        }
+    }
+
+    fun navigateToAboutScreen() {
+        viewModelScope.launch {
+            navigator.navigate(Destination.AboutScreen)
         }
     }
 
@@ -131,10 +138,15 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    //thx pano scrobbler
     fun sendBugReportMail(context: Context) {
         viewModelScope.launch {
-            sendReportMail(context)
+            context.sendReportMail()
+        }
+    }
+
+    fun sendMailToDeveloper(context: Context) {
+        viewModelScope.launch {
+            context.sendMail()
         }
     }
 
@@ -148,6 +160,10 @@ class SettingsViewModel @Inject constructor(
 
     fun openGithubProject(context: Context) {
         context.openUrl("https://github.com/muriloonunes/jamscope")
+    }
+
+    fun openGithubProfile(context: Context) {
+        context.openUrl("https://github.com/muriloonunes")
     }
 
 //    fun openPlayStore(context: Context) {

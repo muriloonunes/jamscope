@@ -149,6 +149,80 @@ object Stuff {
         }
     }
 
+    fun Context.sendReportMail() {
+        var bgRam = -1
+        val manager =
+            ContextCompat.getSystemService(this, ActivityManager::class.java)!!
+        for (proc in manager.runningAppProcesses) {
+            if (proc?.processName?.contains("com.mno.jamscope") == true) {
+                // https://stackoverflow.com/questions/2298208/how-do-i-discover-memory-usage-of-my-application-in-android
+                val memInfo = manager.getProcessMemoryInfo(intArrayOf(proc.pid)).first()
+                bgRam = memInfo.totalPss / 1024
+                break
+            }
+        }
+
+        var lastExitInfo: String? = null
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            lastExitInfo =
+                getAppExitReasons(printAll = true, context = this).firstOrNull()
+                    ?.toString()
+        }
+        val packageName = packageName
+        val pm = packageManager
+        val appInfo = pm.getApplicationInfo(packageName, 0)
+        val appName = pm.getApplicationLabel(appInfo).toString()
+        val versionName = pm.getPackageInfo(packageName, 0).versionName
+        var text = ""
+        text += "$appName v$versionName\n"
+        text += "Android " + Build.VERSION.RELEASE + "\n"
+        text += "Device: " + Build.BRAND + " " + Build.MODEL + " / " + Build.DEVICE + "\n"
+        val mi = ActivityManager.MemoryInfo()
+        manager.getMemoryInfo(mi)
+        text += "Background RAM usage: " + bgRam + "M \n"
+        if (lastExitInfo != null)
+            text += "Last exit reason: $lastExitInfo\n"
+        text += "----------------------------------"
+        text += "\n\n[Describe the issue]\n"
+        Log.d("SettingsViewModel", "text: $text")
+
+        val subject = "$appName - Bug report"
+        sendMail(
+            subject = subject,
+            text = text
+        )
+    }
+
+    fun Context.sendMail(
+        subject: String? = null,
+        text: String? = null,
+    ) {
+        val emailAddress = EMAIL
+        val uri = "mailto:".toUri() // this filters email-only apps
+        val emailIntent = Intent(Intent.ACTION_SENDTO).apply {
+            data = uri
+            putExtra(Intent.EXTRA_EMAIL, arrayOf(emailAddress))
+            subject?.let {
+                putExtra(Intent.EXTRA_SUBJECT, it)
+            }
+            text?.let {
+                putExtra(Intent.EXTRA_TEXT, it)
+            }
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+
+        try {
+            startActivity(emailIntent)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Toast.makeText(
+                this,
+                getString(R.string.no_email_app_found),
+                Toast.LENGTH_LONG
+            ).show()
+        }
+    }
+
     fun Context.searchMusicIntent(track: Track) {
         val intent = Intent(MediaStore.INTENT_ACTION_MEDIA_PLAY_FROM_SEARCH).apply {
             putExtra(SearchManager.QUERY, "${track.artist.name} ${track.name}")

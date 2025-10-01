@@ -56,7 +56,7 @@ fun SettingsTela(
     onBugReportClick: (Context) -> Unit,
     onSuggestFeatureClick: () -> Unit,
     onShowLibrariesClick: () -> Unit,
-    onGithubProjectClick: (Context) -> Unit,
+    onAboutClick: () -> Unit,
 ) {
     val themePreference = uiState.themePreference
     val switchStates = uiState.switchStates
@@ -89,7 +89,7 @@ fun SettingsTela(
                     onBugReportClick = { onBugReportClick(it) },
                     onSuggestFeatureClick = { onSuggestFeatureClick() },
                     onShowLibrariesClick = { onShowLibrariesClick() },
-                    onGithubProjectClick = { onGithubProjectClick(it) }
+                    onAboutClick = { onAboutClick() }
                 )
             }
             WindowWidthSizeClass.EXPANDED, WindowWidthSizeClass.MEDIUM -> {
@@ -108,7 +108,7 @@ fun SettingsTela(
                     onBugReportClick = { onBugReportClick(it) },
                     onSuggestFeatureClick = { onSuggestFeatureClick() },
                     onShowLibrariesClick = { onShowLibrariesClick() },
-                    onGithubProjectClick = { onGithubProjectClick(it) }
+                    onAboutClick = { onAboutClick() }
                 )
             }
         }

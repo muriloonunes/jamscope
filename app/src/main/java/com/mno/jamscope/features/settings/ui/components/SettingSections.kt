@@ -11,11 +11,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.LibraryBooks
 import androidx.compose.material.icons.automirrored.outlined.Logout
 import androidx.compose.material.icons.outlined.BrightnessMedium
-import androidx.compose.material.icons.outlined.BugReport
 import androidx.compose.material.icons.outlined.Coffee
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.ModeComment
+import androidx.compose.material.icons.outlined.ReportProblem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -122,7 +122,7 @@ fun LazyListScope.aboutSettingsSection(
     onBugReportClick: () -> Unit,
     onSuggestFeatureClick: () -> Unit,
     onShowLibrariesClick: () -> Unit,
-    onGithubProjectClick: () -> Unit
+    onAboutClick: () -> Unit
 ) {
     item {
         SettingSection(R.string.about_setting_tile) {
@@ -137,7 +137,7 @@ fun LazyListScope.aboutSettingsSection(
             }
             Spacer(Modifier.height(4.dp))
             SettingsClickableComp(
-                icon = Icons.Outlined.BugReport,
+                icon = Icons.Outlined.ReportProblem,
                 iconDesc = R.string.bug_report_icon,
                 name = R.string.report_bug_setting,
                 subtitle = null,
@@ -170,10 +170,10 @@ fun LazyListScope.aboutSettingsSection(
                 icon = Icons.Outlined.Info,
                 iconDesc = R.string.info_icon,
                 name = R.string.app_name,
-                subtitle = R.string.github_project_link,
-                showIcon = false
+                subtitle = null,
+                showIcon = true
             ) {
-                onGithubProjectClick()
+                onAboutClick()
             }
         }
     }

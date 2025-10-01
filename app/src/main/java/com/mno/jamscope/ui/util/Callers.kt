@@ -24,7 +24,6 @@ import com.mno.jamscope.ui.theme.LocalWindowSizeClass
 @Composable
 fun ProfileScreenCaller(
     listState: LazyListState = rememberLazyListState(),
-    setTopBar: (@Composable () -> Unit) -> Unit? = {},
 ) {
     val profileViewModel: ProfileViewModel = hiltViewModel()
     val refreshing by profileViewModel.isRefreshing.collectAsStateWithLifecycle()
@@ -43,8 +42,7 @@ fun ProfileScreenCaller(
         onRefresh = { profileViewModel.onRefresh() },
         onSeeMoreClick = { context, profile ->
             profileViewModel.seeMore(context, profile)
-        },
-        setTopBar = setTopBar
+        }
     )
 }
 
@@ -52,7 +50,6 @@ fun ProfileScreenCaller(
 @Composable
 fun FriendsScreenCaller(
     windowSizeClass: WindowSizeClass,
-    setTopBar: (@Composable () -> Unit) -> Unit? = {},
     listState: LazyListState = rememberLazyListState(),
     gridState: LazyGridState = rememberLazyGridState(),
 ) {
@@ -114,8 +111,7 @@ fun FriendsScreenCaller(
         },
         listState = listState,
         gridState = gridState,
-        windowSizeClass = windowSizeClass,
-        setTopBar = setTopBar
+        windowSizeClass = windowSizeClass
     )
 }
 
@@ -142,7 +138,7 @@ fun SettingsScreenCaller(showTopAppBar: Boolean) {
         onBuyMeACoffeeClick = { settingsViewModel.openBuyMeACoffee(it) },
         onBugReportClick = { settingsViewModel.sendBugReportMail(it) },
         onSuggestFeatureClick = { settingsViewModel.navigateToWebView() },
-        onShowLibrariesClick = { settingsViewModel.navigateToLibraries() },
-        onGithubProjectClick = { settingsViewModel.openGithubProject(it) }
+        onShowLibrariesClick = { settingsViewModel.navigateToLibrariesLicenseScreen("libraries") },
+        onAboutClick = { settingsViewModel.navigateToAboutScreen() }
     )
 }

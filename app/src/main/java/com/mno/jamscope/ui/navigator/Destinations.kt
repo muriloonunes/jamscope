@@ -17,7 +17,8 @@ sealed interface Destination {
     data object SettingsScreen : Destination
     @Serializable
     data object WebViewScreen : Destination
-
     @Serializable
-    data object LibrariesScreen : Destination
+    data class LibrariesLicenseScreen(val screenType: String) : Destination
+    @Serializable
+    data object AboutScreen : Destination
 }

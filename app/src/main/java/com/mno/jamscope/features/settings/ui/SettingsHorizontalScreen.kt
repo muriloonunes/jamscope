@@ -42,7 +42,7 @@ fun SettingsHorizontalScreen(
     onBugReportClick: (Context) -> Unit,
     onSuggestFeatureClick: () -> Unit,
     onShowLibrariesClick: () -> Unit,
-    onGithubProjectClick: (Context) -> Unit,
+    onAboutClick: (Context) -> Unit,
 ) {
     val context = LocalContext.current
     Row(
@@ -116,7 +116,7 @@ fun SettingsHorizontalScreen(
                             onBugReportClick = { onBugReportClick(context) },
                             onSuggestFeatureClick = { onSuggestFeatureClick() },
                             onShowLibrariesClick = { onShowLibrariesClick() },
-                            onGithubProjectClick = { onGithubProjectClick(context) }
+                            onAboutClick = { onAboutClick(context) }
                         )
                     }
                 }

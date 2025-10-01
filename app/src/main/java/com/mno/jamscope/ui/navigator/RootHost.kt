@@ -14,11 +14,13 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import androidx.navigation.toRoute
 import androidx.window.core.layout.WindowWidthSizeClass
 import com.mno.jamscope.features.login.ui.LoginScreen
 import com.mno.jamscope.features.login.viewmodel.LoginViewModel
+import com.mno.jamscope.features.settings.ui.AboutScreen
 import com.mno.jamscope.features.settings.viewmodel.SettingsViewModel
-import com.mno.jamscope.features.settings.ui.LoadLibrariesScreen
+import com.mno.jamscope.features.settings.ui.LoadLibrariesLicenseScreen
 import com.mno.jamscope.features.settings.ui.WebViewLoader
 import com.mno.jamscope.ui.screen.JamHomeScaffold
 import com.mno.jamscope.ui.screen.JamHomeRail
@@ -92,10 +94,23 @@ fun RootHost(
                     onNavigateBack = { settingsViewModel.navigateBack() }
                 )
             }
-            composable<Destination.LibrariesScreen> {
+            composable<Destination.LibrariesLicenseScreen> { backStackEntry ->
+                val screenType: Destination.LibrariesLicenseScreen = backStackEntry.toRoute()
                 val settingsViewModel: SettingsViewModel = hiltViewModel()
-                LoadLibrariesScreen(
+                LoadLibrariesLicenseScreen(
+                    screenType = screenType.screenType,
                     onNavigateBack = { settingsViewModel.navigateBack() }
+                )
+            }
+            composable<Destination.AboutScreen> {
+                val settingsViewModel: SettingsViewModel = hiltViewModel()
+                AboutScreen(
+                    onNavigateBack = { settingsViewModel.navigateBack() },
+                    onBugReportClick = { settingsViewModel.sendBugReportMail(it) },
+                    onGithubProfileClick = { settingsViewModel.openGithubProfile(it) },
+                    onMailClick = { settingsViewModel.sendMailToDeveloper(it) },
+                    onGithubProjectClick = { settingsViewModel.openGithubProject(it) },
+                    onSeeLicenseClick = { settingsViewModel.navigateToLibrariesLicenseScreen("license") }
                 )
             }
         }

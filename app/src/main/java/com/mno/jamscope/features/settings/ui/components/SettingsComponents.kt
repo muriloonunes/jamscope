@@ -48,6 +48,8 @@ private fun SettingsTile(
         modifier
     }
 
+    val maxLines = if (subtitle != null) 1 else 2
+
     Surface(
         color = MaterialTheme.colorScheme.surfaceContainerHigh,
         modifier = tileModifier
@@ -72,13 +74,13 @@ private fun SettingsTile(
                     contentDescription = iconDesc,
                     modifier = Modifier.size(24.dp)
                 )
-                Column(modifier = Modifier.padding(start = 4.dp)) {
+                Column(modifier = Modifier.padding(start = 8.dp)) {
                     Text(
                         text = name,
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurface,
                         overflow = TextOverflow.Ellipsis,
-                        maxLines = 2,
+                        maxLines = maxLines,
                     )
                     subtitle?.let {
                         Text(
@@ -131,7 +133,8 @@ fun SettingsClickableComp(
     val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
 
     val appName = stringResource(id = R.string.app_name)
-    val versionName = packageInfo.versionName
+    val versionName =
+        packageInfo?.versionName ?: stringResource(id = R.string.unknown)
     val textString = if (name == R.string.app_name) {
         "$appName v$versionName"
     } else {
