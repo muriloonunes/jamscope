@@ -30,6 +30,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mno.jamscope.R
+import com.mno.jamscope.features.settings.domain.model.SwitchState
 import com.mno.jamscope.ui.theme.NowPlayingTheme
 
 @Composable
@@ -102,7 +103,7 @@ fun SettingSwitch(
     icon: ImageVector,
     @StringRes iconDesc: Int,
     @StringRes name: Int,
-    state: Boolean,
+    state: SwitchState,
     onClick: () -> Unit,
 ) {
     Spacer(Modifier.height(4.dp))
@@ -113,7 +114,7 @@ fun SettingSwitch(
         onClick = onClick,
         trailingContent = {
             Switch(
-                checked = state,
+                checked = state is SwitchState.On,
                 onCheckedChange = { onClick() }
             )
         }
@@ -161,7 +162,7 @@ fun SettingsClickableComp(
     )
 }
 
-@Preview(showBackground = true)
+@Preview
 @Composable
 private fun SettingsCompPreview() {
     NowPlayingTheme(2) {

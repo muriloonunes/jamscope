@@ -12,7 +12,7 @@ data class SwitchItem(
     @param:StringRes val name: Int,
     val icon: ImageVector,
     @param:StringRes val iconDesc: Int,
-    val initialState: Boolean,
+    val initialState: SwitchState,
 )
 
 fun getPersonalizationSwitches(): List<SwitchItem> {
@@ -22,14 +22,14 @@ fun getPersonalizationSwitches(): List<SwitchItem> {
             name = R.string.card_colored_background_setting,
             icon = Icons.Outlined.Palette,
             iconDesc = R.string.palette_icon,
-            initialState = true //ON
+            initialState = SwitchState.On
         ),
         SwitchItem(
             key = "playing_animation_toggle",
             name = R.string.playing_animation_setting,
             icon = Icons.Outlined.PlayCircleOutline,
             iconDesc = R.string.animation_play_icon,
-            initialState = true //ON
+            initialState = SwitchState.On
         ),
 //            SwitchItem(
 //                key = "background_updates_toggle",

@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import com.mikepenz.aboutlibraries.ui.compose.android.rememberLibraries
 import com.mikepenz.aboutlibraries.ui.compose.m3.LibrariesContainer
 import com.mno.jamscope.R
+import com.mno.jamscope.ui.navigator.ScreenType
 import com.mno.jamscope.util.Stuff.readRawFile
 import my.nanihadesuka.compose.LazyColumnScrollbar
 import my.nanihadesuka.compose.ScrollbarSettings
@@ -32,7 +33,7 @@ import my.nanihadesuka.compose.ScrollbarSettings
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoadLibrariesLicenseScreen(
-    screenType: String,
+    screenType: ScreenType,
     onNavigateBack: () -> Unit,
 ) {
     Scaffold(
@@ -42,9 +43,8 @@ fun LoadLibrariesLicenseScreen(
                 title = {
                     Text(
                         text = when (screenType) {
-                            "libraries" -> stringResource(R.string.show_libraries_setting)
-                            "license" -> stringResource(R.string.see_license)
-                            else -> ""
+                            ScreenType.LIBRARIES -> stringResource(R.string.show_libraries_setting)
+                            ScreenType.LICENSE -> stringResource(R.string.see_license)
                         }
                     )
                 },
@@ -62,7 +62,7 @@ fun LoadLibrariesLicenseScreen(
         }
     ) { innerPadding ->
         when (screenType) {
-            "libraries" -> {
+            ScreenType.LIBRARIES -> {
                 val libraries by rememberLibraries(R.raw.aboutlibraries)
                 LibrariesContainer(
                     modifier = Modifier
@@ -73,7 +73,7 @@ fun LoadLibrariesLicenseScreen(
                 )
             }
 
-            "license" -> {
+            ScreenType.LICENSE -> {
                 val scrollState = rememberLazyListState()
                 LazyColumnScrollbar(
                     modifier = Modifier

@@ -11,6 +11,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mno.jamscope.features.settings.ui.components.aboutSettingsSection
 import com.mno.jamscope.features.settings.ui.components.accountSettingsSection
+import com.mno.jamscope.features.settings.domain.model.SwitchState
 import com.mno.jamscope.features.settings.ui.components.personalizationSettingsSection
 import com.mno.jamscope.ui.theme.NowPlayingTheme
 
@@ -18,7 +19,7 @@ import com.mno.jamscope.ui.theme.NowPlayingTheme
 fun SettingsVerticalScreen(
     modifier: Modifier = Modifier,
     themePreference: Int,
-    switchStates: Map<String, Boolean>,
+    switchStates: Map<String, SwitchState>,
     onSelectThemeClick: () -> Unit,
     onLogOutClick: () -> Unit,
     onSwitchClick: (String) -> Unit,
@@ -62,8 +63,8 @@ private fun SettingsVerticalScreenPreview() {
         SettingsVerticalScreen(
             themePreference = 0,
             switchStates = mapOf(
-                "switch1" to true,
-                "switch2" to false
+                "switch1" to SwitchState.On,
+                "switch2" to SwitchState.Off
             ),
             onSelectThemeClick = {},
             onLogOutClick = {},

@@ -19,6 +19,7 @@ import com.mno.jamscope.features.profile.ui.ProfileTela
 import com.mno.jamscope.features.profile.viewmodel.ProfileViewModel
 import com.mno.jamscope.features.settings.ui.SettingsTela
 import com.mno.jamscope.features.settings.viewmodel.SettingsViewModel
+import com.mno.jamscope.ui.navigator.ScreenType
 import com.mno.jamscope.ui.theme.LocalWindowSizeClass
 
 @Composable
@@ -138,7 +139,7 @@ fun SettingsScreenCaller(showTopAppBar: Boolean) {
         onBuyMeACoffeeClick = { settingsViewModel.openBuyMeACoffee(it) },
         onBugReportClick = { settingsViewModel.sendBugReportMail(it) },
         onSuggestFeatureClick = { settingsViewModel.navigateToWebView() },
-        onShowLibrariesClick = { settingsViewModel.navigateToLibrariesLicenseScreen("libraries") },
+        onShowLibrariesClick = { settingsViewModel.navigateToLibrariesLicenseScreen(ScreenType.LIBRARIES) },
         onAboutClick = { settingsViewModel.navigateToAboutScreen() }
     )
 }

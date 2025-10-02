@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.mno.jamscope.R
+import com.mno.jamscope.features.settings.domain.model.SwitchState
 import com.mno.jamscope.features.settings.ui.components.SettingsHorizontalMenu
 import com.mno.jamscope.features.settings.ui.components.aboutSettingsSection
 import com.mno.jamscope.features.settings.ui.components.accountSettingsSection
@@ -30,7 +31,7 @@ import com.mno.jamscope.features.settings.ui.components.personalizationSettingsS
 fun SettingsHorizontalScreen(
     modifier: Modifier = Modifier,
     themePreference: Int,
-    switchStates: Map<String, Boolean>,
+    switchStates: Map<String, SwitchState>,
     onSelectThemeClick: () -> Unit,
     onLogOutClick: () -> Unit,
     tiles: List<Int>,

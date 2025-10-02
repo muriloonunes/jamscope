@@ -8,9 +8,11 @@ import com.mno.jamscope.data.repository.FriendsRepository
 import com.mno.jamscope.data.repository.SettingsRepository
 import com.mno.jamscope.data.repository.UserRepository
 import com.mno.jamscope.features.settings.domain.model.getPersonalizationSwitches
+import com.mno.jamscope.features.settings.domain.model.SwitchState
 import com.mno.jamscope.features.settings.state.SettingsUiState
 import com.mno.jamscope.ui.navigator.Destination
 import com.mno.jamscope.ui.navigator.Navigator
+import com.mno.jamscope.ui.navigator.ScreenType
 import com.mno.jamscope.util.Stuff.openUrl
 import com.mno.jamscope.util.Stuff.sendMail
 import com.mno.jamscope.util.Stuff.sendReportMail
@@ -56,10 +58,11 @@ class SettingsViewModel @Inject constructor(
 
     fun toggleSwitch(key: String) {
         val current = _uiState.value.switchStates[key] ?: return
-        val updated = _uiState.value.switchStates.toMutableMap().apply { this[key] = !current }
+        val newState = if (current is SwitchState.On) SwitchState.Off else SwitchState.On
+        val updated = _uiState.value.switchStates.toMutableMap().apply { this[key] = newState }
         _uiState.update { it.copy(switchStates = updated) }
         viewModelScope.launch {
-            settingsRepository.saveSwitchState(key, !current)
+            settingsRepository.saveSwitchState(key, newState)
         }
     }
 
@@ -109,7 +112,7 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    fun navigateToLibrariesLicenseScreen(screenType: String) {
+    fun navigateToLibrariesLicenseScreen(screenType: ScreenType) {
         viewModelScope.launch {
             navigator.navigate(Destination.LibrariesLicenseScreen(screenType))
         }

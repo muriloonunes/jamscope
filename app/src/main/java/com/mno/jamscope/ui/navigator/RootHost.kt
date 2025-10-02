@@ -110,7 +110,11 @@ fun RootHost(
                     onGithubProfileClick = { settingsViewModel.openGithubProfile(it) },
                     onMailClick = { settingsViewModel.sendMailToDeveloper(it) },
                     onGithubProjectClick = { settingsViewModel.openGithubProject(it) },
-                    onSeeLicenseClick = { settingsViewModel.navigateToLibrariesLicenseScreen("license") }
+                    onSeeLicenseClick = {
+                        settingsViewModel.navigateToLibrariesLicenseScreen(
+                            ScreenType.LICENSE
+                        )
+                    }
                 )
             }
         }

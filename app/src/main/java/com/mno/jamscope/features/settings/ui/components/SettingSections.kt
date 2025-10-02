@@ -25,6 +25,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.mno.jamscope.R
+import com.mno.jamscope.features.settings.domain.model.SwitchState
 import com.mno.jamscope.features.settings.domain.model.getPersonalizationSwitches
 
 @Composable
@@ -51,7 +52,7 @@ private fun SettingSection(
 fun LazyListScope.personalizationSettingsSection(
     themePreference: Int,
     onSelectThemeClick: () -> Unit,
-    switchStates: Map<String, Boolean>,
+    switchStates: Map<String, SwitchState>,
     onSwitchClick: (String) -> Unit
 ) {
     item {
