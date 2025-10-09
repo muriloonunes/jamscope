@@ -1,5 +1,10 @@
 package com.mno.jamscope.ui.screen
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,7 +23,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -57,14 +61,7 @@ fun JamHomeScaffold() {
     val coroutineScope = rememberCoroutineScope()
     val windowSizeClass = LocalWindowSizeClass.current
 
-    var topBarContent by remember {
-        mutableStateOf<(@Composable () -> Unit)?>(
-            null
-        )
-    }
-
     Scaffold(
-        topBar = { topBarContent?.invoke() },
         floatingActionButton = {
             JamFloatingBottomBar(
                 modifier = Modifier
@@ -89,19 +86,45 @@ fun JamHomeScaffold() {
                 .padding(innerPadding)
                 .fillMaxSize()
         ) {
-            when (selectedItemIndex) {
-                0 -> {
-                    FriendsScreenCaller(
-                        windowSizeClass = windowSizeClass,
-                        setTopBar = { topBarContent = it },
-                        listState = listState[selectedItemIndex]
-                    )
-                }
+            AnimatedContent(
+                targetState = selectedItemIndex,
+                transitionSpec = {
+                    val durationMillis = 120
+                    if (targetState > initialState) {
+                        slideInHorizontally(
+                            animationSpec = tween(durationMillis),
+                            initialOffsetX = { fullWidth -> fullWidth }
+                        ) togetherWith
+                                slideOutHorizontally(
+                                    animationSpec = tween(durationMillis),
+                                    targetOffsetX = { fullWidth -> -fullWidth }
+                                )
+                    } else {
+                        slideInHorizontally(
+                            animationSpec = tween(durationMillis),
+                            initialOffsetX = { fullWidth -> -fullWidth }
+                        ) togetherWith
+                                slideOutHorizontally(
+                                    animationSpec = tween(durationMillis),
+                                    targetOffsetX = { fullWidth -> fullWidth }
+                                )
+                    }
+                },
+                label = "Page transition"
+            ) { targetPage ->
+                when (targetPage) {
+                    0 -> {
+                        FriendsScreenCaller(
+                            windowSizeClass = windowSizeClass,
+                            listState = listState[selectedItemIndex]
+                        )
+                    }
 
-                1 -> {
-                    ProfileScreenCaller(
-                        listState = listState[selectedItemIndex],
-                        setTopBar = { topBarContent = it })
+                    1 -> {
+                        ProfileScreenCaller(
+                            listState = listState[selectedItemIndex]
+                        )
+                    }
                 }
             }
         }

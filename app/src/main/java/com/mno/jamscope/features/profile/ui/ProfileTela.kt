@@ -61,7 +61,6 @@ fun ProfileTela(
     windowSizeClass: WindowSizeClass,
     onRefresh: () -> Unit,
     onSeeMoreClick: (Context, Profile?) -> Unit,
-    setTopBar: (@Composable () -> Unit) -> Unit? = {},
 ) {
     val context = LocalContext.current
     val density = LocalDensity.current
@@ -73,10 +72,6 @@ fun ProfileTela(
         if (userProfile != null) {
             imagePfp = userProfile.imageUrl
         }
-    }
-
-    LaunchedEffect(Unit) {
-        setTopBar { null }
     }
 
     val statusBarHeight = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()

@@ -10,6 +10,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -17,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import com.mno.jamscope.data.model.RecentTracks
 import com.mno.jamscope.data.model.User
 import com.mno.jamscope.features.friends.ui.components.FriendCard
+import com.mno.jamscope.features.friends.ui.components.FriendsTopRowBar
 import com.mno.jamscope.ui.components.ShowErrorMessage
 import com.mno.jamscope.ui.components.SortingLazyRow
 import com.mno.jamscope.ui.components.animations.highlightIf
@@ -35,10 +40,11 @@ fun FriendsVerticalScreen(
     friendToExtend: String?,
     onExtendedHandled: () -> Unit,
     colorProvider: (String?, Boolean) -> Color,
-    showSortingRow: Boolean,
     sortingType: SortingType,
     onSortingTypeChange: (SortingType) -> Unit,
+    onSettingIconClick: () -> Unit,
 ) {
+    var showSortingRow by remember { mutableStateOf(false) }
     LazyColumn(
         state = listState,
         modifier = modifier,
@@ -46,6 +52,13 @@ fun FriendsVerticalScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         contentPadding = PaddingValues(bottom = bottomBarPadding)
     ) {
+        item {
+            FriendsTopRowBar(
+                onSettingIconClick = onSettingIconClick,
+                onSortIconClick = { showSortingRow = !showSortingRow },
+                showingSortingRow = showSortingRow
+            )
+        }
         item {
             //isso aqui impede o bug de scroll "infinito"
             Spacer(Modifier.height(1.dp))
