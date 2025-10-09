@@ -12,6 +12,7 @@ import com.mno.jamscope.data.model.User
 import com.mno.jamscope.data.repository.FriendsRepository
 import com.mno.jamscope.features.widgets.WidgetDataStoreManager
 import com.mno.jamscope.features.widgets.friendgroup.FriendGroupWidget
+import com.mno.jamscope.features.widgets.singlefriend.generateLastUpdatedString
 
 class FriendGroupWidgetWorker(
     private val appContext: Context,
@@ -50,7 +51,8 @@ class FriendGroupWidgetWorker(
         FriendGroupWidget().apply {
             updateAppWidgetState(applicationContext, glanceId) { state ->
                 WidgetDataStoreManager.saveFriendsGroup(state, friendsList)
-                WidgetDataStoreManager.saveLastUpdated(state, applicationContext)
+                val formattedDate = generateLastUpdatedString(applicationContext)
+                WidgetDataStoreManager.saveLastUpdated(state, formattedDate)
             }
             update(applicationContext, glanceId)
         }

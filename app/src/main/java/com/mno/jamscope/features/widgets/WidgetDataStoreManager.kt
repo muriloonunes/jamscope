@@ -1,15 +1,10 @@
 package com.mno.jamscope.features.widgets
 
-import android.content.Context
 import androidx.datastore.preferences.core.MutablePreferences
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.mno.jamscope.data.model.User
 import kotlinx.serialization.json.Json
-import java.text.SimpleDateFormat
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import java.util.Locale
 
 object WidgetDataStoreManager {
     private const val WIDGET_KEY = "widget_friend_key"
@@ -29,19 +24,7 @@ object WidgetDataStoreManager {
         }
     }
 
-    fun saveLastUpdated(prefs: MutablePreferences, context: Context) {
-        val locale = Locale.getDefault()
-        val dateTimeFormatter: DateTimeFormatter
-        val is24HourFormat = android.text.format.DateFormat.is24HourFormat(context)
-        val dateFormat = java.text.DateFormat.getDateInstance(java.text.DateFormat.SHORT, locale)
-        val datePattern = (dateFormat as SimpleDateFormat).toPattern()
-        dateTimeFormatter = if (is24HourFormat) {
-            DateTimeFormatter.ofPattern("$datePattern HH:mm", locale)
-        } else {
-            DateTimeFormatter.ofPattern("$datePattern hh:mm a", locale)
-        }
-        val formattedDate = LocalDateTime.now().format(dateTimeFormatter)
-//        val formattedDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM HH:mm:ss", Locale.getDefault()))
+    fun saveLastUpdated(prefs: MutablePreferences, formattedDate: String) {
         prefs[stringPreferencesKey(LAST_UPDATED_KEY)] = formattedDate
     }
 
