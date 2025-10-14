@@ -108,7 +108,7 @@ class SettingsViewModel @Inject constructor(
 
     fun navigateToWebView() {
         viewModelScope.launch {
-            navigator.navigate(Destination.WebViewScreen)
+            navigator.navigate(Destination.SuggestFeatureScreen)
         }
     }
 

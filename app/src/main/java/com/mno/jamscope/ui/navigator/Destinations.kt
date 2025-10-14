@@ -8,6 +8,8 @@ sealed interface Destination {
     @Serializable
     data object LoginScreen : Destination
     @Serializable
+    data object WebLoginScreen : Destination
+    @Serializable
     data object AppRoute : Destination
     @Serializable
     data object FriendsScreen : Destination
@@ -16,7 +18,7 @@ sealed interface Destination {
     @Serializable
     data object SettingsScreen : Destination
     @Serializable
-    data object WebViewScreen : Destination
+    data object SuggestFeatureScreen : Destination
     @Serializable
     data class LibrariesLicenseScreen(val screenType: ScreenType) : Destination
     @Serializable

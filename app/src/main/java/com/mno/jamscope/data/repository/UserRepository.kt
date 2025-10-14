@@ -37,12 +37,19 @@ class UserRepository @Inject constructor(
         return userDataStoreManager.isUserLoggedIn()
     }
 
-    suspend fun authenticate(
+    suspend fun authenticateMobile(
         username: String,
         password: String,
         method: String
     ): Resource<Profile> {
-        return apiRepository.authenticate(username, password, method)
+        return apiRepository.authenticateMobile(username, password, method)
+    }
+
+    suspend fun authenticateWeb(
+        token: String,
+        method: String
+    ) {
+        return apiRepository.authenticateWeb(token, method)
     }
 
     suspend fun getUserFriends(username: String): Resource<List<User>> {

@@ -46,7 +46,7 @@ class LoginViewModel @Inject constructor(
             val username = _state.value.username.trim()
             val password = _state.value.password.trim()
             when (val result =
-                userRepository.authenticate(
+                userRepository.authenticateMobile(
                     username = username,
                     password = password,
                     method = "getMobileSession"

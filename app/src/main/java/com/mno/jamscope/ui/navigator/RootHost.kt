@@ -8,6 +8,7 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
@@ -16,17 +17,22 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import androidx.navigation.toRoute
 import androidx.window.core.layout.WindowWidthSizeClass
+import com.mno.jamscope.R
 import com.mno.jamscope.features.login.ui.LoginScreen
 import com.mno.jamscope.features.login.viewmodel.LoginViewModel
 import com.mno.jamscope.features.settings.ui.AboutScreen
-import com.mno.jamscope.features.settings.viewmodel.SettingsViewModel
 import com.mno.jamscope.features.settings.ui.LoadLibrariesLicenseScreen
-import com.mno.jamscope.features.settings.ui.WebViewLoader
-import com.mno.jamscope.ui.screen.JamHomeScaffold
+import com.mno.jamscope.features.settings.viewmodel.SettingsViewModel
+import com.mno.jamscope.features.webview.ui.WebViewLoader
+import com.mno.jamscope.features.webview.viewmodel.WebViewViewModel
 import com.mno.jamscope.ui.screen.JamHomeRail
+import com.mno.jamscope.ui.screen.JamHomeScaffold
 import com.mno.jamscope.ui.theme.LocalWindowSizeClass
 import com.mno.jamscope.ui.util.ProfileScreenCaller
 import com.mno.jamscope.ui.util.SettingsScreenCaller
+import com.mno.jamscope.util.Stuff
+import io.ktor.http.URLBuilder
+import io.ktor.http.set
 
 @Composable
 fun RootHost(
@@ -66,6 +72,24 @@ fun RootHost(
                     onPasswordVisibilityChange = { loginViewModel.onPasswordVisibilityChange() }
                 )
             }
+            composable<Destination.WebLoginScreen> {
+                val webViewModel: WebViewViewModel = hiltViewModel()
+                val urlBuilder = URLBuilder(Stuff.AUTH_URL)
+                urlBuilder.set {
+                    parameters.append("api_key", Stuff.LAST_KEY)
+                    parameters.append("cb", "${Stuff.DEEPLINK_PROTOCOL_NAME}://auth")
+                }
+                WebViewLoader(
+                    onNavigateBack = { webViewModel.navigateBack() },
+                    title = stringResource(R.string.login),
+                    url = urlBuilder.buildString(),
+                    allowedHost = "last.fm",
+                    callbackScheme = "${Stuff.DEEPLINK_PROTOCOL_NAME}://auth",
+                    onCallbackDetected = {
+                        webViewModel.handleCallbackUrl(it)
+                    },
+                )
+            }
         }
         navigation<Destination.AppRoute>(
             startDestination = Destination.FriendsScreen
@@ -88,10 +112,12 @@ fun RootHost(
             composable<Destination.ProfileScreen> {
                 ProfileScreenCaller()
             }
-            composable<Destination.WebViewScreen> {
-                val settingsViewModel: SettingsViewModel = hiltViewModel()
+            composable<Destination.SuggestFeatureScreen> {
+                val webViewModel: WebViewViewModel = hiltViewModel()
                 WebViewLoader(
-                    onNavigateBack = { settingsViewModel.navigateBack() }
+                    onNavigateBack = { webViewModel.navigateBack() },
+                    title = stringResource(R.string.suggest_feature_setting),
+                    url = "https://forms.gle/zwhTjknzo6NVKh9MA"
                 )
             }
             composable<Destination.LibrariesLicenseScreen> { backStackEntry ->

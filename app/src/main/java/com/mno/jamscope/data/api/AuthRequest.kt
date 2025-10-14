@@ -22,11 +22,15 @@ import javax.crypto.BadPaddingException
 import javax.inject.Inject
 
 class AuthRequest @Inject constructor(
-    private val exceptions: Exceptions
+    private val exceptions: Exceptions,
 ) {
-    private fun generateApiSig(username: String, password: String): String {
+    private fun generateMobileApiSig(
+        username: String,
+        password: String,
+        method: String,
+    ): String {
         val apiSignature =
-            "api_key${Stuff.LAST_KEY}" + "methodauth.getMobileSession" + "password$password" + "username$username" + Stuff.LAST_SECRET
+            "api_key${Stuff.LAST_KEY}" + "methodauth.$method" + "password$password" + "username$username" + Stuff.LAST_SECRET
 
         val md5Digest = MessageDigest.getInstance("MD5")
         val hashBytes = md5Digest.digest(apiSignature.toByteArray(Charsets.UTF_8))
@@ -39,16 +43,38 @@ class AuthRequest @Inject constructor(
         return hexString.toString()
     }
 
-    private fun buildAuthUrl(username: String, password: String, method: String): String {
-        val apiSig = generateApiSig(username, password)
+    private fun generateWebApiSig(
+        token: String,
+        method: String,
+    ): String {
+        val apiSignature =
+            "api_key${Stuff.LAST_KEY}" + "methodauth.$method" + "token$token" + Stuff.LAST_SECRET
+
+        val md = MessageDigest.getInstance("MD5")
+        val digest = md.digest(apiSignature.toByteArray())
+        return digest.joinToString("") { "%02x".format(it) }
+    }
+
+    private fun buildMobileAuthUrl(username: String, password: String, method: String): String {
+        val apiSig = generateMobileApiSig(username, password, method)
         val urlParams =
             "method=auth.$method&api_key=${Stuff.LAST_KEY}&password=$password&username=$username&api_sig=$apiSig"
         return "${Stuff.BASE_URL}${Stuff.FORMAT_JSON}&$urlParams"
     }
 
-    suspend fun authenticate(username: String, password: String, method: String): Resource<Profile> {
+    private fun buildWebAuthUrl(token: String, method: String): String {
+        val apiSig = generateWebApiSig(token, method)
+        val urlParams = "method=auth.$method&api_key=${Stuff.LAST_KEY}&token=$token&api_sig=$apiSig"
+        return "${Stuff.BASE_URL}${Stuff.FORMAT_JSON}&$urlParams"
+    }
+
+    suspend fun authenticateMobile(
+        username: String,
+        password: String,
+        method: String,
+    ): Resource<Profile> {
         return try {
-            val requestUrl = buildAuthUrl(username, password, method)
+            val requestUrl = buildMobileAuthUrl(username, password, method)
             val response = withContext(Dispatchers.IO) {
                 HttpClientProvider.client.post(requestUrl) {
                     headers {
@@ -60,7 +86,8 @@ class AuthRequest @Inject constructor(
                 Log.e("ApiRequest", "autenticar: ${response.bodyAsText()}")
                 Error(exceptions.handleError(response.status.value))
             } else {
-                val profile = withContext(Dispatchers.IO) { createProfile(response.bodyAsText(), password) }
+                val profile =
+                    withContext(Dispatchers.IO) { createProfile(response.bodyAsText(), password) }
                 profile?.let { Success(it) } ?: Error("Failed to process session response")
             }
         } catch (e: UnresolvedAddressException) {
@@ -72,11 +99,40 @@ class AuthRequest @Inject constructor(
         }
     }
 
+    suspend fun authenticateWeb(
+        token: String,
+        method: String,
+    ) {
+        //TODO adicionar retorno
+        try {
+            val requestUrl = buildWebAuthUrl(token, method)
+            val response = withContext(Dispatchers.IO) {
+                HttpClientProvider.client.post(requestUrl) {
+                    headers {
+                        append(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+                    }
+                }
+            }
+            if (!response.status.isSuccess()) {
+                Log.e("ApiRequest", "autenticar: ${response.bodyAsText()}")
+//                Error(exceptions.handleError(response.status.value))
+            } else {
+                Log.d("AuthRequest", "authenticateWeb: ${response.bodyAsText()}")
+            }
+        } catch (e: UnresolvedAddressException) {
+            e.printStackTrace()
+//            Error(exceptions.handleError(666))
+        } catch (e: Exception) {
+            e.printStackTrace()
+//            Error(exceptions.handleError(0))
+        }
+    }
+
     suspend fun isStillAuthenticated(profile: Profile, method: String): Boolean {
         return try {
             val username = profile.username
             val password = profile.senha
-            val requestUrl = buildAuthUrl(username, password, method)
+            val requestUrl = buildMobileAuthUrl(username, password, method)
             val response = withContext(Dispatchers.IO) {
                 HttpClientProvider.client.post(requestUrl) {
                     headers {
@@ -88,7 +144,8 @@ class AuthRequest @Inject constructor(
                 Log.e("AuthRequest", "isStillAuthenticated: ${response.bodyAsText()}")
                 false
             } else {
-                val sessionResponse = Stuff.JSON.decodeFromString<SessionResponse>(response.bodyAsText())
+                val sessionResponse =
+                    Stuff.JSON.decodeFromString<SessionResponse>(response.bodyAsText())
                 sessionResponse.session.key == profile.session.key
             }
         } catch (e: BadPaddingException) {

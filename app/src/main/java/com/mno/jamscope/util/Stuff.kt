@@ -30,6 +30,8 @@ object Stuff {
     const val REFRESHING_TIME = 90000L // 1.5 minutes
     const val EMAIL = "murideveloper@protonmail.com"
     const val BASE_URL = "https://ws.audioscrobbler.com/2.0/?"
+    const val AUTH_URL = "https://www.last.fm/api/auth"
+    const val DEEPLINK_PROTOCOL_NAME = "jamscope"
     const val FORMAT_JSON = "format=json"
     const val DEFAULT_PROFILE_IMAGE =
         "https://lastfm.freetls.fastly.net/i/u/64s/2a96cbd8b46e442fc41c2b86b821562f.png"
