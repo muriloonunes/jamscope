@@ -10,6 +10,7 @@ import com.mno.jamscope.data.model.Track
 import com.mno.jamscope.data.repository.SettingsRepository
 import com.mno.jamscope.data.repository.UserRepository
 import com.mno.jamscope.data.flows.LogoutEventBus
+import com.mno.jamscope.features.settings.domain.model.SwitchState
 import com.mno.jamscope.util.Stuff
 import com.mno.jamscope.util.Stuff.openUrl
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -58,9 +59,9 @@ class ProfileViewModel @Inject constructor(
             }
         }
         viewModelScope.launch {
-            settingsRepository.getSwitchState("playing_animation_toggle", true)
+            settingsRepository.getSwitchState("playing_animation_toggle", SwitchState.On)
                 .collect { state ->
-                    _playingAnimationToggle.value = state
+                    _playingAnimationToggle.value = state.value
                 }
         }
     }

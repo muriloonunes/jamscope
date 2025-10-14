@@ -11,6 +11,7 @@ import com.mno.jamscope.data.model.User
 import com.mno.jamscope.data.repository.FriendsRepository
 import com.mno.jamscope.data.repository.SettingsRepository
 import com.mno.jamscope.data.repository.UserRepository
+import com.mno.jamscope.features.settings.domain.model.SwitchState
 import com.mno.jamscope.ui.navigator.Destination
 import com.mno.jamscope.ui.navigator.Navigator
 import com.mno.jamscope.ui.theme.AppTheme
@@ -94,13 +95,13 @@ class FriendsViewModel @Inject constructor(
         }
         viewModelScope.launch {
             combine(
-                settingsRepository.getSwitchState("playing_animation_toggle", true),
-                settingsRepository.getSwitchState("card_background_color_toggle", true)
+                settingsRepository.getSwitchState("playing_animation_toggle", SwitchState.On),
+                settingsRepository.getSwitchState("card_background_color_toggle", SwitchState.On)
             ) { playingAnimation, cardBackground ->
                 playingAnimation to cardBackground
             }.collect { (playingAnimation, cardBackground) ->
-                _playingAnimationToggle.value = playingAnimation
-                _cardBackgroundColorToggle.value = cardBackground
+                _playingAnimationToggle.value = playingAnimation.value
+                _cardBackgroundColorToggle.value = cardBackground.value
             }
         }
         viewModelScope.launch {

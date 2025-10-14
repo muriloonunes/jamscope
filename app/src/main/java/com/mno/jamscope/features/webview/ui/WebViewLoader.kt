@@ -1,4 +1,4 @@
-package com.mno.jamscope.features.settings.ui
+package com.mno.jamscope.features.webview.ui
 
 import android.annotation.SuppressLint
 import android.view.ViewGroup
@@ -24,13 +24,19 @@ import com.mno.jamscope.R
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WebViewLoader(
+    url: String,
+    title: String,
+    allowedHost: String? = null,
+    enableJavaScript: Boolean = true,
+    callbackScheme: String? = null,
+    onCallbackDetected: ((String) -> Unit)? = null,
     onNavigateBack: () -> Unit,
 ) {
     Scaffold(topBar = {
         TopAppBar(
             title = {
                 Text(
-                    text = stringResource(R.string.suggest_feature_setting),
+                    text = title,
                 )
             },
             navigationIcon = {
@@ -46,25 +52,35 @@ fun WebViewLoader(
         )
     }) { innerPadding ->
         AndroidView(
-            factory = {
-                WebView(it).apply {
-                    webViewClient = object : WebViewClient() {
-                        override fun shouldOverrideUrlLoading(
-                            view: WebView,
-                            request: WebResourceRequest
-                        ): Boolean {
-                            return !request.url.toString()
-                                .contains("docs.google.com")
-                        }
-                    }
+            factory = { context ->
+                WebView(context).apply {
                     this.layoutParams = ViewGroup.LayoutParams(
                         ViewGroup.LayoutParams.MATCH_PARENT,
                         ViewGroup.LayoutParams.MATCH_PARENT
                     )
-                    settings.javaScriptEnabled = true
+                    settings.javaScriptEnabled = enableJavaScript
+
+                    webViewClient = object : WebViewClient() {
+                        override fun shouldOverrideUrlLoading(
+                            view: WebView,
+                            request: WebResourceRequest,
+                        ): Boolean {
+                            val urlStr = request.url.toString()
+                            if (callbackScheme != null && urlStr.startsWith(callbackScheme)) {
+                                onCallbackDetected?.invoke(urlStr)
+                                return true // bloqueia o WebView de tentar abrir
+                            }
+
+                            if (allowedHost != null && !urlStr.contains(allowedHost)) {
+                                return true // bloqueia navegação
+                            }
+
+                            return false
+                        }
+                    }
                 }
             }, update = {
-                it.loadUrl("https://forms.gle/zwhTjknzo6NVKh9MA")
+                it.loadUrl(url)
             }, modifier = Modifier.padding(innerPadding)
         )
     }

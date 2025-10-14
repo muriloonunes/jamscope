@@ -59,6 +59,22 @@ android {
     room {
         schemaDirectory("$projectDir/schemas")
     }
+    //https://issuetracker.google.com/issues/430526759#comment9
+    kotlin {
+        compilerOptions {
+            freeCompilerArgs.add("-Xlambdas=class")
+        }
+    }
+}
+
+tasks.register<Copy>("copyLicenseToRaw") {
+    from(rootProject.file("LICENSE.txt"))
+    into("src/main/res/raw")
+    rename("LICENSE.txt", "gpl_license.txt")
+}
+
+tasks.named("preBuild") {
+    dependsOn("copyLicenseToRaw")
 }
 
 dependencies {

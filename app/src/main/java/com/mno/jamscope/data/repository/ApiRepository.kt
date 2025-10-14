@@ -13,8 +13,12 @@ class ApiRepository @Inject constructor(
     private val profileRequest: ProfileRequest,
     private val userRequest: UserRequest
 ) {
-    suspend fun authenticate(username: String, password: String, method: String): Resource<Profile> {
-        return authRequest.authenticate(username = username, password = password, method = method)
+    suspend fun authenticateMobile(username: String, password: String, method: String): Resource<Profile> {
+        return authRequest.authenticateMobile(username = username, password = password, method = method)
+    }
+
+    suspend fun authenticateWeb(token: String, method: String) {
+        return authRequest.authenticateWeb(token, method)
     }
 
     suspend fun isStillAuthenticated(profile: Profile): Boolean {

@@ -105,11 +105,12 @@ fun SortingBottomSheet(
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun SortingLazyRow(
+    modifier: Modifier = Modifier,
     currentSortingType: SortingType,
     onSortingTypeChange: (SortingType) -> Unit,
 ) {
     LazyRow(
-        modifier = Modifier
+        modifier = modifier
             .padding(horizontal = 8.dp)
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.Center,

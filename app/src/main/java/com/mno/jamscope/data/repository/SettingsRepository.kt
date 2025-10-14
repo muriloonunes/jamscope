@@ -1,6 +1,7 @@
 package com.mno.jamscope.data.repository
 
 import com.mno.jamscope.data.session.SettingsDataStoreManager
+import com.mno.jamscope.features.settings.domain.model.SwitchState
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -13,10 +14,10 @@ class SettingsRepository @Inject constructor(
         settingsDataStoreManager.saveThemePref(theme)
     }
 
-    fun getSwitchState(key: String, initialState: Boolean): Flow<Boolean> =
+    fun getSwitchState(key: String, initialState: SwitchState): Flow<SwitchState> =
         settingsDataStoreManager.getSwitchState(key, initialState)
 
-    suspend fun saveSwitchState(key: String, value: Boolean) {
+    suspend fun saveSwitchState(key: String, value: SwitchState) {
         settingsDataStoreManager.saveSwitchState(key, value)
     }
 

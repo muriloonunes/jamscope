@@ -51,28 +51,31 @@ import com.mno.jamscope.util.Stuff
 import com.mno.jamscope.worker.FriendListeningWidgetWorker
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 import java.util.concurrent.TimeUnit
 
 class FriendListeningWidget : GlanceAppWidget() {
     companion object {
-        val SMALL_LAYOUT_SIZE = DpSize(120.dp, 100.dp)
+        val SMALL_LAYOUT_SIZE = DpSize(120.dp, 115.dp)
     }
 
     override val sizeMode = SizeMode.Exact
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         provideContent {
             JamscopeWidgetTheme {
-                val size = LocalSize.current
-                WidgetUi(size, context)
+                WidgetUi(context)
             }
         }
     }
 
     @Composable
     fun WidgetUi(
-        size: DpSize,
         context: Context,
     ) {
+        val size = LocalSize.current
         val isOneCellHeight = size.height < SMALL_LAYOUT_SIZE.height
         val friend = WidgetDataStoreManager.getFriend(currentState())
         val textStyle = TextStyle(
@@ -148,6 +151,20 @@ fun GlanceModifier.clickableWidget(name: String?): GlanceModifier {
             )
         )
     )
+}
+
+fun generateLastUpdatedString(context: Context): String {
+    val locale = Locale.getDefault()
+    val dateTimeFormatter: DateTimeFormatter
+    val is24HourFormat = android.text.format.DateFormat.is24HourFormat(context)
+    val dateFormat = java.text.DateFormat.getDateInstance(java.text.DateFormat.SHORT, locale)
+    val datePattern = (dateFormat as SimpleDateFormat).toPattern()
+    dateTimeFormatter = if (is24HourFormat) {
+        DateTimeFormatter.ofPattern("$datePattern HH:mm", locale)
+    } else {
+        DateTimeFormatter.ofPattern("$datePattern hh:mm a", locale)
+    }
+    return LocalDateTime.now().format(dateTimeFormatter)
 }
 
 val NETWORK_CONSTRAINTS =

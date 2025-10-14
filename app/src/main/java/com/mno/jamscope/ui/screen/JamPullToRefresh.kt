@@ -3,6 +3,7 @@ package com.mno.jamscope.ui.screen
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshState
@@ -12,6 +13,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -21,6 +24,7 @@ fun JamPullToRefresh(
     state: PullToRefreshState = rememberPullToRefreshState(),
     isRefreshing: Boolean,
     enabled: Boolean = true,
+    padding: Dp = 0.dp,
     content: @Composable BoxScope.() -> Unit,
 ) {
     //https://composables.com/docs/androidx.compose.material3/material3/components/ContainedLoadingIndicator
@@ -37,6 +41,7 @@ fun JamPullToRefresh(
         Box(
             Modifier
                 .align(Alignment.TopCenter)
+                .padding(padding)
                 .graphicsLayer {
                     scaleX = scaleFraction()
                     scaleY = scaleFraction()

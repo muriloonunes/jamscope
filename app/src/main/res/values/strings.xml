@@ -116,6 +116,14 @@
     <string name="song_by_artist">"%1$s by %2$s"</string>
     <string name="changelog">Changelog</string>
     <string name="dismiss">Dismiss</string>
-    <string name="changelog_not_found">Changelog not found</string>
+    <string name="not_found">%1$s not found</string>
     <string name="full_changelog">Full changelog on GitHub</string>
+    <string name="version">Version %1$s</string>
+    <string name="unknown">unknown</string>
+    <string name="thanks_for_using">Thanks for using Jamscope!</string>
+    <string name="about_app">This app was built with love for those who love music and socializing. I hope you enjoy ♡</string>
+    <string name="made_by">Made (with love) by</string>
+    <string name="contact">Contact</string>
+    <string name="see_code_github">Check out the code on GitHub</string>
+    <string name="see_license">License</string>
 </resources>

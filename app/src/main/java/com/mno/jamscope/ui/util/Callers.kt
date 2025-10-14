@@ -19,12 +19,12 @@ import com.mno.jamscope.features.profile.ui.ProfileTela
 import com.mno.jamscope.features.profile.viewmodel.ProfileViewModel
 import com.mno.jamscope.features.settings.ui.SettingsTela
 import com.mno.jamscope.features.settings.viewmodel.SettingsViewModel
+import com.mno.jamscope.ui.navigator.ScreenType
 import com.mno.jamscope.ui.theme.LocalWindowSizeClass
 
 @Composable
 fun ProfileScreenCaller(
     listState: LazyListState = rememberLazyListState(),
-    setTopBar: (@Composable () -> Unit) -> Unit? = {},
 ) {
     val profileViewModel: ProfileViewModel = hiltViewModel()
     val refreshing by profileViewModel.isRefreshing.collectAsStateWithLifecycle()
@@ -43,8 +43,7 @@ fun ProfileScreenCaller(
         onRefresh = { profileViewModel.onRefresh() },
         onSeeMoreClick = { context, profile ->
             profileViewModel.seeMore(context, profile)
-        },
-        setTopBar = setTopBar
+        }
     )
 }
 
@@ -52,7 +51,6 @@ fun ProfileScreenCaller(
 @Composable
 fun FriendsScreenCaller(
     windowSizeClass: WindowSizeClass,
-    setTopBar: (@Composable () -> Unit) -> Unit? = {},
     listState: LazyListState = rememberLazyListState(),
     gridState: LazyGridState = rememberLazyGridState(),
 ) {
@@ -114,17 +112,17 @@ fun FriendsScreenCaller(
         },
         listState = listState,
         gridState = gridState,
-        windowSizeClass = windowSizeClass,
-        setTopBar = setTopBar
+        windowSizeClass = windowSizeClass
     )
 }
 
 @Composable
-fun SettingsScreenCaller() {
+fun SettingsScreenCaller(showTopAppBar: Boolean) {
     val settingsViewModel: SettingsViewModel = hiltViewModel()
     val state by settingsViewModel.uiState.collectAsState()
     SettingsTela(
         uiState = state,
+        showTopAppBar = showTopAppBar,
         onTileSelected = { settingsViewModel.onTileSelect(it) },
         onNavigateBack = { settingsViewModel.navigateBack() },
         onSelectThemeClick = { settingsViewModel.showThemeDialog() },
@@ -141,7 +139,7 @@ fun SettingsScreenCaller() {
         onBuyMeACoffeeClick = { settingsViewModel.openBuyMeACoffee(it) },
         onBugReportClick = { settingsViewModel.sendBugReportMail(it) },
         onSuggestFeatureClick = { settingsViewModel.navigateToWebView() },
-        onShowLibrariesClick = { settingsViewModel.navigateToLibraries() },
-        onGithubProjectClick = { settingsViewModel.openGithubProject(it) }
+        onShowLibrariesClick = { settingsViewModel.navigateToLibrariesLicenseScreen(ScreenType.LIBRARIES) },
+        onAboutClick = { settingsViewModel.navigateToAboutScreen() }
     )
 }

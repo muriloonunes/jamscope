@@ -116,14 +116,14 @@ fun ProfileTracksSection(
     userRecentTracks: List<Track>,
     playingAnimationEnabled: Boolean,
     onSeeMoreClick: () -> Unit,
-    contentPadding: Dp = 0.dp,
+    contentPadding: PaddingValues = PaddingValues(0.dp),
 ) {
     LazyColumn(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top,
         state = listState,
-        contentPadding = PaddingValues(top = contentPadding)
+        contentPadding = contentPadding
     ) {
         item {
             Spacer(Modifier.height(1.dp))

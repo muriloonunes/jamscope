@@ -11,9 +11,8 @@ import android.os.Build
 import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
+import androidx.annotation.RawRes
 import androidx.annotation.RequiresApi
-import androidx.annotation.StringRes
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
@@ -31,6 +30,8 @@ object Stuff {
     const val REFRESHING_TIME = 90000L // 1.5 minutes
     const val EMAIL = "murideveloper@protonmail.com"
     const val BASE_URL = "https://ws.audioscrobbler.com/2.0/?"
+    const val AUTH_URL = "https://www.last.fm/api/auth"
+    const val DEEPLINK_PROTOCOL_NAME = "jamscope"
     const val FORMAT_JSON = "format=json"
     const val DEFAULT_PROFILE_IMAGE =
         "https://lastfm.freetls.fastly.net/i/u/64s/2a96cbd8b46e442fc41c2b86b821562f.png"
@@ -40,13 +41,15 @@ object Stuff {
     const val FROM_WIDGET = "FROM_WIDGET"
     val JSON = Json { ignoreUnknownKeys = true }
 
-    fun Context.readChangelog(): String {
+    fun Context.readRawFile(
+        @RawRes fileRes: Int,
+        expectedFileName: String,
+    ): String {
         return try {
-            val resourceId = R.raw.changelog
-            if (resourceId == 0) {
-                this.getString(R.string.changelog_not_found)
+            if (fileRes == 0) {
+                this.getString(R.string.not_found, expectedFileName)
             }
-            val inputStream = this.resources.openRawResource(resourceId)
+            val inputStream = this.resources.openRawResource(fileRes)
             val reader = BufferedReader(InputStreamReader(inputStream))
             val changelog = StringBuilder()
             var line: String? = reader.readLine()
@@ -58,7 +61,7 @@ object Stuff {
             changelog.toString().trimEnd()
         } catch (e: Exception) {
             e.printStackTrace()
-            this.getString(R.string.changelog_not_found)
+            this.getString(R.string.not_found, expectedFileName)
         }
     }
 
@@ -148,6 +151,80 @@ object Stuff {
         }
     }
 
+    fun Context.sendReportMail() {
+        var bgRam = -1
+        val manager =
+            ContextCompat.getSystemService(this, ActivityManager::class.java)!!
+        for (proc in manager.runningAppProcesses) {
+            if (proc?.processName?.contains("com.mno.jamscope") == true) {
+                // https://stackoverflow.com/questions/2298208/how-do-i-discover-memory-usage-of-my-application-in-android
+                val memInfo = manager.getProcessMemoryInfo(intArrayOf(proc.pid)).first()
+                bgRam = memInfo.totalPss / 1024
+                break
+            }
+        }
+
+        var lastExitInfo: String? = null
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            lastExitInfo =
+                getAppExitReasons(printAll = true, context = this).firstOrNull()
+                    ?.toString()
+        }
+        val packageName = packageName
+        val pm = packageManager
+        val appInfo = pm.getApplicationInfo(packageName, 0)
+        val appName = pm.getApplicationLabel(appInfo).toString()
+        val versionName = pm.getPackageInfo(packageName, 0).versionName
+        var text = ""
+        text += "$appName v$versionName\n"
+        text += "Android " + Build.VERSION.RELEASE + "\n"
+        text += "Device: " + Build.BRAND + " " + Build.MODEL + " / " + Build.DEVICE + "\n"
+        val mi = ActivityManager.MemoryInfo()
+        manager.getMemoryInfo(mi)
+        text += "Background RAM usage: " + bgRam + "M \n"
+        if (lastExitInfo != null)
+            text += "Last exit reason: $lastExitInfo\n"
+        text += "----------------------------------"
+        text += "\n\n[Describe the issue]\n"
+        Log.d("SettingsViewModel", "text: $text")
+
+        val subject = "$appName - Bug report"
+        sendMail(
+            subject = subject,
+            text = text
+        )
+    }
+
+    fun Context.sendMail(
+        subject: String? = null,
+        text: String? = null,
+    ) {
+        val emailAddress = EMAIL
+        val uri = "mailto:".toUri() // this filters email-only apps
+        val emailIntent = Intent(Intent.ACTION_SENDTO).apply {
+            data = uri
+            putExtra(Intent.EXTRA_EMAIL, arrayOf(emailAddress))
+            subject?.let {
+                putExtra(Intent.EXTRA_SUBJECT, it)
+            }
+            text?.let {
+                putExtra(Intent.EXTRA_TEXT, it)
+            }
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+
+        try {
+            startActivity(emailIntent)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Toast.makeText(
+                this,
+                getString(R.string.no_email_app_found),
+                Toast.LENGTH_LONG
+            ).show()
+        }
+    }
+
     fun Context.searchMusicIntent(track: Track) {
         val intent = Intent(MediaStore.INTENT_ACTION_MEDIA_PLAY_FROM_SEARCH).apply {
             putExtra(SearchManager.QUERY, "${track.artist.name} ${track.name}")
@@ -166,12 +243,4 @@ object Stuff {
             Toast.makeText(this, getString(R.string.no_music_player), Toast.LENGTH_SHORT).show()
         }
     }
-
-    data class SwitchItem(
-        val key: String,
-        @param:StringRes val name: Int,
-        val icon: ImageVector,
-        @param:StringRes val iconDesc: Int,
-        val initialState: Boolean,
-    )
 }

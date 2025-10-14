@@ -3,16 +3,19 @@ package com.mno.jamscope.features.settings.viewmodel
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mno.jamscope.data.flows.LogoutEventBus
 import com.mno.jamscope.data.repository.FriendsRepository
 import com.mno.jamscope.data.repository.SettingsRepository
 import com.mno.jamscope.data.repository.UserRepository
+import com.mno.jamscope.features.settings.domain.model.getPersonalizationSwitches
+import com.mno.jamscope.features.settings.domain.model.SwitchState
 import com.mno.jamscope.features.settings.state.SettingsUiState
 import com.mno.jamscope.ui.navigator.Destination
 import com.mno.jamscope.ui.navigator.Navigator
-import com.mno.jamscope.data.flows.LogoutEventBus
+import com.mno.jamscope.ui.navigator.ScreenType
 import com.mno.jamscope.util.Stuff.openUrl
-import com.mno.jamscope.util.sendReportMail
-import com.mno.jamscope.features.settings.ui.components.switches
+import com.mno.jamscope.util.Stuff.sendMail
+import com.mno.jamscope.util.Stuff.sendReportMail
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,7 +31,7 @@ class SettingsViewModel @Inject constructor(
     private val navigator: Navigator,
     private val friendsRepository: FriendsRepository,
     private val settingsRepository: SettingsRepository,
-    private val logoutBus: LogoutEventBus
+    private val logoutBus: LogoutEventBus,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(SettingsUiState())
     val uiState: StateFlow<SettingsUiState> = _uiState
@@ -43,8 +46,9 @@ class SettingsViewModel @Inject constructor(
     }
 
     private fun loadSwitchStates() {
+        val personalizationSwitches = getPersonalizationSwitches()
         viewModelScope.launch {
-            val states = switches.associate { switch ->
+            val states = personalizationSwitches.associate { switch ->
                 switch.key to settingsRepository.getSwitchState(switch.key, switch.initialState)
                     .first()
             }
@@ -54,10 +58,11 @@ class SettingsViewModel @Inject constructor(
 
     fun toggleSwitch(key: String) {
         val current = _uiState.value.switchStates[key] ?: return
-        val updated = _uiState.value.switchStates.toMutableMap().apply { this[key] = !current }
+        val newState = if (current is SwitchState.On) SwitchState.Off else SwitchState.On
+        val updated = _uiState.value.switchStates.toMutableMap().apply { this[key] = newState }
         _uiState.update { it.copy(switchStates = updated) }
         viewModelScope.launch {
-            settingsRepository.saveSwitchState(key, !current)
+            settingsRepository.saveSwitchState(key, newState)
         }
     }
 
@@ -103,13 +108,19 @@ class SettingsViewModel @Inject constructor(
 
     fun navigateToWebView() {
         viewModelScope.launch {
-            navigator.navigate(Destination.WebViewScreen)
+            navigator.navigate(Destination.SuggestFeatureScreen)
         }
     }
 
-    fun navigateToLibraries() {
+    fun navigateToLibrariesLicenseScreen(screenType: ScreenType) {
         viewModelScope.launch {
-            navigator.navigate(Destination.LibrariesScreen)
+            navigator.navigate(Destination.LibrariesLicenseScreen(screenType))
+        }
+    }
+
+    fun navigateToAboutScreen() {
+        viewModelScope.launch {
+            navigator.navigate(Destination.AboutScreen)
         }
     }
 
@@ -130,10 +141,15 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    //thx pano scrobbler
     fun sendBugReportMail(context: Context) {
         viewModelScope.launch {
-            sendReportMail(context)
+            context.sendReportMail()
+        }
+    }
+
+    fun sendMailToDeveloper(context: Context) {
+        viewModelScope.launch {
+            context.sendMail()
         }
     }
 
@@ -147,6 +163,10 @@ class SettingsViewModel @Inject constructor(
 
     fun openGithubProject(context: Context) {
         context.openUrl("https://github.com/muriloonunes/jamscope")
+    }
+
+    fun openGithubProfile(context: Context) {
+        context.openUrl("https://github.com/muriloonunes")
     }
 
 //    fun openPlayStore(context: Context) {

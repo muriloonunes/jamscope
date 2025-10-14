@@ -4,6 +4,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import com.mno.jamscope.features.settings.domain.model.SwitchState
 import com.mno.jamscope.ui.theme.AppTheme
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -16,15 +17,16 @@ class SettingsDataStoreManager @Inject constructor(
         private fun getKey(key: String) = booleanPreferencesKey("switch_state_$key")
     }
 
-    fun getSwitchState(key: String, initialState: Boolean): Flow<Boolean> {
+    fun getSwitchState(key: String, initialState: SwitchState): Flow<SwitchState> {
         return dataStore.data.map { preferences ->
-            preferences[getKey(key)] ?: initialState
+            val stored = preferences[getKey(key)] ?: initialState.value
+            SwitchState.fromValue(stored)
         }
     }
 
-    suspend fun saveSwitchState(key: String, value: Boolean) {
+    suspend fun saveSwitchState(key: String, value: SwitchState) {
         dataStore.edit { preferences ->
-            preferences[getKey(key)] = value
+            preferences[getKey(key)] = value.value
         }
     }
 

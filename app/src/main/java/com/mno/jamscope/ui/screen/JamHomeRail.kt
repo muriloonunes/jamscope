@@ -170,7 +170,7 @@ fun JamHomeRail() {
                         }
 
                         2 -> {
-                            SettingsScreenCaller()
+                            SettingsScreenCaller(showTopAppBar = false)
                         }
                     }
                 }
