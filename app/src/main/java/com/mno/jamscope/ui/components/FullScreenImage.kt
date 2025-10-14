@@ -26,7 +26,7 @@ import androidx.compose.ui.window.DialogProperties
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.mno.jamscope.R
-import com.mno.jamscope.ui.theme.NowPlayingTheme
+import com.mno.jamscope.ui.theme.JamscopePreviewTheme
 import com.mno.jamscope.util.saveImageFromCoilCache
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -97,7 +97,8 @@ fun FullscreenImage(
                         scope.launch(Dispatchers.IO) {
                             val success = saveImageFromCoilCache(context, imageUrl)
                             withContext(Dispatchers.Main) {
-                                val message = if (success) R.string.image_saved else R.string.image_not_saved
+                                val message =
+                                    if (success) R.string.image_saved else R.string.image_not_saved
                                 Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
                             }
                         }
@@ -117,7 +118,7 @@ fun FullscreenImage(
 @Preview(showBackground = true)
 @Composable
 private fun FullscreenImagePreview() {
-    NowPlayingTheme(0) {
+    JamscopePreviewTheme(true) {
         FullscreenImage(
             imageUrl = "https://example.com/image.jpg",
             placeholderUrl = "https://example.com/placeholder.jpg",

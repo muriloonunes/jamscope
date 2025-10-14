@@ -13,11 +13,9 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.staticCompositionLocalOf
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
@@ -251,20 +249,8 @@ private val highContrastDarkColorScheme = darkColorScheme(
     surfaceContainerHighest = surfaceContainerHighestDarkHighContrast,
 )
 
-@Immutable
-data class ColorFamily(
-    val color: Color,
-    val onColor: Color,
-    val colorContainer: Color,
-    val onColorContainer: Color,
-)
-
-val unspecified_scheme = ColorFamily(
-    Color.Unspecified, Color.Unspecified, Color.Unspecified, Color.Unspecified
-)
-
 @Composable
-fun NowPlayingTheme(
+fun JamscopeTheme(
     themePreference: Int,
     // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,
@@ -301,6 +287,17 @@ fun NowPlayingTheme(
         motionScheme = MotionScheme.expressive(),
         content = content
     )
+}
+
+@Composable
+fun JamscopePreviewTheme(
+    isDarkMode: Boolean = true,
+    content: @Composable () -> Unit,
+) {
+    val themePreference = if (isDarkMode) 2 else 1
+    JamscopeTheme(themePreference) {
+        content()
+    }
 }
 
 enum class AppTheme {

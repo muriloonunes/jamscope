@@ -9,11 +9,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.mno.jamscope.features.settings.domain.model.SwitchState
 import com.mno.jamscope.features.settings.ui.components.aboutSettingsSection
 import com.mno.jamscope.features.settings.ui.components.accountSettingsSection
-import com.mno.jamscope.features.settings.domain.model.SwitchState
 import com.mno.jamscope.features.settings.ui.components.personalizationSettingsSection
-import com.mno.jamscope.ui.theme.NowPlayingTheme
+import com.mno.jamscope.ui.theme.JamscopePreviewTheme
 
 @Composable
 fun SettingsVerticalScreen(
@@ -59,7 +59,7 @@ fun SettingsVerticalScreen(
 @Preview
 @Composable
 private fun SettingsVerticalScreenPreview() {
-    NowPlayingTheme(2) {
+    JamscopePreviewTheme(true) {
         SettingsVerticalScreen(
             themePreference = 0,
             switchStates = mapOf(

@@ -45,7 +45,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mno.jamscope.R
-import com.mno.jamscope.ui.theme.NowPlayingTheme
+import com.mno.jamscope.ui.theme.JamscopePreviewTheme
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -290,7 +290,7 @@ private fun AboutCard(
 @Preview
 @Composable
 private fun AboutScreenPreview() {
-    NowPlayingTheme(2) {
+    JamscopePreviewTheme(true) {
         AboutScreen(
             onNavigateBack = {},
             onGithubProjectClick = {},

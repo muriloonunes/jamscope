@@ -26,7 +26,7 @@ import com.mno.jamscope.ui.navigator.Navigator
 import com.mno.jamscope.ui.navigator.RootHost
 import com.mno.jamscope.ui.theme.LocalThemePreference
 import com.mno.jamscope.ui.theme.LocalWindowSizeClass
-import com.mno.jamscope.ui.theme.NowPlayingTheme
+import com.mno.jamscope.ui.theme.JamscopeTheme
 import com.mno.jamscope.ui.viewmodel.MainViewModel
 import com.mno.jamscope.util.Stuff
 import dagger.hilt.android.AndroidEntryPoint
@@ -58,7 +58,7 @@ class MainActivity : ComponentActivity() {
             val navController = rememberNavController()
             val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
             val showChangelog by mainViewModel.showChangelog.collectAsStateWithLifecycle()
-            NowPlayingTheme(themePreference = themePreference) {
+            JamscopeTheme(themePreference = themePreference) {
                 CompositionLocalProvider(
                     LocalThemePreference provides themePreference,
                     LocalWindowSizeClass provides windowSizeClass

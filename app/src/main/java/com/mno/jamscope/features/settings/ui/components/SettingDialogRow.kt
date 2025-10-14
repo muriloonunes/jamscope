@@ -13,7 +13,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.mno.jamscope.ui.theme.NowPlayingTheme
+import com.mno.jamscope.ui.theme.JamscopePreviewTheme
 
 
 /**
@@ -53,7 +53,7 @@ fun SettingDialogRow(
 @Preview
 @Composable
 private fun SettingDialogRowPreview() {
-    NowPlayingTheme(2) {
+    JamscopePreviewTheme(true) {
         SettingDialogRow(
             text = "Option 1",
             selected = true,

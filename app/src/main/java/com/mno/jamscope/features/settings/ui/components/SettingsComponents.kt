@@ -31,7 +31,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mno.jamscope.R
 import com.mno.jamscope.features.settings.domain.model.SwitchState
-import com.mno.jamscope.ui.theme.NowPlayingTheme
+import com.mno.jamscope.ui.theme.JamscopePreviewTheme
 
 @Composable
 private fun SettingsTile(
@@ -165,7 +165,7 @@ fun SettingsClickableComp(
 @Preview
 @Composable
 private fun SettingsCompPreview() {
-    NowPlayingTheme(2) {
+    JamscopePreviewTheme(true) {
         SettingsTile(
             icon = Icons.AutoMirrored.Outlined.Logout,
             iconDesc = "Settings icon",
@@ -186,7 +186,7 @@ private fun SettingsCompPreview() {
 @Preview
 @Composable
 private fun SettingsSwitchPreview() {
-    NowPlayingTheme(2) {
+    JamscopePreviewTheme(true) {
         SettingsTile(
             icon = Icons.AutoMirrored.Outlined.Logout,
             iconDesc = "Settings icon",
