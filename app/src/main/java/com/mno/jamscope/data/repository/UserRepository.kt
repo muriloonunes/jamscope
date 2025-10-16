@@ -1,14 +1,13 @@
 package com.mno.jamscope.data.repository
 
 import com.mno.jamscope.data.local.dao.UserProfileDao
-import com.mno.jamscope.data.local.toProfile
-import com.mno.jamscope.data.local.toRecentTrackEntity
-import com.mno.jamscope.data.local.toUserProfileEntity
-import com.mno.jamscope.data.model.Profile
+import com.mno.jamscope.data.mapper.toDomain
+import com.mno.jamscope.data.mapper.toEntity
 import com.mno.jamscope.data.model.Resource
-import com.mno.jamscope.data.model.Track
-import com.mno.jamscope.data.model.User
 import com.mno.jamscope.data.session.UserDataStoreManager
+import com.mno.jamscope.domain.model.Friend
+import com.mno.jamscope.domain.model.Track
+import com.mno.jamscope.domain.model.User
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -16,15 +15,16 @@ import javax.inject.Inject
 class UserRepository @Inject constructor(
     private val apiRepository: ApiRepository,
     private val userDataStoreManager: UserDataStoreManager,
-    private val userProfileDao: UserProfileDao
+    private val userProfileDao: UserProfileDao,
 ) {
-    suspend fun getUserProfile(): Profile? {
+    suspend fun getUserProfile(): User? {
         return userDataStoreManager.getUserProfile()
     }
 
-    suspend fun saveUserProfile(profile: Profile) {
-        userDataStoreManager.saveUserProfile(profile)
-        cacheUserProfile(profile)
+    suspend fun saveUserProfile(user: User) {
+        userDataStoreManager.saveUserProfile(user)
+        //TODO voltar a cachear
+//        cacheUserProfile(profile)
     }
 
     suspend fun clearUserSession() {
@@ -40,36 +40,36 @@ class UserRepository @Inject constructor(
     suspend fun authenticateMobile(
         username: String,
         password: String,
-        method: String
-    ): Resource<Profile> {
+        method: String,
+    ): Resource<User> {
         return apiRepository.authenticateMobile(username, password, method)
     }
 
     suspend fun authenticateWeb(
         token: String,
-        method: String
+        method: String,
     ) {
         return apiRepository.authenticateWeb(token, method)
     }
 
-    suspend fun getUserFriends(username: String): Resource<List<User>> {
+    suspend fun getUserFriends(username: String): Resource<List<Friend>> {
         return apiRepository.getProfileFriends(username)
     }
 
-    suspend fun getUserInfo(profile: Profile) {
-        return apiRepository.getProfileInfo(profile)
+    suspend fun getUserInfo(user: User) {
+        return apiRepository.getUserInfo(user)
     }
 
-    suspend fun getRecentTracks(profile: Profile): Resource<Unit> {
-        return apiRepository.getProfileRecentTracks(profile)
+    suspend fun getRecentTracks(user: User): Resource<Unit> {
+        return apiRepository.getProfileRecentTracks(user)
     }
 
-    private suspend fun cacheUserProfile(profile: Profile) {
-        val userProfile = profile.toUserProfileEntity()
+    private suspend fun cacheUserProfile(user: User) {
+        val userProfile = user.toEntity()
         userProfileDao.insertUserProfile(userProfile)
     }
 
-    suspend fun getCachedUserProfile(): Profile {
+    suspend fun getCachedUserProfile(): User {
         return withContext(Dispatchers.IO) {
             val userProfileEntity = userProfileDao.getUserProfile()
             @Suppress("SENSELESS_COMPARISON")
@@ -81,14 +81,14 @@ class UserRepository @Inject constructor(
             if (userProfileEntity != null) {
                 val userUrl = userProfileEntity.url
                 val recentTracks = userProfileDao.getRecentTracksForUser(userUrl)
-                return@withContext userProfileEntity.toProfile(recentTracks)
+                return@withContext userProfileEntity.toDomain(recentTracks)
             } else {
                 val fallbackProfile = userDataStoreManager.getUserProfile()!!
                 if (fallbackProfile.profileUrl != null) {
-                    cacheUserProfile(fallbackProfile)
+                    //TODO voltar a cachear
+//                    cacheUserProfile(fallbackProfile)
                     return@withContext fallbackProfile
-                }
-                else {
+                } else {
                     throw IllegalStateException("No user profile found")
                 }
             }
@@ -96,7 +96,7 @@ class UserRepository @Inject constructor(
     }
 
     suspend fun cacheRecentTracks(userUrl: String, tracks: List<Track>) {
-        val trackEntities = tracks.map { it.toRecentTrackEntity(userUrl) }
+        val trackEntities = tracks.map { it.toEntity(userUrl) }
         userProfileDao.deleteRecentTracksForUser(userUrl)
         userProfileDao.insertRecentTracks(trackEntities)
     }

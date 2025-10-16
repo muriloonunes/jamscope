@@ -8,8 +8,8 @@ import androidx.glance.appwidget.state.getAppWidgetState
 import androidx.glance.appwidget.state.updateAppWidgetState
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.mno.jamscope.data.model.User
 import com.mno.jamscope.data.repository.FriendsRepository
+import com.mno.jamscope.domain.model.Friend
 import com.mno.jamscope.features.widgets.WidgetDataStoreManager
 import com.mno.jamscope.features.widgets.friendgroup.FriendGroupWidget
 import com.mno.jamscope.features.widgets.singlefriend.generateLastUpdatedString
@@ -17,7 +17,7 @@ import com.mno.jamscope.features.widgets.singlefriend.generateLastUpdatedString
 class FriendGroupWidgetWorker(
     private val appContext: Context,
     workerParams: WorkerParameters,
-    var repository: FriendsRepository
+    var repository: FriendsRepository,
 ) : CoroutineWorker(appContext, workerParams) {
     override suspend fun doWork(): Result {
         val glanceIds = GlanceAppWidgetManager(appContext)
@@ -47,7 +47,7 @@ class FriendGroupWidgetWorker(
         }
     }
 
-    private suspend fun updateWidgetState(glanceId: GlanceId, friendsList: List<User>) {
+    private suspend fun updateWidgetState(glanceId: GlanceId, friendsList: List<Friend>) {
         FriendGroupWidget().apply {
             updateAppWidgetState(applicationContext, glanceId) { state ->
                 WidgetDataStoreManager.saveFriendsGroup(state, friendsList)

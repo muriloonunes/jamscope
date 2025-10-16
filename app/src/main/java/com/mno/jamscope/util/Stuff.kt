@@ -18,7 +18,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import com.mno.jamscope.R
 import com.mno.jamscope.data.model.Token
-import com.mno.jamscope.data.model.Track
+import com.mno.jamscope.domain.model.Track
 import kotlinx.serialization.json.Json
 import java.io.BufferedReader
 import java.io.InputStreamReader
@@ -227,12 +227,12 @@ object Stuff {
 
     fun Context.searchMusicIntent(track: Track) {
         val intent = Intent(MediaStore.INTENT_ACTION_MEDIA_PLAY_FROM_SEARCH).apply {
-            putExtra(SearchManager.QUERY, "${track.artist.name} ${track.name}")
+            putExtra(SearchManager.QUERY, "${track.artistName} ${track.name}")
             putExtra(MediaStore.EXTRA_MEDIA_FOCUS, MediaStore.Audio.Media.ENTRY_CONTENT_TYPE)
-            putExtra(MediaStore.EXTRA_MEDIA_ARTIST, track.artist.name)
+            putExtra(MediaStore.EXTRA_MEDIA_ARTIST, track.artistName)
             putExtra(MediaStore.EXTRA_MEDIA_TITLE, track.name)
-            if (track.album.name.isNotEmpty()) {
-                putExtra(MediaStore.EXTRA_MEDIA_ALBUM, track.album.name)
+            if (track.albumName.isNotEmpty()) {
+                putExtra(MediaStore.EXTRA_MEDIA_ALBUM, track.albumName)
             }
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }

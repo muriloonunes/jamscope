@@ -34,15 +34,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mno.jamscope.R
-import com.mno.jamscope.data.model.RecentTracks
-import com.mno.jamscope.data.model.User
+import com.mno.jamscope.domain.model.Friend
+import com.mno.jamscope.domain.model.Track
 import com.mno.jamscope.ui.components.LoadTrackInfo
 import com.mno.jamscope.ui.theme.LocalThemePreference
 
 @Composable
 fun FriendCard(
-    friend: User,
-    recentTracks: RecentTracks?,
+    friend: Friend,
+    recentTracks: List<Track>?,
     modifier: Modifier = Modifier,
     cardBackgroundToggle: Boolean,
     playingAnimationEnabled: Boolean,
@@ -59,7 +59,7 @@ fun FriendCard(
     }
     val backgroundColor = if (cardBackgroundToggle)
         colorProvider(
-            friend.url,
+            friend.profileUrl,
             isDarkTheme
         ) else MaterialTheme.colorScheme.onTertiary
 
@@ -106,7 +106,7 @@ fun FriendCard(
                     .padding(start = 4.dp, end = 12.dp)
             ) {
                 FriendImage(friend, false)
-                friend.realname.ifEmpty { friend.name }?.let {
+                friend.realName.ifEmpty { friend.name }.let {
                     Text(
                         text = it,
                         style = MaterialTheme.typography.bodySmall.copy(
@@ -130,7 +130,7 @@ fun FriendCard(
                 horizontalAlignment = Alignment.Start,
             ) {
                 AnimatedContent(
-                    targetState = recentTracks?.track?.firstOrNull(),
+                    targetState = recentTracks?.firstOrNull(),
                     transitionSpec = {
                         (fadeIn(animationSpec = tween(500)) + slideInVertically(initialOffsetY = { it })).togetherWith(
                             fadeOut(animationSpec = tween(300)) + slideOutVertically(targetOffsetY = { it })

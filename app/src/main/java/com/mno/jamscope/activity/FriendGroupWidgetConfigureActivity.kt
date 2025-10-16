@@ -22,11 +22,11 @@ import com.bumptech.glide.Glide
 import com.mno.jamscope.R
 import com.mno.jamscope.databinding.FriendGroupWidgetConfigureBinding
 import com.mno.jamscope.databinding.FriendsListItemBinding
-import com.mno.jamscope.data.model.User
-import com.mno.jamscope.ui.viewmodel.ConfigWidgetScreenViewModel
+import com.mno.jamscope.domain.model.Friend
 import com.mno.jamscope.features.widgets.WidgetDataStoreManager
 import com.mno.jamscope.features.widgets.friendgroup.FriendGroupWidget
 import com.mno.jamscope.features.widgets.friendgroup.startGroupUpdateWorker
+import com.mno.jamscope.ui.viewmodel.ConfigWidgetScreenViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -36,7 +36,7 @@ class FriendGroupWidgetConfigureActivity : AppCompatActivity() {
     private lateinit var binding: FriendGroupWidgetConfigureBinding
     private val configScreenWidgetViewModel: ConfigWidgetScreenViewModel by viewModels()
     private lateinit var adapter: FriendsAdapter
-    private var selectedFriends: MutableList<User> = mutableListOf()
+    private var selectedFriends: MutableList<Friend> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,7 +72,11 @@ class FriendGroupWidgetConfigureActivity : AppCompatActivity() {
                 return@FriendsAdapter
             }
             if (this.selectedFriends.size >= 4) {
-                Toast.makeText(this, getString(R.string.max_four_friends_warning), Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this,
+                    getString(R.string.max_four_friends_warning),
+                    Toast.LENGTH_SHORT
+                ).show()
                 return@FriendsAdapter
             }
             this.selectedFriends.add(selectedFriend)
@@ -111,18 +115,18 @@ class FriendGroupWidgetConfigureActivity : AppCompatActivity() {
         finish()
     }
 
-    class FriendsAdapter(private val onFriendSelected: (User) -> Unit) :
-        ListAdapter<User, FriendsAdapter.FriendViewHolder>(DIFF_CALLBACK) {
+    class FriendsAdapter(private val onFriendSelected: (Friend) -> Unit) :
+        ListAdapter<Friend, FriendsAdapter.FriendViewHolder>(DIFF_CALLBACK) {
 
-        private val selectedFriends: MutableList<User> = mutableListOf()
+        private val selectedFriends: MutableList<Friend> = mutableListOf()
 
         companion object {
-            private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<User>() {
-                override fun areItemsTheSame(oldItem: User, newItem: User): Boolean {
+            private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<Friend>() {
+                override fun areItemsTheSame(oldItem: Friend, newItem: Friend): Boolean {
                     return oldItem.name == newItem.name
                 }
 
-                override fun areContentsTheSame(oldItem: User, newItem: User): Boolean {
+                override fun areContentsTheSame(oldItem: Friend, newItem: Friend): Boolean {
                     return oldItem == newItem
                 }
             }
@@ -161,9 +165,9 @@ class FriendGroupWidgetConfigureActivity : AppCompatActivity() {
 
         class FriendViewHolder(private val binding: FriendsListItemBinding) :
             RecyclerView.ViewHolder(binding.root) {
-            fun bind(friend: User, isSelected: Boolean) {
-                binding.friendName.text = friend.realname.ifEmpty { friend.name }
-                val imageUrl = friend.image.firstOrNull { it.size == "large" }?.url ?: ""
+            fun bind(friend: Friend, isSelected: Boolean) {
+                binding.friendName.text = friend.realName.ifEmpty { friend.name }
+                val imageUrl = friend.largeImageUrl
                 Glide.with(binding.friendImage.context)
                     .load(imageUrl)
                     .error(R.drawable.baseline_account_circle_24)

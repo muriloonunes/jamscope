@@ -53,8 +53,8 @@ import androidx.window.core.layout.WindowHeightSizeClass
 import androidx.window.core.layout.WindowSizeClass
 import coil3.compose.AsyncImage
 import com.mno.jamscope.R
-import com.mno.jamscope.data.model.Track
-import com.mno.jamscope.data.model.User
+import com.mno.jamscope.domain.model.Friend
+import com.mno.jamscope.domain.model.Track
 import com.mno.jamscope.ui.components.FullscreenImage
 import com.mno.jamscope.ui.components.LastProBadge
 import com.mno.jamscope.ui.components.LoadTrackInfo
@@ -67,18 +67,16 @@ import my.nanihadesuka.compose.LazyColumnScrollbar
 import my.nanihadesuka.compose.ScrollbarSettings
 
 @Composable
-fun FriendImage(friend: User, forExtended: Boolean) {
+fun FriendImage(friend: Friend, forExtended: Boolean) {
     val size = if (forExtended) 100.dp else 50.dp
-    val isPro = friend.subscriber == 1
+    val isPro = friend.subscriber
     var showFullscreenImage by remember { mutableStateOf(false) }
     AsyncImage(
-        model = friend.image.firstOrNull { it.size == "large" }?.url ?: "",
-        contentDescription = friend.name?.let {
-            stringResource(
-                R.string.profile_pic_description,
-                it
-            )
-        },
+        model = friend.largeImageUrl,
+        contentDescription = stringResource(
+            R.string.profile_pic_description,
+            friend.name
+        ),
         error = forwardingPainter(
             painter = painterResource(id = R.drawable.baseline_account_circle_24),
             colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface)
@@ -110,9 +108,9 @@ fun FriendImage(friend: User, forExtended: Boolean) {
 
     if (showFullscreenImage) {
         FullscreenImage(
-            imageUrl = friend.image.firstOrNull { it.size == "extralarge" }?.url ?: "",
-            placeholderUrl = friend.image.firstOrNull { it.size == "large" }?.url ?: "",
-            contentDescription = friend.realname.ifEmpty { friend.name } ?: "",
+            imageUrl = friend.extraLargeImageUrl,
+            placeholderUrl = friend.largeImageUrl,
+            contentDescription = friend.realName.ifEmpty { friend.name },
             onDismissRequest = { showFullscreenImage = false }
         )
     }
@@ -121,7 +119,7 @@ fun FriendImage(friend: User, forExtended: Boolean) {
 @Composable
 fun FriendExtendedCardTracksSection(
     modifier: Modifier = Modifier,
-    friend: User,
+    friend: Friend,
     recentTracks: List<Track>,
     darkerBackgroundColor: Int,
     playingAnimationEnabled: Boolean,
@@ -235,7 +233,7 @@ fun FriendExtendedCardTracksSection(
 @Composable
 fun FriendExtendedCardHeader(
     modifier: Modifier = Modifier,
-    friend: User,
+    friend: Friend,
     windowSizeClass: WindowSizeClass,
 ) {
     val windowHeight = windowSizeClass.windowHeightSizeClass
@@ -248,7 +246,7 @@ fun FriendExtendedCardHeader(
             ) {
                 FriendImage(friend, true)
                 Spacer(modifier = Modifier.height(4.dp))
-                if (friend.subscriber == 1) {
+                if (friend.subscriber) {
                     LastProBadge()
                 }
                 FriendInfo(
@@ -272,7 +270,7 @@ fun FriendExtendedCardHeader(
                     FriendInfo(
                         friend = friend
                     )
-                    if (friend.subscriber == 1) {
+                    if (friend.subscriber) {
                         LastProBadge()
                     }
                 }
@@ -283,7 +281,7 @@ fun FriendExtendedCardHeader(
 
 @Composable
 fun FriendInfo(
-    friend: User,
+    friend: Friend,
 ) {
     val themePreference = LocalThemePreference.current
     val isDarkTheme = when (themePreference) {
@@ -296,10 +294,10 @@ fun FriendInfo(
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        if (friend.realname.isNotEmpty()) {
+        if (friend.realName.isNotEmpty()) {
             val friendNameWithLink = buildAnnotatedString {
-                withLink(LinkAnnotation.Url(url = friend.url)) {
-                    append(friend.realname)
+                withLink(LinkAnnotation.Url(url = friend.profileUrl)) {
+                    append(friend.realName)
                 }
             }
             Text(
@@ -314,9 +312,9 @@ fun FriendInfo(
                 maxLines = 1,
             )
         } else {
-            friend.name?.let {
+            friend.name.let {
                 val friendNameWithLink = buildAnnotatedString {
-                    withLink(LinkAnnotation.Url(url = friend.url)) {
+                    withLink(LinkAnnotation.Url(url = friend.profileUrl)) {
                         append(it)
                     }
                 }
@@ -333,14 +331,14 @@ fun FriendInfo(
                 )
             }
         }
-        if (friend.realname.isNotEmpty() && friend.name != null) {
+        if (friend.realName.isNotEmpty() && friend.name.isNotEmpty()) {
             Text(
                 text = friend.name,
                 style = MaterialTheme.typography.bodySmall.copy(color = textColor.copy(alpha = 0.9f)),
                 textAlign = TextAlign.Center,
             )
         }
-        friend.country?.takeIf { it.isNotEmpty() && it != "None" }?.let { country ->
+        friend.country.takeIf { it.isNotEmpty() && it != "None" }?.let { country ->
             Text(
                 text = "${getLocalizedCountryName(country)} ${getCountryFlag(country)}",
                 style = MaterialTheme.typography.bodySmall.copy(color = textColor.copy(0.9f)),

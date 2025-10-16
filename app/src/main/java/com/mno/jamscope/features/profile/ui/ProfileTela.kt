@@ -39,8 +39,8 @@ import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowHeightSizeClass
 import androidx.window.core.layout.WindowSizeClass
 import com.mno.jamscope.R
-import com.mno.jamscope.data.model.Profile
-import com.mno.jamscope.data.model.Track
+import com.mno.jamscope.domain.model.Track
+import com.mno.jamscope.domain.model.User
 import com.mno.jamscope.features.profile.ui.components.CollapsingProfileTopBar
 import com.mno.jamscope.features.profile.ui.components.ProfileHeaderSection
 import com.mno.jamscope.features.profile.ui.components.ProfileTracksSection
@@ -53,14 +53,14 @@ import kotlin.math.roundToInt
 @Composable
 fun ProfileTela(
     isRefreshing: Boolean,
-    userProfile: Profile?,
+    userProfile: User?,
     errorMessage: String,
     recentTracks: List<Track>,
     playingAnimationEnabled: Boolean,
     listState: LazyListState = rememberLazyListState(),
     windowSizeClass: WindowSizeClass,
     onRefresh: () -> Unit,
-    onSeeMoreClick: (Context, Profile?) -> Unit,
+    onSeeMoreClick: (Context, User?) -> Unit,
 ) {
     val context = LocalContext.current
     val density = LocalDensity.current
@@ -70,7 +70,7 @@ fun ProfileTela(
     var imagePfp by remember { mutableStateOf<Any?>(R.drawable.baseline_account_circle_24) }
     LaunchedEffect(userProfile) {
         if (userProfile != null) {
-            imagePfp = userProfile.imageUrl
+            imagePfp = userProfile.extraLargeImageUrl
         }
     }
 
@@ -187,8 +187,8 @@ fun ProfileTela(
                             .background(MaterialTheme.colorScheme.surface),
                         imagePfp = imagePfp,
                         username = userProfile?.username,
-                        realName = userProfile?.realname,
-                        subscriber = userProfile?.subscriber,
+                        realName = userProfile?.realName,
+                        subscriber = userProfile?.subscriber == true,
                         profileUrl = userProfile?.profileUrl,
                         country = userProfile?.country,
                         playcount = userProfile?.playcount,
@@ -205,8 +205,8 @@ fun ProfileTela(
                             .weight(0.5f),
                         imagePfp = imagePfp,
                         username = userProfile?.username,
-                        realName = userProfile?.realname,
-                        subscriber = userProfile?.subscriber,
+                        realName = userProfile?.realName,
+                        subscriber = userProfile?.subscriber == true,
                         profileUrl = userProfile?.profileUrl,
                         country = userProfile?.country,
                         playcount = userProfile?.playcount,

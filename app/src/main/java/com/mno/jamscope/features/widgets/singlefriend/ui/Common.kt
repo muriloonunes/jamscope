@@ -28,14 +28,14 @@ import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import com.mno.jamscope.R
-import com.mno.jamscope.data.model.User
+import com.mno.jamscope.domain.model.Friend
 import com.mno.jamscope.features.widgets.WidgetDataStoreManager
 import com.mno.jamscope.features.widgets.singlefriend.WidgetRefreshAction
 import com.mno.jamscope.util.dateStringFormatter
 
 @Composable
 fun ProfileWidgetImage(
-    friend: User?,
+    friend: Friend?,
     imageBitmap: Bitmap?,
     size: Dp = 60.dp,
     cornerRadius: Dp = 50.dp,
@@ -65,7 +65,7 @@ fun ProfileWidgetImage(
 
 @Composable
 fun FriendWidgetInfo(
-    friend: User?,
+    friend: Friend?,
     textStyle: TextStyle,
     context: Context,
     forSmall: Boolean,
@@ -81,7 +81,7 @@ fun FriendWidgetInfo(
     ) {
         when {
             friend == null -> NoFriendSelected(textStyle)
-            friend.recentTracks == null -> NoRecentTracks(textStyle, context)
+            friend.recentTracks.isEmpty() -> NoRecentTracks(textStyle, context)
             else -> FriendListeningDetails(friend, textStyle, context, forSmall)
         }
     }
@@ -105,22 +105,24 @@ private fun NoRecentTracks(textStyle: TextStyle, context: Context) {
 
 @Composable
 private fun FriendListeningDetails(
-    friend: User,
+    friend: Friend,
     textStyle: TextStyle,
     context: Context,
     forSmall: Boolean,
 ) {
-    val track = friend.recentTracks?.track?.firstOrNull()
+    val track = friend.recentTracks.firstOrNull()
 
-    FriendNameText(context, friend.realname, friend.name ?: "", textStyle)
+    FriendNameText(context, friend.realName, friend.name, textStyle)
     track?.let { it ->
-        val dateString = track.dateInfo?.formattedDate?.let {
-            dateStringFormatter(it, true, context)
-        } ?: context.getString(R.string.now)
+        val dateString = if (track.date.isNotEmpty()) {
+            dateStringFormatter(track.date, true, context)
+        } else {
+            context.getString(R.string.now)
+        }
 
         if (forSmall) {
             Text(
-                text = context.getString(R.string.song_by_artist, it.name, it.artist.name),
+                text = context.getString(R.string.song_by_artist, it.name, it.artistName),
                 style = textStyle,
                 maxLines = 1
             )
@@ -131,7 +133,7 @@ private fun FriendListeningDetails(
                 Text(
 //                    ·
 //                    text = "${it.album.name} — ${it.artist.name}",
-                    text = it.album.name,
+                    text = it.albumName,
                     style = textStyle,
                     maxLines = 1,
                     modifier = GlanceModifier.defaultWeight()
@@ -141,8 +143,8 @@ private fun FriendListeningDetails(
             LastUpdatedManager(true)
         } else {
             Text(text = it.name, style = textStyle, maxLines = 2)
-            Text(text = it.artist.name, style = textStyle, maxLines = 1)
-            Text(text = it.album.name, style = textStyle, maxLines = 1)
+            Text(text = it.artistName, style = textStyle, maxLines = 1)
+            Text(text = it.albumName, style = textStyle, maxLines = 1)
             DateText(dateString, false)
         }
     } ?: NoRecentTracks(textStyle, context)

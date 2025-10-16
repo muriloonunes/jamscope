@@ -18,8 +18,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.mno.jamscope.data.model.RecentTracks
-import com.mno.jamscope.data.model.User
+import com.mno.jamscope.domain.model.Friend
+import com.mno.jamscope.domain.model.Track
 import com.mno.jamscope.features.friends.ui.components.FriendCard
 import com.mno.jamscope.features.friends.ui.components.FriendsTopRowBar
 import com.mno.jamscope.ui.components.ShowErrorMessage
@@ -33,8 +33,8 @@ fun FriendsVerticalScreen(
     listState: LazyListState,
     modifier: Modifier,
     errorMessage: String,
-    friends: List<User>,
-    recentTracksMap: Map<String, RecentTracks?>,
+    friends: List<Friend>,
+    recentTracksMap: Map<String, List<Track>?>,
     cardBackgroundToggle: Boolean,
     playingAnimationEnabled: Boolean,
     friendToExtend: String?,
@@ -78,7 +78,7 @@ fun FriendsVerticalScreen(
                 )
             }
         }
-        items(friends, key = { it.name!! }) { friend ->
+        items(friends, key = { it.name }) { friend ->
             FriendCard(
                 modifier = Modifier
                     .highlightIf(friend.name == friendToExtend, onExtendedHandled)
@@ -97,7 +97,7 @@ fun FriendsVerticalScreen(
                         )
                     ),
                 friend = friend,
-                recentTracks = recentTracksMap[friend.url],
+                recentTracks = recentTracksMap[friend.profileUrl],
                 cardBackgroundToggle = cardBackgroundToggle,
                 playingAnimationEnabled = playingAnimationEnabled,
                 friendToExtend = friendToExtend,

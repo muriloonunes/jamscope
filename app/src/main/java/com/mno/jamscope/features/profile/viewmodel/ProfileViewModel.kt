@@ -4,12 +4,12 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mno.jamscope.R
-import com.mno.jamscope.data.model.Profile
+import com.mno.jamscope.data.flows.LogoutEventBus
 import com.mno.jamscope.data.model.Resource
-import com.mno.jamscope.data.model.Track
 import com.mno.jamscope.data.repository.SettingsRepository
 import com.mno.jamscope.data.repository.UserRepository
-import com.mno.jamscope.data.flows.LogoutEventBus
+import com.mno.jamscope.domain.model.Track
+import com.mno.jamscope.domain.model.User
 import com.mno.jamscope.features.settings.domain.model.SwitchState
 import com.mno.jamscope.util.Stuff
 import com.mno.jamscope.util.Stuff.openUrl
@@ -29,7 +29,7 @@ class ProfileViewModel @Inject constructor(
     @param:ApplicationContext private val context: Context,
     private val settingsRepository: SettingsRepository,
     private val logoutBus: LogoutEventBus,
-    ) : ViewModel() {
+) : ViewModel() {
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing = _isRefreshing
         .onStart {
@@ -38,8 +38,8 @@ class ProfileViewModel @Inject constructor(
         }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
 
-    private val _userProfile = MutableStateFlow<Profile?>(null)
-    val userProfile: StateFlow<Profile?> = _userProfile
+    private val _userProfile = MutableStateFlow<User?>(null)
+    val userProfile: StateFlow<User?> = _userProfile
 
     private val _recentTracks = MutableStateFlow<List<Track>>(emptyList())
     val recentTracks: StateFlow<List<Track>> = _recentTracks
@@ -76,7 +76,7 @@ class ProfileViewModel @Inject constructor(
             try {
                 val userProfile = userRepository.getCachedUserProfile()
                 _userProfile.value = userProfile
-                _recentTracks.value = userProfile.recentTracks?.track ?: emptyList()
+                _recentTracks.value = userProfile.recentTracks
             } catch (_: IllegalStateException) {
                 _errorMessage.value = context.getString(R.string.error_loading_profile)
             }
@@ -92,11 +92,12 @@ class ProfileViewModel @Inject constructor(
             when (val result = userRepository.getRecentTracks(userProfile)) {
                 is Resource.Success -> {
                     _userProfile.value = userProfile
-                    _recentTracks.value = userProfile.recentTracks?.track ?: emptyList()
-                    userRepository.cacheRecentTracks(
-                        userProfile.profileUrl!!,
-                        userProfile.recentTracks?.track ?: emptyList()
-                    )
+                    _recentTracks.value = userProfile.recentTracks
+                    //TODO voltar a cachear
+//                    userRepository.cacheRecentTracks(
+//                        userProfile.profileUrl,
+//                        userProfile.recentTracks
+//                    )
                     _isRefreshing.value = false
                 }
 
@@ -113,7 +114,7 @@ class ProfileViewModel @Inject constructor(
 
     fun seeMore(
         context: Context,
-        userProfile: Profile?,
+        userProfile: User?,
     ) {
         context.openUrl("https://www.last.fm/user/${userProfile!!.username}/library?page=3")
     }

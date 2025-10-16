@@ -19,7 +19,7 @@ fun CollapsingProfileTopBar(
     imagePfp: Any?,
     username: String?,
     realName: String?,
-    subscriber: Int?,
+    subscriber: Boolean,
     profileUrl: String?,
     country: String?,
     playcount: Long?,
@@ -41,7 +41,7 @@ fun CollapsingProfileTopBar(
                     username = username,
                     size = imageSize,
                     shape = RoundedCornerShape(48.dp),
-                    isLastPro = subscriber == 1
+                    isLastPro = subscriber
                 )
             }
             if (username != null) {

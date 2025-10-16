@@ -27,18 +27,18 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.window.core.layout.WindowHeightSizeClass
 import com.google.android.material.color.MaterialColors
-import com.mno.jamscope.data.model.User
+import com.mno.jamscope.domain.model.Friend
 import com.mno.jamscope.ui.theme.LocalWindowSizeClass
 
 @Composable
 fun ExtendedFriendCard(
-    friend: User,
+    friend: Friend,
     backgroundColor: Color,
     playingAnimationEnabled: Boolean,
-    onDismissRequest: () -> Unit
+    onDismissRequest: () -> Unit,
 ) {
     val context = LocalContext.current
-    val recentTracks = friend.recentTracks?.track ?: emptyList()
+    val recentTracks = friend.recentTracks
     val darkerBackgroundColor = MaterialColors.harmonize(
         backgroundColor.toArgb(),
         MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f).toArgb()
@@ -49,6 +49,7 @@ fun ExtendedFriendCard(
         WindowHeightSizeClass.COMPACT -> Modifier
             .fillMaxHeight(0.9f)
             .fillMaxWidth(0.7f)
+
         else -> Modifier
             .fillMaxHeight(0.8f)
             .fillMaxWidth(0.8f)
@@ -114,7 +115,7 @@ fun ExtendedFriendCard(
 fun Modifier.simpleVerticalScrollbar(
     state: LazyListState,
     width: Dp = 8.dp,
-    color: Color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+    color: Color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
 ): Modifier {
     val targetAlpha = if (state.isScrollInProgress) 1f else 0f
     val duration = if (state.isScrollInProgress) 350 else 900

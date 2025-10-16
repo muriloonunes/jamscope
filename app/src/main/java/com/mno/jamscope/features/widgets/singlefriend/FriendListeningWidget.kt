@@ -84,8 +84,8 @@ class FriendListeningWidget : GlanceAppWidget() {
         )
         var imageBitmap by remember { mutableStateOf<Bitmap?>(null) }
         LaunchedEffect(friend) {
-            imageBitmap = friend?.image?.firstOrNull { it.size == "large" }?.url?.let {
-                loadBitmap(it, context)
+            if (!friend?.largeImageUrl.isNullOrEmpty()) {
+                imageBitmap = loadBitmap(friend.largeImageUrl, context)
             }
         }
         val modifier = GlanceModifier

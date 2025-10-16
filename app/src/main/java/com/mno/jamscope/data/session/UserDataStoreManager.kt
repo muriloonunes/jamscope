@@ -3,7 +3,7 @@ package com.mno.jamscope.data.session
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
-import com.mno.jamscope.data.model.Profile
+import com.mno.jamscope.domain.model.User
 import com.mno.jamscope.util.Crypto
 import com.mno.jamscope.util.SortingType
 import io.ktor.utils.io.core.toByteArray
@@ -18,8 +18,8 @@ import javax.inject.Inject
 class UserDataStoreManager @Inject constructor(
     private val dataStore: DataStore<Preferences>
 ) {
-    suspend fun saveUserProfile(profile: Profile) = withContext(Dispatchers.IO) {
-        val json = Json.encodeToString(profile)
+    suspend fun saveUserProfile(user: User) = withContext(Dispatchers.IO) {
+        val json = Json.encodeToString(user)
         val encryptedJson = Crypto.encrypt(json.toByteArray())
         val encryptedBase64 = Base64.getEncoder().encodeToString(encryptedJson)
         dataStore.edit { preferences ->
@@ -27,7 +27,7 @@ class UserDataStoreManager @Inject constructor(
         }
     }
 
-    suspend fun getUserProfile(): Profile? = withContext(Dispatchers.IO) {
+    suspend fun getUserProfile(): User? = withContext(Dispatchers.IO) {
         val preferences = dataStore.data.first()
         val encryptedBase64 = preferences[PreferencesKeys.PROFILE_JSON] ?: return@withContext null
         return@withContext try {
@@ -40,8 +40,8 @@ class UserDataStoreManager @Inject constructor(
     }
 
     suspend fun isUserLoggedIn(): Boolean {
-        val profile = getUserProfile()
-        return profile?.session?.key?.isNotEmpty() == true
+        val user = getUserProfile()
+        return user?.sessionKey?.isNotEmpty() == true
     }
 
     suspend fun clearUserSession() {

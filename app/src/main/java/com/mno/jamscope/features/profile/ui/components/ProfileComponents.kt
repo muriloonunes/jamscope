@@ -53,7 +53,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.lerp
 import coil3.compose.AsyncImage
 import com.mno.jamscope.R
-import com.mno.jamscope.data.model.Track
+import com.mno.jamscope.domain.model.Track
 import com.mno.jamscope.ui.components.FullscreenImage
 import com.mno.jamscope.ui.components.LastProBadge
 import com.mno.jamscope.ui.components.LoadTrackInfo
@@ -72,7 +72,7 @@ fun ProfileHeaderSection(
     imagePfp: Any?,
     username: String?,
     realName: String?,
-    subscriber: Int?,
+    subscriber: Boolean,
     profileUrl: String?,
     country: String?,
     playcount: Long?,
@@ -136,7 +136,7 @@ fun ProfileTracksSection(
         itemsIndexed(
             items = userRecentTracks,
             key = { index, track -> "$index${track.name}" }) { index, track ->
-            val nowPlaying = track.dateInfo?.formattedDate == null
+            val nowPlaying = track.isNowPlaying
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
@@ -165,8 +165,8 @@ fun ProfileTracksSection(
                         else Modifier
                     )
             ) {
-                val imageUrl = track.image?.firstOrNull { it.size == "medium" }?.url ?: ""
-                val bigImageUrl = track.image?.firstOrNull { it.size == "extralarge" }?.url ?: ""
+                val imageUrl = track.largeImageUrl
+                val bigImageUrl = track.extraLargeImageUrl
                 TrackImageLoader(
                     imageUrl = imageUrl,
                     bigImageUrl = bigImageUrl,
@@ -296,7 +296,7 @@ fun ProfileInfo(
     username: String?,
     realName: String?,
     profileUrl: String?,
-    subscriber: Int?,
+    subscriber: Boolean,
     country: String?,
     playcount: Long?,
     alignment: Alignment.Horizontal = Alignment.Start,
@@ -337,7 +337,7 @@ fun ProfileInfo(
                         scaleY = scale
                     }
             ) {
-                if (subscriber == 1) {
+                if (subscriber) {
                     LastProBadge()
                 }
                 country?.takeIf { it.isNotEmpty() && it != "None" }

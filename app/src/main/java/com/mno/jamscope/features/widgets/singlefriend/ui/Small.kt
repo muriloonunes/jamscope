@@ -7,15 +7,15 @@ import androidx.glance.GlanceModifier
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Row
 import androidx.glance.text.TextStyle
-import com.mno.jamscope.data.model.User
+import com.mno.jamscope.domain.model.Friend
 
 @Composable
 fun SmallWidgetDesign(
     modifier: GlanceModifier,
     context: Context,
-    friend: User?,
+    friend: Friend?,
     textStyle: TextStyle,
-    imageBitmap: Bitmap?
+    imageBitmap: Bitmap?,
 ) {
     Row(
         modifier = modifier,
@@ -23,7 +23,7 @@ fun SmallWidgetDesign(
     ) {
         ProfileWidgetImage(friend, imageBitmap)
         FriendWidgetInfo(
-            friend =  friend,
+            friend = friend,
             textStyle = textStyle,
             context = context,
             forSmall = true

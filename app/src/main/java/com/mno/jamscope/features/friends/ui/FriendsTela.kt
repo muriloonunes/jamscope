@@ -10,8 +10,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.window.core.layout.WindowSizeClass
 import androidx.window.core.layout.WindowWidthSizeClass
-import com.mno.jamscope.data.model.RecentTracks
-import com.mno.jamscope.data.model.User
+import com.mno.jamscope.domain.model.Friend
+import com.mno.jamscope.domain.model.Track
 import com.mno.jamscope.features.friends.ui.components.topBarHeight
 import com.mno.jamscope.ui.screen.JamPullToRefresh
 import com.mno.jamscope.util.SortingType
@@ -23,8 +23,8 @@ fun FriendsTela(
     sortingType: SortingType,
     isRefreshing: Boolean,
     errorMessage: String,
-    recentTracks: Map<String, RecentTracks?>,
-    friends: List<User>,
+    recentTracks: Map<String, List<Track>?>,
+    friends: List<Friend>,
     cardBackgroundColorEnabled: Boolean,
     playingAnimationEnabled: Boolean,
     friendToExtend: String?,

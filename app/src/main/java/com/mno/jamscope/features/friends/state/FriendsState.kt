@@ -1,7 +1,7 @@
 package com.mno.jamscope.features.friends.state
 
-import com.mno.jamscope.data.model.RecentTracks
-import com.mno.jamscope.data.model.User
+import com.mno.jamscope.domain.model.Friend
+import com.mno.jamscope.domain.model.Track
 import com.mno.jamscope.util.SortingType
 
 data class FriendsState(
@@ -9,8 +9,8 @@ data class FriendsState(
     val isBottomSheetShown: Boolean = false,
     val errorMessage: String = "",
     val sortingType: SortingType = SortingType.DEFAULT,
-    val friends: List<User> = emptyList(),
-    val recentTracksMap: Map<String, RecentTracks?> = emptyMap(),
+    val friends: List<Friend> = emptyList(),
+    val recentTracksMap: Map<String, Track?> = emptyMap(),
     val playingAnimationEnabled: Boolean = true,
     val cardBackgroundColorEnabled: Boolean = true,
 )

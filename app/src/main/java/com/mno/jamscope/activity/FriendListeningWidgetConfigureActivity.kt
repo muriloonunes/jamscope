@@ -20,9 +20,9 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.mno.jamscope.R
-import com.mno.jamscope.data.model.User
 import com.mno.jamscope.databinding.FriendsListItemBinding
 import com.mno.jamscope.databinding.SmallFriendListeningWidgetConfigureBinding
+import com.mno.jamscope.domain.model.Friend
 import com.mno.jamscope.features.widgets.WidgetDataStoreManager
 import com.mno.jamscope.features.widgets.singlefriend.FriendListeningWidget
 import com.mno.jamscope.features.widgets.singlefriend.startListeningUpdateWorker
@@ -36,7 +36,7 @@ class FriendListeningWidgetConfigureActivity : AppCompatActivity() {
     private lateinit var binding: SmallFriendListeningWidgetConfigureBinding
     private val configScreenWidgetViewModel: ConfigWidgetScreenViewModel by viewModels()
     private lateinit var adapter: FriendsAdapter
-    private var selectedFriend: User? = null
+    private var selectedFriend: Friend? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -105,18 +105,18 @@ class FriendListeningWidgetConfigureActivity : AppCompatActivity() {
         finish()
     }
 
-    class FriendsAdapter(private val onFriendSelected: (User) -> Unit) :
-        ListAdapter<User, FriendsAdapter.FriendViewHolder>(DIFF_CALLBACK) {
+    class FriendsAdapter(private val onFriendSelected: (Friend) -> Unit) :
+        ListAdapter<Friend, FriendsAdapter.FriendViewHolder>(DIFF_CALLBACK) {
 
         private var selectedFriendPosition: Int? = null
 
         companion object {
-            private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<User>() {
-                override fun areItemsTheSame(oldItem: User, newItem: User): Boolean {
+            private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<Friend>() {
+                override fun areItemsTheSame(oldItem: Friend, newItem: Friend): Boolean {
                     return oldItem.name == newItem.name
                 }
 
-                override fun areContentsTheSame(oldItem: User, newItem: User): Boolean {
+                override fun areContentsTheSame(oldItem: Friend, newItem: Friend): Boolean {
                     return oldItem == newItem
                 }
             }
@@ -148,9 +148,9 @@ class FriendListeningWidgetConfigureActivity : AppCompatActivity() {
 
         class FriendViewHolder(private val binding: FriendsListItemBinding) :
             RecyclerView.ViewHolder(binding.root) {
-            fun bind(friend: User, isSelected: Boolean) {
-                binding.friendName.text = friend.realname.ifEmpty { friend.name }
-                val imageUrl = friend.image.firstOrNull { it.size == "large" }?.url ?: ""
+            fun bind(friend: Friend, isSelected: Boolean) {
+                binding.friendName.text = friend.realName.ifEmpty { friend.name }
+                val imageUrl = friend.largeImageUrl
                 Glide.with(binding.friendImage.context)
                     .load(imageUrl)
                     .error(R.drawable.baseline_account_circle_24)

@@ -5,12 +5,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mno.jamscope.data.flows.LogoutEventBus
 import com.mno.jamscope.data.flows.WidgetIntentBus
-import com.mno.jamscope.data.model.RecentTracks
 import com.mno.jamscope.data.model.Resource
-import com.mno.jamscope.data.model.User
 import com.mno.jamscope.data.repository.FriendsRepository
 import com.mno.jamscope.data.repository.SettingsRepository
 import com.mno.jamscope.data.repository.UserRepository
+import com.mno.jamscope.domain.model.Friend
+import com.mno.jamscope.domain.model.Track
 import com.mno.jamscope.features.settings.domain.model.SwitchState
 import com.mno.jamscope.ui.navigator.Destination
 import com.mno.jamscope.ui.navigator.Navigator
@@ -57,15 +57,15 @@ class FriendsViewModel @Inject constructor(
     private val _sortingType = MutableStateFlow(SortingType.DEFAULT)
     val sortingType: StateFlow<SortingType> = _sortingType
 
-    private val _friends = MutableStateFlow<List<User>>(emptyList())
-    val friends: StateFlow<List<User>> =
+    private val _friends = MutableStateFlow<List<Friend>>(emptyList())
+    val friends: StateFlow<List<Friend>> =
         _friends.combine(sortingType) { friends, sortingType ->
             sortFriends(friends, sortingType)
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
-    private val _recentTracksMap = MutableStateFlow<Map<String, RecentTracks?>>(emptyMap())
-    val recentTracksMap: StateFlow<Map<String, RecentTracks?>> = friends.map { friendsList ->
-        friendsList.associate { it.url to it.recentTracks }
+    private val _recentTracksMap = MutableStateFlow<Map<String, List<Track>>>(emptyMap())
+    val recentTracksMap: StateFlow<Map<String, List<Track>>> = friends.map { friendsList ->
+        friendsList.associate { it.profileUrl to it.recentTracks }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyMap())
 
     private val _cardBackgroundColorToggle = MutableStateFlow(true)
@@ -145,8 +145,10 @@ class FriendsViewModel @Inject constructor(
                     userProfile.friends = friends
                     userRepository.saveUserProfile(userProfile)
                     _friends.value = friendsWithTracks
-                    _recentTracksMap.value = friendsWithTracks.associate { it.url to it.recentTracks }
-                    friendsRepository.cacheFriends(friendsWithTracks)
+                    _recentTracksMap.value =
+                        friendsWithTracks.associate { it.profileUrl to it.recentTracks }
+                    //TODO voltar a cachear
+//                    friendsRepository.cacheFriends(friendsWithTracks)
 
                     _isRefreshing.value = false
                 }
@@ -160,14 +162,15 @@ class FriendsViewModel @Inject constructor(
         }
     }
 
-    private suspend fun fetchAndProcessRecentTracks(friends: List<User>): List<User> {
+    private suspend fun fetchAndProcessRecentTracks(friends: List<Friend>): List<Friend> {
         return friends.map { friend ->
             viewModelScope.async(Dispatchers.IO) {
                 friendsRepository.getRecentTracks(friend)
-                friendsRepository.cacheRecentTracks(
-                    friend.url,
-                    friend.recentTracks?.track ?: emptyList()
-                )
+                //TODO voltar a cachear
+//                friendsRepository.cacheRecentTracks(
+//                    friend.profileUrl,
+//                    friend.recentTracks
+//                )
                 friend
             }
         }.awaitAll()
@@ -180,13 +183,13 @@ class FriendsViewModel @Inject constructor(
         }
     }
 
-    private fun sortFriends(friends: List<User>, sortingType: SortingType): List<User> {
+    private fun sortFriends(friends: List<Friend>, sortingType: SortingType): List<Friend> {
         return when (sortingType) {
             SortingType.DEFAULT -> friends
-            SortingType.ALPHABETICAL -> friends.sortedBy { (it.realname.ifEmpty { it.name })?.lowercase() }
+            SortingType.ALPHABETICAL -> friends.sortedBy { (it.realName.ifEmpty { it.name }).lowercase() }
             SortingType.RECENTLY_PLAYED -> friends.sortedWith(
-                compareByDescending<User> { it.recentTracks?.track?.firstOrNull()?.dateInfo == null }
-                    .thenByDescending { it.recentTracks?.track?.firstOrNull()?.dateInfo?.formattedDate }
+                compareByDescending<Friend> { it.recentTracks.firstOrNull()?.date == null }
+                    .thenByDescending { it.recentTracks.firstOrNull()?.date }
             )
         }
     }

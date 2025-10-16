@@ -11,13 +11,13 @@ import androidx.glance.layout.Row
 import androidx.glance.layout.Spacer
 import androidx.glance.layout.height
 import androidx.glance.text.TextStyle
-import com.mno.jamscope.data.model.User
+import com.mno.jamscope.domain.model.Friend
 
 @Composable
 fun LargeWidgetDesign(
     modifier: GlanceModifier,
     context: Context,
-    friend: User?,
+    friend: Friend?,
     textStyle: TextStyle,
     imageBitmap: Bitmap?,
 ) {

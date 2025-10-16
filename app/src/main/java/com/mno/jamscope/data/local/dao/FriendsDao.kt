@@ -4,25 +4,25 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.mno.jamscope.data.local.FriendEntity
-import com.mno.jamscope.data.local.RecentTrackEntity
+import com.mno.jamscope.data.local.entity.FriendEntity
+import com.mno.jamscope.data.local.entity.TrackEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface FriendsDao {
     @Query("SELECT * FROM friend")
-    fun getAllUsers(): Flow<List<FriendEntity>>
+    fun getAllFriends(): Flow<List<FriendEntity>>
 
-    @Query("SELECT * FROM recent_tracks WHERE userUrl = :userUrl")
-    fun getRecentTracksForUser(userUrl: String): Flow<List<RecentTrackEntity>>
+    @Query("SELECT * FROM recent_tracks WHERE ownerUrl = :userUrl")
+    fun getRecentTracksForUser(userUrl: String): Flow<List<TrackEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertUsers(users: List<FriendEntity>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertRecentTracks(tracks: List<RecentTrackEntity>)
+    suspend fun insertRecentTracks(tracks: List<TrackEntity>)
 
-    @Query("DELETE FROM recent_tracks WHERE userUrl = :userUrl")
+    @Query("DELETE FROM recent_tracks WHERE ownerUrl = :userUrl")
     suspend fun deleteRecentTracksForUser(userUrl: String)
 
     @Query("DELETE FROM friend")

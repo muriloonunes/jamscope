@@ -4,24 +4,24 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.mno.jamscope.data.local.RecentTrackEntity
-import com.mno.jamscope.data.local.UserProfileEntity
+import com.mno.jamscope.data.local.entity.TrackEntity
+import com.mno.jamscope.data.local.entity.UserEntity
 
 @Dao
 interface UserProfileDao {
     @Query("SELECT * FROM user_profile")
-    fun getUserProfile(): UserProfileEntity
+    fun getUserProfile(): UserEntity
 
-    @Query("SELECT * FROM recent_tracks WHERE userUrl = :userUrl")
-    fun getRecentTracksForUser(userUrl: String): List<RecentTrackEntity>
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertUserProfile(userProfile: UserProfileEntity)
+    @Query("SELECT * FROM recent_tracks WHERE ownerUrl = :userUrl")
+    fun getRecentTracksForUser(userUrl: String): List<TrackEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertRecentTracks(tracks: List<RecentTrackEntity>)
+    suspend fun insertUserProfile(userProfile: UserEntity)
 
-    @Query("DELETE FROM recent_tracks WHERE userUrl = :userUrl")
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertRecentTracks(tracks: List<TrackEntity>)
+
+    @Query("DELETE FROM recent_tracks WHERE ownerUrl = :userUrl")
     suspend fun deleteRecentTracksForUser(userUrl: String)
 
     @Query("DELETE FROM recent_tracks")

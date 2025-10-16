@@ -53,11 +53,11 @@ import coil3.request.ImageRequest
 import coil3.request.SuccessResult
 import coil3.toBitmap
 import com.mno.jamscope.R
-import com.mno.jamscope.data.model.User
-import com.mno.jamscope.util.Stuff
-import com.mno.jamscope.util.dateStringFormatter
+import com.mno.jamscope.domain.model.Friend
 import com.mno.jamscope.features.widgets.WidgetDataStoreManager
 import com.mno.jamscope.features.widgets.theme.JamscopeWidgetTheme
+import com.mno.jamscope.util.Stuff
+import com.mno.jamscope.util.dateStringFormatter
 import com.mno.jamscope.worker.FriendGroupWidgetWorker
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -69,7 +69,8 @@ class FriendGroupWidget : GlanceAppWidget() {
             val friendsList = WidgetDataStoreManager.getFriendsGroup(currentState())
             JamscopeWidgetTheme {
                 Box(
-                    modifier = GlanceModifier.background(GlanceTheme.colors.surface).cornerRadius(Stuff.WIDGET_CORNER_RADIUS)
+                    modifier = GlanceModifier.background(GlanceTheme.colors.surface)
+                        .cornerRadius(Stuff.WIDGET_CORNER_RADIUS)
                 ) {
                     LazyColumn(
                         modifier = GlanceModifier.fillMaxSize()
@@ -87,15 +88,13 @@ class FriendGroupWidget : GlanceAppWidget() {
     }
 
     @Composable
-    private fun WidgetDesign(context: Context, friend: User) {
+    private fun WidgetDesign(context: Context, friend: Friend) {
         val textStyle = TextStyle(
             color = GlanceTheme.colors.onSurface,
         )
         var imageBitmap by remember { mutableStateOf<Bitmap?>(null) }
         LaunchedEffect(friend) {
-            imageBitmap = friend.image.firstOrNull { it.size == "large" }?.url?.let {
-                loadBitmap(it, context)
-            }
+            imageBitmap = loadBitmap(friend.largeImageUrl, context)
         }
         Row(
             modifier = GlanceModifier.fillMaxSize().background(GlanceTheme.colors.surface)
@@ -108,7 +107,7 @@ class FriendGroupWidget : GlanceAppWidget() {
 
     @Composable
     private fun ProfileImage(
-        friend: User?, imageBitmap: Bitmap?
+        friend: Friend?, imageBitmap: Bitmap?,
     ) {
         val imageDescription = friend?.name?.let {
             LocalContext.current.getString(R.string.profile_pic_description, it)
@@ -129,13 +128,13 @@ class FriendGroupWidget : GlanceAppWidget() {
     }
 
     @Composable
-    private fun FriendInfo(friend: User?, textStyle: TextStyle, context: Context) {
+    private fun FriendInfo(friend: Friend?, textStyle: TextStyle, context: Context) {
         Column(
             horizontalAlignment = Alignment.Start, modifier = GlanceModifier.padding(start = 8.dp)
         ) {
             when {
                 friend == null -> NoFriendSelected(textStyle)
-                friend.recentTracks == null -> NoRecentTracks(textStyle, context)
+                friend.recentTracks.isEmpty() -> NoRecentTracks(textStyle, context)
                 else -> FriendListeningDetails(friend, textStyle, context)
             }
         }
@@ -158,31 +157,30 @@ class FriendGroupWidget : GlanceAppWidget() {
     }
 
     @Composable
-    private fun FriendListeningDetails(friend: User, textStyle: TextStyle, context: Context) {
-        val track = friend.recentTracks?.track?.firstOrNull()
+    private fun FriendListeningDetails(friend: Friend, textStyle: TextStyle, context: Context) {
+        val track = friend.recentTracks.firstOrNull()
 
         Text(
             text = context.getString(
                 R.string.friend_listening_to,
-                friend.realname.ifEmpty { friend.name!! }), style = textStyle, maxLines = 1
+                friend.realName.ifEmpty { friend.name }), style = textStyle, maxLines = 1
         )
 
         track?.let { it ->
-            Text(text = it.name + " • " + it.artist.name, style = textStyle, maxLines = 1)
+            Text(text = it.name + " • " + it.artistName, style = textStyle, maxLines = 1)
             Row(
                 modifier = GlanceModifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = track.album.name,
+                    text = track.albumName,
                     style = textStyle,
                     maxLines = 1,
                     modifier = GlanceModifier.defaultWeight()
                 )
 
-                val dateText = track.dateInfo?.formattedDate?.let {
-                    dateStringFormatter(it, true, context)
-                } ?: context.getString(R.string.now)
+                val dateText = dateStringFormatter(track.date, true, context)
+                    ?: context.getString(R.string.now)
 
                 Text(
                     text = dateText, style = TextStyle(
@@ -277,7 +275,7 @@ class WidgetRefreshAction : ActionCallback {
     override suspend fun onAction(
         context: Context,
         glanceId: GlanceId,
-        parameters: ActionParameters
+        parameters: ActionParameters,
     ) {
         WorkManager.getInstance(context).cancelUniqueWork("FriendGroupWidgetWorker")
 

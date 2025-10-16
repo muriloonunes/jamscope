@@ -1,12 +1,14 @@
 package com.mno.jamscope.data.api
 
 import android.util.Log
-import com.mno.jamscope.data.model.Profile
+import com.mno.jamscope.data.mapper.toUser
 import com.mno.jamscope.data.model.Resource
 import com.mno.jamscope.data.model.Resource.Error
 import com.mno.jamscope.data.model.Resource.Success
-import com.mno.jamscope.data.model.Session
-import com.mno.jamscope.data.model.SessionResponse
+import com.mno.jamscope.data.remote.dto.ProfileDto
+import com.mno.jamscope.data.remote.dto.SessionDto
+import com.mno.jamscope.data.remote.dto.SessionResponseDto
+import com.mno.jamscope.domain.model.User
 import com.mno.jamscope.util.Stuff
 import io.ktor.client.request.headers
 import io.ktor.client.request.post
@@ -72,7 +74,7 @@ class AuthRequest @Inject constructor(
         username: String,
         password: String,
         method: String,
-    ): Resource<Profile> {
+    ): Resource<User> {
         return try {
             val requestUrl = buildMobileAuthUrl(username, password, method)
             val response = withContext(Dispatchers.IO) {
@@ -86,9 +88,9 @@ class AuthRequest @Inject constructor(
                 Log.e("ApiRequest", "autenticar: ${response.bodyAsText()}")
                 Error(exceptions.handleError(response.status.value))
             } else {
-                val profile =
-                    withContext(Dispatchers.IO) { createProfile(response.bodyAsText(), password) }
-                profile?.let { Success(it) } ?: Error("Failed to process session response")
+                val user =
+                    withContext(Dispatchers.IO) { createUser(response.bodyAsText(), password) }
+                user?.let { Success(it) } ?: Error("Failed to process session response")
             }
         } catch (e: UnresolvedAddressException) {
             e.printStackTrace()
@@ -128,10 +130,10 @@ class AuthRequest @Inject constructor(
         }
     }
 
-    suspend fun isStillAuthenticated(profile: Profile, method: String): Boolean {
+    suspend fun isStillAuthenticated(user: User, method: String): Boolean {
         return try {
-            val username = profile.username
-            val password = profile.senha
+            val username = user.username
+            val password = user.password
             val requestUrl = buildMobileAuthUrl(username, password, method)
             val response = withContext(Dispatchers.IO) {
                 HttpClientProvider.client.post(requestUrl) {
@@ -145,8 +147,8 @@ class AuthRequest @Inject constructor(
                 false
             } else {
                 val sessionResponse =
-                    Stuff.JSON.decodeFromString<SessionResponse>(response.bodyAsText())
-                sessionResponse.session.key == profile.session.key
+                    Stuff.JSON.decodeFromString<SessionResponseDto>(response.bodyAsText())
+                sessionResponse.session.key == user.sessionKey
             }
         } catch (e: BadPaddingException) {
             Log.e("Auth", "Erro de descriptografia: ${e.message}")
@@ -157,17 +159,19 @@ class AuthRequest @Inject constructor(
         }
     }
 
-    private fun createProfile(responseBodyString: String, password: String): Profile? {
+    private fun createUser(responseBodyString: String, password: String): User? {
         return try {
-            val sessionResponse = Stuff.JSON.decodeFromString<SessionResponse>(responseBodyString)
-            Profile(
+            val sessionResponse =
+                Stuff.JSON.decodeFromString<SessionResponseDto>(responseBodyString)
+
+            ProfileDto(
                 username = sessionResponse.session.name,
                 subscriber = sessionResponse.session.subscriber,
-                session = Session(key = sessionResponse.session.key),
+                session = SessionDto(key = sessionResponse.session.key),
                 senha = password,
                 imageUrl = "",
                 profileUrl = "",
-            )
+            ).toUser()
         } catch (e: Exception) {
             e.printStackTrace()
             null

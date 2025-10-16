@@ -9,8 +9,8 @@ import androidx.glance.appwidget.state.getAppWidgetState
 import androidx.glance.appwidget.state.updateAppWidgetState
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.mno.jamscope.data.model.User
 import com.mno.jamscope.data.repository.FriendsRepository
+import com.mno.jamscope.domain.model.Friend
 import com.mno.jamscope.features.widgets.WidgetDataStoreManager
 import com.mno.jamscope.features.widgets.singlefriend.FriendListeningWidget
 import com.mno.jamscope.features.widgets.singlefriend.generateLastUpdatedString
@@ -49,7 +49,7 @@ class FriendListeningWidgetWorker(
         }
     }
 
-    private suspend fun updateWidgetState(glanceId: GlanceId, friend: User) {
+    private suspend fun updateWidgetState(glanceId: GlanceId, friend: Friend) {
         FriendListeningWidget().apply {
             updateAppWidgetState(applicationContext, glanceId) { state ->
                 WidgetDataStoreManager.saveFriend(state, friend)

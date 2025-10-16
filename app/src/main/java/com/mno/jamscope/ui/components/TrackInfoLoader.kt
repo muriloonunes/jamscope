@@ -1,5 +1,6 @@
 package com.mno.jamscope.ui.components
 
+import android.util.Log
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -31,7 +32,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.mno.jamscope.R
-import com.mno.jamscope.data.model.Track
+import com.mno.jamscope.domain.model.Track
 import com.mno.jamscope.ui.components.animations.NowPlayingAnimation
 import com.mno.jamscope.util.Stuff.searchMusicIntent
 import com.mno.jamscope.util.dateStringFormatter
@@ -45,6 +46,7 @@ fun LoadTrackInfo(
     nowPlaying: Boolean = false,
     textColor: Color,
 ) {
+    Log.d("LoadTrackInfo", "Track: $track")
     val context = LocalContext.current
     val color =
         if (nowPlaying) MaterialTheme.colorScheme.onPrimaryContainer else textColor
@@ -66,7 +68,7 @@ fun LoadTrackInfo(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = track.album.name.ifEmpty { stringResource(R.string.unknown_album) },
+                text = track.albumName.ifEmpty { stringResource(R.string.unknown_album) },
                 style = MaterialTheme.typography.labelLarge.copy(
                     color = color
                 ),
@@ -77,7 +79,7 @@ fun LoadTrackInfo(
                     .basicMarquee()
             )
 
-            if (track.dateInfo?.formattedDate == null) {
+            if (track.date.isEmpty()) {
                 // O usuário está ouvindo no momento
                 if (playingAnimationEnabled) {
                     NowPlayingAnimation(nowPlaying)
@@ -98,7 +100,7 @@ fun LoadTrackInfo(
             } else {
                 Text(
                     text = dateStringFormatter(
-                        track.dateInfo.formattedDate,
+                        track.date,
                         false,
                         null
                     ),
@@ -118,7 +120,7 @@ fun LoadTrackInfo(
         }
 
         Text(
-            text = track.artist.name,
+            text = track.artistName,
             style = MaterialTheme.typography.labelMedium.copy(
                 color = color
             ),
