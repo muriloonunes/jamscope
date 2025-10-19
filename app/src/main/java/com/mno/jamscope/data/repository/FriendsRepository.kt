@@ -1,14 +1,13 @@
 package com.mno.jamscope.data.repository
 
-import com.mno.jamscope.data.local.dao.FriendsDao
-import com.mno.jamscope.data.mapper.toDomain
-import com.mno.jamscope.data.mapper.toEntity
-import com.mno.jamscope.data.session.UserDataStoreManager
+import com.mno.jamscope.data.local.datastore.UserDataStoreManager
+import com.mno.jamscope.data.local.db.dao.FriendsDao
+import com.mno.jamscope.data.local.mapper.toDomain
+import com.mno.jamscope.data.local.mapper.toEntity
 import com.mno.jamscope.domain.model.Friend
 import com.mno.jamscope.domain.model.Track
 import com.mno.jamscope.util.SortingType
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -34,13 +33,13 @@ class FriendsRepository @Inject constructor(
     fun getCachedFriends(): Flow<List<Friend>> = friendsDao.getAllFriends().map { friendEntities ->
         friendEntities.map { friendEntity ->
             val recentTracks =
-                friendsDao.getRecentTracksForUser(friendEntity.url).firstOrNull() ?: emptyList()
+                friendsDao.getRecentTracksForUser(friendEntity.url)
             friendEntity.toDomain(recentTracks)
         }
     }
 
-    fun getCachedRecentTracks(userUrl: String): Flow<List<Track>> {
-        return friendsDao.getRecentTracksForUser(userUrl).map { list -> list.map { it.toDomain() } }
+    fun getCachedRecentTracks(userUrl: String): List<Track> {
+        return friendsDao.getRecentTracksForUser(userUrl).map { it.toDomain() }
     }
 
     suspend fun cacheFriends(users: List<Friend>) {

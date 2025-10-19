@@ -179,8 +179,9 @@ class FriendGroupWidget : GlanceAppWidget() {
                     modifier = GlanceModifier.defaultWeight()
                 )
 
-                val dateText = dateStringFormatter(track.date, true, context)
-                    ?: context.getString(R.string.now)
+                val dateText = track.date?.let {
+                    dateStringFormatter(it, true, context)
+                } ?: context.getString(R.string.now)
 
                 Text(
                     text = dateText, style = TextStyle(

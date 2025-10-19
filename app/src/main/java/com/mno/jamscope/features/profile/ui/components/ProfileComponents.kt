@@ -136,7 +136,7 @@ fun ProfileTracksSection(
         itemsIndexed(
             items = userRecentTracks,
             key = { index, track -> "$index${track.name}" }) { index, track ->
-            val nowPlaying = track.isNowPlaying
+            val nowPlaying = track.date == null
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier

@@ -1,10 +1,10 @@
 package com.mno.jamscope.data.repository
 
-import com.mno.jamscope.data.local.dao.UserProfileDao
-import com.mno.jamscope.data.mapper.toDomain
-import com.mno.jamscope.data.mapper.toEntity
-import com.mno.jamscope.data.model.Resource
-import com.mno.jamscope.data.session.UserDataStoreManager
+import com.mno.jamscope.data.local.db.dao.UserProfileDao
+import com.mno.jamscope.data.local.mapper.toDomain
+import com.mno.jamscope.data.local.mapper.toEntity
+import com.mno.jamscope.domain.Resource
+import com.mno.jamscope.data.local.datastore.UserDataStoreManager
 import com.mno.jamscope.domain.model.Friend
 import com.mno.jamscope.domain.model.Track
 import com.mno.jamscope.domain.model.User

@@ -1,6 +1,6 @@
 package com.mno.jamscope.data.repository
 
-import com.mno.jamscope.data.session.SettingsDataStoreManager
+import com.mno.jamscope.data.local.datastore.SettingsDataStoreManager
 import com.mno.jamscope.features.settings.domain.model.SwitchState
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject

@@ -3,7 +3,7 @@ package com.mno.jamscope.features.login.viewmodel
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mno.jamscope.data.model.Resource
+import com.mno.jamscope.domain.Resource
 import com.mno.jamscope.data.repository.UserRepository
 import com.mno.jamscope.features.login.state.LoginState
 import com.mno.jamscope.ui.navigator.Destination

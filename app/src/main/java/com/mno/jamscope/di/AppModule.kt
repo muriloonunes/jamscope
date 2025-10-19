@@ -5,21 +5,19 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
-import androidx.room.Room
 import androidx.work.WorkerFactory
-import com.mno.jamscope.data.api.AuthRequest
-import com.mno.jamscope.data.api.Exceptions
-import com.mno.jamscope.data.api.ProfileRequest
-import com.mno.jamscope.data.api.UserRequest
-import com.mno.jamscope.data.local.AppDatabase
-import com.mno.jamscope.data.local.dao.FriendsDao
-import com.mno.jamscope.data.local.dao.UserProfileDao
+import com.mno.jamscope.data.local.datastore.SettingsDataStoreManager
+import com.mno.jamscope.data.local.datastore.UserDataStoreManager
+import com.mno.jamscope.data.local.db.dao.FriendsDao
+import com.mno.jamscope.data.local.db.dao.UserProfileDao
+import com.mno.jamscope.data.remote.api.AuthRequest
+import com.mno.jamscope.data.remote.api.Exceptions
+import com.mno.jamscope.data.remote.api.FriendRequest
+import com.mno.jamscope.data.remote.api.UserRequest
 import com.mno.jamscope.data.repository.ApiRepository
 import com.mno.jamscope.data.repository.FriendsRepository
 import com.mno.jamscope.data.repository.SettingsRepository
 import com.mno.jamscope.data.repository.UserRepository
-import com.mno.jamscope.data.session.SettingsDataStoreManager
-import com.mno.jamscope.data.session.UserDataStoreManager
 import com.mno.jamscope.ui.navigator.DefaultNavigator
 import com.mno.jamscope.ui.navigator.Navigator
 import com.mno.jamscope.worker.GenericWorkerFactory
@@ -28,6 +26,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import io.ktor.client.HttpClient
 import javax.inject.Singleton
 
 val Context.userDataStore: DataStore<Preferences> by preferencesDataStore(name = "user_data_store")
@@ -62,8 +61,16 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideApiRepository(authRequest: AuthRequest, userRequest: UserRequest, profileRequest: ProfileRequest): ApiRepository {
-        return ApiRepository(authRequest = authRequest, userRequest = userRequest, profileRequest = profileRequest)
+    fun provideApiRepository(
+        authRequest: AuthRequest,
+        friendRequest: FriendRequest,
+        userRequest: UserRequest,
+    ): ApiRepository {
+        return ApiRepository(
+            authRequest = authRequest,
+            friendRequest = friendRequest,
+            userRequest = userRequest
+        )
     }
 
     @Provides
@@ -71,45 +78,27 @@ object AppModule {
     fun provideUserRepository(
         dataStoreManager: UserDataStoreManager,
         apiRepository: ApiRepository,
-        userProfileDao: UserProfileDao
+        userProfileDao: UserProfileDao,
     ): UserRepository {
         return UserRepository(apiRepository, dataStoreManager, userProfileDao)
     }
 
     @Provides
     @Singleton
-    fun provideDatabase(@ApplicationContext context: Context): AppDatabase {
-        return Room.databaseBuilder(
-                context.applicationContext,
-                AppDatabase::class.java,
-                "app_database"
-            ).fallbackToDestructiveMigration(false).build()
-    }
-
-    @Provides
-    @Singleton
-    fun provideFriendsDao(database: AppDatabase): FriendsDao = database.friendsDao()
-
-    @Provides
-    @Singleton
     fun provideFriendsRepository(
         dataStoreManager: UserDataStoreManager,
         friendsDao: FriendsDao,
-        apiRepository: ApiRepository
+        apiRepository: ApiRepository,
     ): FriendsRepository {
         return FriendsRepository(dataStoreManager, friendsDao, apiRepository)
     }
 
     @Provides
     fun provideWorkerFactory(
-        repository: FriendsRepository
+        repository: FriendsRepository,
     ): WorkerFactory {
         return GenericWorkerFactory(repository)
     }
-
-    @Provides
-    @Singleton
-    fun provideUserProfileDao(database: AppDatabase): UserProfileDao = database.userProfileDao()
 
     @Provides
     @Singleton
@@ -128,13 +117,19 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideAuthRequest(exceptions: Exceptions): AuthRequest {
-        return AuthRequest(exceptions)
+    fun provideAuthRequest(
+        exceptions: Exceptions,
+        client: HttpClient,
+    ): AuthRequest {
+        return AuthRequest(exceptions, client)
     }
 
     @Provides
     @Singleton
-    fun provideProfileRequest(exceptions: Exceptions): ProfileRequest {
-        return ProfileRequest(exceptions)
+    fun provideProfileRequest(
+        exceptions: Exceptions,
+        client: HttpClient,
+    ): UserRequest {
+        return UserRequest(exceptions, client)
     }
 }

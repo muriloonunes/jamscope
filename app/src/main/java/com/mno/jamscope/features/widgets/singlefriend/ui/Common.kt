@@ -114,11 +114,9 @@ private fun FriendListeningDetails(
 
     FriendNameText(context, friend.realName, friend.name, textStyle)
     track?.let { it ->
-        val dateString = if (track.date.isNotEmpty()) {
-            dateStringFormatter(track.date, true, context)
-        } else {
-            context.getString(R.string.now)
-        }
+        val dateString = track.date?.let {
+            dateStringFormatter(it, true, context)
+        } ?: context.getString(R.string.now)
 
         if (forSmall) {
             Text(

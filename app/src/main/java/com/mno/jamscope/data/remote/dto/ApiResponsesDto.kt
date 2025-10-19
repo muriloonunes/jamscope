@@ -22,7 +22,8 @@ data class ProfileDto(
     val senha: String,
     val session: SessionDto,
     var subscriber: Int,
-    var imageUrl: String? = null,
+    var extraLargeImageUrl: String? = null,
+    var largeImageUrl: String? = null,
     var profileUrl: String? = null,
     var friends: List<FriendDto>? = null, // Na API: "user" serve como amigo também
     var country: String? = null,
@@ -59,7 +60,7 @@ data class FriendsDto(
  */
 @Serializable
 data class FriendDto(
-    val name: String? = null,
+    val name: String,
     val image: List<ImageDto>,
     val url: String,
     val country: String? = null,
@@ -91,6 +92,7 @@ data class TrackDto(
     val image: List<ImageDto>? = null,
     val album: AlbumDto,
     val name: String,
+    val url: String,
     @SerialName("date") val dateInfo: DateInfoDto? = null,
     @SerialName("@attr") val nowPlayingAttr: NowPlayingAttrDto? = null
 )

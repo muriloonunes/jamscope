@@ -1,11 +1,12 @@
 package com.mno.jamscope.features.profile.viewmodel
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mno.jamscope.R
 import com.mno.jamscope.data.flows.LogoutEventBus
-import com.mno.jamscope.data.model.Resource
+import com.mno.jamscope.domain.Resource
 import com.mno.jamscope.data.repository.SettingsRepository
 import com.mno.jamscope.data.repository.UserRepository
 import com.mno.jamscope.domain.model.Track
@@ -33,7 +34,7 @@ class ProfileViewModel @Inject constructor(
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing = _isRefreshing
         .onStart {
-            loadCachedProfile()
+//            loadCachedProfile()
             if (shouldRefresh()) refreshProfile()
         }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
@@ -77,7 +78,9 @@ class ProfileViewModel @Inject constructor(
                 val userProfile = userRepository.getCachedUserProfile()
                 _userProfile.value = userProfile
                 _recentTracks.value = userProfile.recentTracks
-            } catch (_: IllegalStateException) {
+            } catch (e: IllegalStateException) {
+                Log.e("ProfileViewModel", e.toString())
+                e.printStackTrace()
                 _errorMessage.value = context.getString(R.string.error_loading_profile)
             }
         }

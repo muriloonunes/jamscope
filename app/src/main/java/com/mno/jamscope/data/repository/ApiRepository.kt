@@ -1,17 +1,17 @@
 package com.mno.jamscope.data.repository
 
-import com.mno.jamscope.data.api.AuthRequest
-import com.mno.jamscope.data.api.ProfileRequest
-import com.mno.jamscope.data.api.UserRequest
-import com.mno.jamscope.data.model.Resource
+import com.mno.jamscope.data.remote.api.AuthRequest
+import com.mno.jamscope.data.remote.api.UserRequest
+import com.mno.jamscope.data.remote.api.FriendRequest
+import com.mno.jamscope.domain.Resource
 import com.mno.jamscope.domain.model.Friend
 import com.mno.jamscope.domain.model.User
 import javax.inject.Inject
 
 class ApiRepository @Inject constructor(
     private val authRequest: AuthRequest,
-    private val profileRequest: ProfileRequest,
     private val userRequest: UserRequest,
+    private val friendRequest: FriendRequest,
 ) {
     suspend fun authenticateMobile(
         username: String,
@@ -34,18 +34,18 @@ class ApiRepository @Inject constructor(
     }
 
     suspend fun getUserInfo(user: User) {
-        profileRequest.getUserInfo(user)
+        userRequest.getUserInfo(user)
     }
 
     suspend fun getProfileRecentTracks(user: User): Resource<Unit> {
-        return profileRequest.getRecentTracks(user)
+        return userRequest.getRecentTracks(user)
     }
 
     suspend fun getProfileFriends(username: String): Resource<List<Friend>> {
-        return profileRequest.getProfileFriends(username)
+        return userRequest.getUserFriends(username)
     }
 
     suspend fun getFriendRecentTracks(friend: Friend) {
-        userRequest.getFriendRecentTracks(friend)
+        friendRequest.getFriendRecentTracks(friend)
     }
 }

@@ -5,10 +5,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mno.jamscope.data.flows.LogoutEventBus
 import com.mno.jamscope.data.flows.WidgetIntentBus
-import com.mno.jamscope.data.model.Resource
 import com.mno.jamscope.data.repository.FriendsRepository
 import com.mno.jamscope.data.repository.SettingsRepository
 import com.mno.jamscope.data.repository.UserRepository
+import com.mno.jamscope.domain.Resource
 import com.mno.jamscope.domain.model.Friend
 import com.mno.jamscope.domain.model.Track
 import com.mno.jamscope.features.settings.domain.model.SwitchState
