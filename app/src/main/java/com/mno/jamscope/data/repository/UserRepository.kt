@@ -12,6 +12,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
+@Deprecated(
+    "This class is deprecated, use UserRepositoryImpl instead",
+    ReplaceWith("UserRepositoryImpl"),
+)
 class UserRepository @Inject constructor(
     private val apiRepository: ApiRepository,
     private val userDataStoreManager: UserDataStoreManager,

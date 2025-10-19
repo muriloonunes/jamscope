@@ -2,7 +2,7 @@ package com.mno.jamscope.data.repository
 
 import android.content.Context
 import com.mno.jamscope.data.local.datastore.UserDataStore
-import com.mno.jamscope.data.mapper.toUser
+import com.mno.jamscope.data.remote.mapper.toUser
 import com.mno.jamscope.data.remote.api.LastFmServiceApi
 import com.mno.jamscope.data.remote.api.handleError
 import com.mno.jamscope.data.remote.dto.ProfileDto

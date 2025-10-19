@@ -6,8 +6,8 @@ import com.mno.jamscope.data.local.datastore.UserDataStore
 import com.mno.jamscope.data.local.db.dao.UserProfileDao
 import com.mno.jamscope.data.local.mapper.toDomain
 import com.mno.jamscope.data.local.mapper.toEntity
-import com.mno.jamscope.data.mapper.toFriend
-import com.mno.jamscope.data.mapper.toTrack
+import com.mno.jamscope.data.remote.mapper.toFriend
+import com.mno.jamscope.data.remote.mapper.toTrack
 import com.mno.jamscope.data.remote.api.LastFmServiceApi
 import com.mno.jamscope.data.remote.api.handleError
 import com.mno.jamscope.domain.Resource

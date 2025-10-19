@@ -8,6 +8,10 @@ import com.mno.jamscope.domain.model.Friend
 import com.mno.jamscope.domain.model.User
 import javax.inject.Inject
 
+@Deprecated(
+    "This class is deprecated, use LoginRepositoryImpl instead",
+    ReplaceWith("LoginRepositoryImpl"),
+)
 class ApiRepository @Inject constructor(
     private val authRequest: AuthRequest,
     private val userRequest: UserRequest,

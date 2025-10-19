@@ -1,7 +1,7 @@
 package com.mno.jamscope.data.remote.api
 
 import android.util.Log
-import com.mno.jamscope.data.mapper.toUser
+import com.mno.jamscope.data.remote.mapper.toUser
 import com.mno.jamscope.domain.Resource
 import com.mno.jamscope.domain.Resource.Error
 import com.mno.jamscope.domain.Resource.Success
@@ -24,6 +24,10 @@ import java.security.MessageDigest
 import javax.crypto.BadPaddingException
 import javax.inject.Inject
 
+@Deprecated(
+    "This class is deprecated, use LastFmServiceApi instead",
+    ReplaceWith("LastFmServiceApi"),
+)
 class AuthRequest @Inject constructor(
     private val exceptions: Exceptions,
     private val client: HttpClient,

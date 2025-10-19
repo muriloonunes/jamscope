@@ -1,4 +1,4 @@
-package com.mno.jamscope.data.mapper
+package com.mno.jamscope.data.remote.mapper
 
 import com.mno.jamscope.data.remote.dto.FriendDto
 import com.mno.jamscope.data.remote.dto.ProfileDto

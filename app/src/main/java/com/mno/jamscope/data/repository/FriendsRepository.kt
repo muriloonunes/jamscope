@@ -12,6 +12,10 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
+@Deprecated(
+    "This class is deprecated, use FriendRepositoryImpl instead",
+    ReplaceWith("FriendRepositoryImpl"),
+)
 class FriendsRepository @Inject constructor(
     private val userDataStoreManager: UserDataStoreManager,
     private val friendsDao: FriendsDao,

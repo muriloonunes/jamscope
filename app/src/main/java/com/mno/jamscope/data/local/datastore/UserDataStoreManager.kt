@@ -15,6 +15,10 @@ import kotlinx.serialization.json.Json
 import java.util.Base64
 import javax.inject.Inject
 
+@Deprecated(
+    "This class is deprecated, use UserDataStore instead",
+    ReplaceWith("UserDataStore"),
+)
 class UserDataStoreManager @Inject constructor(
     private val dataStore: DataStore<Preferences>
 ) {

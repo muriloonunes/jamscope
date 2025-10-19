@@ -5,6 +5,10 @@ import com.mno.jamscope.features.settings.domain.model.SwitchState
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
+@Deprecated(
+    "This class is deprecated, use SettingsRepositoryImpl instead",
+    ReplaceWith("SettingsRepositoryImpl"),
+)
 class SettingsRepository @Inject constructor(
     private val settingsDataStoreManager: SettingsDataStoreManager
 ) {

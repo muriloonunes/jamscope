@@ -1,8 +1,8 @@
 package com.mno.jamscope.data.remote.api
 
 import android.util.Log
-import com.mno.jamscope.data.mapper.toFriend
-import com.mno.jamscope.data.mapper.toTrack
+import com.mno.jamscope.data.remote.mapper.toFriend
+import com.mno.jamscope.data.remote.mapper.toTrack
 import com.mno.jamscope.domain.Resource
 import com.mno.jamscope.domain.Resource.Error
 import com.mno.jamscope.domain.Resource.Success
@@ -36,6 +36,10 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 import javax.inject.Inject
 
+@Deprecated(
+    "This class is deprecated, use LastFmServiceApi instead",
+    ReplaceWith("LastFmServiceApi"),
+)
 class UserRequest @Inject constructor(
     private val exceptions: Exceptions,
     private val client: HttpClient,

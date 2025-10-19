@@ -10,8 +10,12 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
+@Deprecated(
+    "This class is deprecated, use SettingsDataStore instead",
+    ReplaceWith("SettingsDataStore"),
+)
 class SettingsDataStoreManager @Inject constructor(
-    private val dataStore: DataStore<Preferences>
+    private val dataStore: DataStore<Preferences>,
 ) {
     companion object {
         private fun getKey(key: String) = booleanPreferencesKey("switch_state_$key")
@@ -30,7 +34,7 @@ class SettingsDataStoreManager @Inject constructor(
         }
     }
 
-    val themePreferenceFlow : Flow<Int> = dataStore.data.map { preferences ->
+    val themePreferenceFlow: Flow<Int> = dataStore.data.map { preferences ->
         preferences[PreferencesKeys.THEME] ?: AppTheme.SYSTEM.ordinal
     }
 

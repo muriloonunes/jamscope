@@ -1,7 +1,7 @@
 package com.mno.jamscope.data.remote.api
 
 import android.util.Log
-import com.mno.jamscope.data.mapper.toTrack
+import com.mno.jamscope.data.remote.mapper.toTrack
 import com.mno.jamscope.data.remote.dto.RecentTracksResponseDto
 import com.mno.jamscope.domain.model.Friend
 import com.mno.jamscope.util.Stuff
@@ -22,6 +22,10 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 import javax.inject.Inject
 
+@Deprecated(
+    "This class is deprecated, use LastFmServiceApi instead",
+    ReplaceWith("LastFmServiceApi"),
+)
 class FriendRequest @Inject constructor(
     private val client: HttpClient,
 ) {
