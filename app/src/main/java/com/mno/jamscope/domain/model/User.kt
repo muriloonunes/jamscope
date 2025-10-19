@@ -17,3 +17,20 @@ data class User(
     var friends: List<Friend> = emptyList(),
     var recentTracks: List<Track> = emptyList()
 )
+
+fun User.mergeWith(fullUser: User): User {
+    return User(
+        username = this.username,
+        password = this.password,
+        sessionKey = this.sessionKey,
+        subscriber = fullUser.subscriber,
+        largeImageUrl = fullUser.largeImageUrl,
+        extraLargeImageUrl = fullUser.extraLargeImageUrl,
+        profileUrl = fullUser.profileUrl,
+        country = fullUser.country,
+        realName = fullUser.realName,
+        playcount = fullUser.playcount,
+        friends = fullUser.friends,
+        recentTracks = this.recentTracks
+    )
+}

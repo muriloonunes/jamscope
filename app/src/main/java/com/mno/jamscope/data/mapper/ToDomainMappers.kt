@@ -1,16 +1,14 @@
 package com.mno.jamscope.data.mapper
 
-import android.util.Log
 import com.mno.jamscope.data.remote.dto.FriendDto
 import com.mno.jamscope.data.remote.dto.ProfileDto
 import com.mno.jamscope.data.remote.dto.TrackDto
 import com.mno.jamscope.domain.model.Friend
 import com.mno.jamscope.domain.model.Track
 import com.mno.jamscope.domain.model.User
-import java.time.LocalDateTime
+import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import java.util.Locale
 
 fun ProfileDto.toUser(): User {
     return User(
@@ -18,8 +16,8 @@ fun ProfileDto.toUser(): User {
         password = senha,
         sessionKey = session.key,
         subscriber = subscriber == 1,
-        largeImageUrl = imageUrl ?: "",
-        extraLargeImageUrl = imageUrl ?: "",
+        largeImageUrl = extraLargeImageUrl ?: "",
+        extraLargeImageUrl = extraLargeImageUrl ?: "",
         profileUrl = profileUrl ?: "",
         country = country ?: "",
         realName = realname,
@@ -34,7 +32,7 @@ fun FriendDto.toFriend(): Friend {
     val extraLargeUrl = image.find { it.size == "extralarge" }?.url ?: ""
 
     return Friend(
-        name = name ?: "",
+        name = name,
         largeImageUrl = largeUrl,
         extraLargeImageUrl = extraLargeUrl,
         profileUrl = url,
@@ -47,23 +45,13 @@ fun FriendDto.toFriend(): Friend {
 }
 
 fun TrackDto.toTrack(): Track {
-    Log.d("TrackDto", "Converting TrackDto: $this")
     val largeUrl = image?.find { it.size == "large" }?.url ?: ""
     val extraLargeUrl = image?.find { it.size == "extralarge" }?.url ?: ""
-
-    val formattedDate = dateInfo?.let {
-        try {
-            val localDateTime = LocalDateTime.parse(
-                it.formattedDate,
-                DateTimeFormatter.ofPattern("dd MMM yyyy, HH:mm", Locale.ENGLISH)
-            )
-            val zonedDateTime = localDateTime.atZone(ZoneId.of("UTC"))
-                .withZoneSameInstant(ZoneId.systemDefault())
-            zonedDateTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
-        } catch (_: Exception) {
-            ""
-        }
-    } ?: ""
+    val date = dateInfo?.formattedDate?.let {
+        val instant = Instant.parse(it)
+        val zonedDateTime = instant.atZone(ZoneId.systemDefault())
+        zonedDateTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
+    }
 
     return Track(
         name = name,
@@ -71,7 +59,7 @@ fun TrackDto.toTrack(): Track {
         albumName = album.name,
         largeImageUrl = largeUrl,
         extraLargeImageUrl = extraLargeUrl,
-        date = formattedDate,
-        isNowPlaying = nowPlayingAttr?.nowplaying == "true"
+        date = date,
+        url = url,
     )
 }
