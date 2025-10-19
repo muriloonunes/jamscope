@@ -3,7 +3,7 @@ package com.mno.jamscope.data.local.db.entity
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "user_profile")
+@Entity(tableName = "user")
 data class UserEntity(
     @PrimaryKey val url: String,
     val username: String,

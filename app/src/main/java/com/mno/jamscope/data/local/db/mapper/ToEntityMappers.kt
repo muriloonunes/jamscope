@@ -1,4 +1,4 @@
-package com.mno.jamscope.data.local.mapper
+package com.mno.jamscope.data.local.db.mapper
 
 import com.mno.jamscope.data.local.db.entity.FriendEntity
 import com.mno.jamscope.data.local.db.entity.TrackEntity
@@ -24,27 +24,41 @@ fun User.toEntity(): UserEntity {
 
 fun Friend.toEntity(): FriendEntity {
     return FriendEntity(
-        url = this.profileUrl,
+        profileUrl = this.profileUrl,
         name = this.name,
         country = this.country,
         realname = this.realName,
         subscriber = this.subscriber,
         playcount = this.playcount,
         imageLarge = this.largeImageUrl,
-        imageExtraLarge = this.extraLargeImageUrl
+        imageExtraLarge = this.extraLargeImageUrl,
     )
 }
 
-fun Track.toEntity(userUrl: String): TrackEntity {
+fun Track.toUserEntity(userUrl: String): TrackEntity {
     return TrackEntity(
-        ownerUrl = userUrl,
+        userOwnerUrl = userUrl,
         name = this.name,
         artistName = this.artistName,
         albumName = this.albumName,
         largeImageUrl = this.largeImageUrl,
         extraLargeImageUrl = this.extraLargeImageUrl,
         date = this.date,
-        url = this.url
+        url = this.url,
+        friendOwnerUrl = null
+    )
+}
+fun Track.toFriendEntity(friendUrl: String): TrackEntity {
+    return TrackEntity(
+        friendOwnerUrl = friendUrl,
+        name = this.name,
+        artistName = this.artistName,
+        albumName = this.albumName,
+        largeImageUrl = this.largeImageUrl,
+        extraLargeImageUrl = this.extraLargeImageUrl,
+        date = this.date,
+        url = this.url,
+        userOwnerUrl = null
     )
 }
 
@@ -67,7 +81,7 @@ fun UserEntity.toDomain(recentTracks: List<TrackEntity>): User {
 fun FriendEntity.toDomain(recentTracks: List<TrackEntity>): Friend {
     return Friend(
         name = this.name,
-        profileUrl = this.url,
+        profileUrl = this.profileUrl,
         country = this.country,
         realName = this.realname,
         subscriber = this.subscriber,

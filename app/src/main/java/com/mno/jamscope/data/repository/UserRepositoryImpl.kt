@@ -3,13 +3,14 @@ package com.mno.jamscope.data.repository
 import android.content.Context
 import com.mno.jamscope.data.local.datastore.SettingsDataStore
 import com.mno.jamscope.data.local.datastore.UserDataStore
-import com.mno.jamscope.data.local.db.dao.UserProfileDao
-import com.mno.jamscope.data.local.mapper.toDomain
-import com.mno.jamscope.data.local.mapper.toEntity
-import com.mno.jamscope.data.remote.mapper.toFriend
-import com.mno.jamscope.data.remote.mapper.toTrack
+import com.mno.jamscope.data.local.db.dao.TrackDao
+import com.mno.jamscope.data.local.db.dao.UserDao
+import com.mno.jamscope.data.local.db.mapper.toDomain
+import com.mno.jamscope.data.local.db.mapper.toEntity
 import com.mno.jamscope.data.remote.api.LastFmServiceApi
 import com.mno.jamscope.data.remote.api.handleError
+import com.mno.jamscope.data.remote.mapper.toFriend
+import com.mno.jamscope.data.remote.mapper.toTrack
 import com.mno.jamscope.domain.Resource
 import com.mno.jamscope.domain.Resource.Error
 import com.mno.jamscope.domain.model.Friend
@@ -28,7 +29,8 @@ class UserRepositoryImpl @Inject constructor(
     private val serviceApi: LastFmServiceApi,
     private val userDataStore: UserDataStore,
     private val settingsDataStore: SettingsDataStore,
-    private val userDao: UserProfileDao,
+    private val userDao: UserDao,
+    private val trackDao: TrackDao,
     @param:ApplicationContext private val context: Context,
 ) : UserRepository {
     override suspend fun getUserInfoFromApi(username: String): Resource<User> {
@@ -102,9 +104,9 @@ class UserRepositoryImpl @Inject constructor(
         val user = userDataStore.getUserProfile()
         if (user != null) return@withContext user
 
-        val fallbackProfile = userDao.getUserProfile()
-        val recentTracks = userDao.getRecentTracksForUser(fallbackProfile.url)
-        val restored = fallbackProfile.toDomain(recentTracks)
+        val fallbackProfile = userDao.getUser()
+        val tracks = trackDao.getUserTracks(fallbackProfile.url)
+        val restored = fallbackProfile.toDomain(tracks)
 
         saveUser(restored)
         restored
@@ -113,7 +115,9 @@ class UserRepositoryImpl @Inject constructor(
     override suspend fun saveUser(user: User) {
         withContext(Dispatchers.IO) {
             userDataStore.saveUserProfile(user)
-            userDao.insertUserProfile(user.toEntity())
+            userDao.insertUser(user.toEntity())
+            val trackEntities = user.recentTracks.map { it.toEntity(user.profileUrl) }
+            trackDao.insertTracks(trackEntities)
         }
     }
 
@@ -122,7 +126,7 @@ class UserRepositoryImpl @Inject constructor(
             userDataStore.clearUserSession()
             settingsDataStore.clearUserPrefs()
             userDao.deleteUserProfile()
-            userDao.deleteAllRecentTracks()
+            trackDao.deleteAllRecentTracks()
         }
     }
 }

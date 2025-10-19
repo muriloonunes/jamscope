@@ -6,28 +6,29 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 
 @Entity(
-    tableName = "recent_tracks",
+    tableName = "tracks",
     foreignKeys = [
         ForeignKey(
             entity = FriendEntity::class,
-            parentColumns = ["url"],
-            childColumns = ["ownerUrl"],
+            parentColumns = ["profileUrl"],
+            childColumns = ["friendOwnerUrl"],
             onDelete = ForeignKey.CASCADE,
             onUpdate = ForeignKey.CASCADE,
         ),
         ForeignKey(
             entity = UserEntity::class,
             parentColumns = ["url"],
-            childColumns = ["ownerUrl"],
+            childColumns = ["userOwnerUrl"],
             onDelete = ForeignKey.CASCADE,
             onUpdate = ForeignKey.CASCADE,
         )
     ],
-    indices = [Index("ownerUrl")]
+    indices = [Index("friendOwnerUrl"), Index("userOwnerUrl")],
 )
 data class TrackEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    val ownerUrl: String,
+    val friendOwnerUrl: String?,
+    val userOwnerUrl: String?,
     val name: String,
     val artistName: String,
     val albumName: String,

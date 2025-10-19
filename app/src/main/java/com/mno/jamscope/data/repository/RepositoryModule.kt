@@ -4,9 +4,12 @@ import android.content.Context
 import com.mno.jamscope.data.local.datastore.SettingsDataStore
 import com.mno.jamscope.data.local.datastore.UserDataStore
 import com.mno.jamscope.data.local.db.dao.FriendsDao
-import com.mno.jamscope.data.local.db.dao.UserProfileDao
+import com.mno.jamscope.data.local.db.dao.TrackDao
+import com.mno.jamscope.data.local.db.dao.UserDao
 import com.mno.jamscope.data.remote.api.LastFmServiceApi
+import com.mno.jamscope.domain.repository.FriendRepository
 import com.mno.jamscope.domain.repository.LoginRepository
+import com.mno.jamscope.domain.repository.SettingsRepository
 import com.mno.jamscope.domain.repository.UserRepository
 import dagger.Module
 import dagger.Provides
@@ -38,7 +41,8 @@ object RepositoryModule {
         serviceApi: LastFmServiceApi,
         userDataStore: UserDataStore,
         settingsDataStore: SettingsDataStore,
-        userDao: UserProfileDao,
+        userDao: UserDao,
+        trackDao: TrackDao,
         @ApplicationContext context: Context,
     ): UserRepository {
         return UserRepositoryImpl(
@@ -46,6 +50,7 @@ object RepositoryModule {
             userDataStore = userDataStore,
             settingsDataStore = settingsDataStore,
             userDao = userDao,
+            trackDao = trackDao,
             context = context
         )
     }
@@ -54,16 +59,16 @@ object RepositoryModule {
     @Singleton
     fun provideFriendRepository(
         serviceApi: LastFmServiceApi,
-        userDataStore: UserDataStore,
         settingsDataStore: SettingsDataStore,
         friendsDao: FriendsDao,
+        trackDao: TrackDao,
         @ApplicationContext context: Context,
-    ): FriendRepositoryImpl {
+    ): FriendRepository {
         return FriendRepositoryImpl(
-            serviceApi,
-            userDataStore = userDataStore,
+            serviceApi = serviceApi,
             settingsDataStore = settingsDataStore,
             friendsDao = friendsDao,
+            trackDao = trackDao,
             context = context,
         )
     }
@@ -72,7 +77,7 @@ object RepositoryModule {
     @Singleton
     fun provideSettingsRepository(
         settingsDataStore: SettingsDataStore,
-    ): SettingsRepositoryImpl {
+    ): SettingsRepository {
         return SettingsRepositoryImpl(
             settingsDataStore = settingsDataStore
         )

@@ -4,10 +4,12 @@ import android.content.Context
 import com.mno.jamscope.data.local.datastore.SettingsDataStore
 import com.mno.jamscope.data.local.datastore.UserDataStore
 import com.mno.jamscope.data.local.db.dao.FriendsDao
-import com.mno.jamscope.data.local.mapper.toDomain
-import com.mno.jamscope.data.remote.mapper.toTrack
+import com.mno.jamscope.data.local.db.dao.TrackDao
+import com.mno.jamscope.data.local.db.mapper.toDomain
+import com.mno.jamscope.data.local.db.mapper.toEntity
 import com.mno.jamscope.data.remote.api.LastFmServiceApi
 import com.mno.jamscope.data.remote.api.handleError
+import com.mno.jamscope.data.remote.mapper.toTrack
 import com.mno.jamscope.domain.Resource
 import com.mno.jamscope.domain.Resource.Error
 import com.mno.jamscope.domain.model.Friend
@@ -24,6 +26,7 @@ class FriendRepositoryImpl @Inject constructor(
     private val userDataStore: UserDataStore,
     private val settingsDataStore: SettingsDataStore,
     private val friendsDao: FriendsDao,
+    private val trackDao: TrackDao,
     @param:ApplicationContext private val context: Context,
 ) : FriendRepository {
     override suspend fun getRecentTracks(username: String): Resource<List<Track>> {
@@ -41,18 +44,23 @@ class FriendRepositoryImpl @Inject constructor(
 
     override suspend fun getFriends(): List<Friend> {
         return withContext(Dispatchers.IO) {
-            try {
-                val profile = userDataStore.getUserProfile() //talvez eu nao deveria fazer isso aqui?
-                profile?.friends ?: throw NoSuchElementException()
-            } catch (_: NoSuchElementException) {
-                val friends = friendsDao.getFriends().map {
-                    val recentTracks =
-                        friendsDao.getRecentTracksForUser(it.url)
-                    it.toDomain(recentTracks)
-                }
-                friends
-                //TODO achar um metodo de salvar o profile com os amigos atualizados do room novamente mas o metodo que salva o profile esta em outro repository
+            val friendEntities = friendsDao.getFriends()
+            friendEntities.map { friend ->
+                val tracks = trackDao.getUserTracks(friend.profileUrl)
+                friend.toDomain(tracks)
             }
+        }
+    }
+
+    override suspend fun saveFriends(friends: List<Friend>) {
+        withContext(Dispatchers.IO) {
+            val friendEntities = friends.map { it.toEntity() }
+            friendsDao.insertFriends(friendEntities)
+
+            val allTracks = friends.flatMap { friend ->
+                friend.recentTracks.map { it.toEntity(friend.profileUrl) }
+            }
+            trackDao.insertTracks(allTracks)
         }
     }
 

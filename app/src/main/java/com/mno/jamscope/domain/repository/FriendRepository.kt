@@ -8,6 +8,7 @@ import com.mno.jamscope.util.SortingType
 interface FriendRepository {
     suspend fun getRecentTracks(username: String): Resource<List<Track>>
     suspend fun getFriends(): List<Friend>
+    suspend fun saveFriends(friends: List<Friend>)
     suspend fun saveSortingType(sortingType: SortingType)
     suspend fun getSortingType(): SortingType
     suspend fun clearFriends()

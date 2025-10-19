@@ -5,7 +5,7 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "friend")
 data class FriendEntity(
-    @PrimaryKey val url: String,
+    @PrimaryKey val profileUrl: String,
     val name: String,
     val country: String,
     val realname: String,
