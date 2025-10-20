@@ -4,9 +4,14 @@ import android.content.Context
 import com.mno.jamscope.R
 import javax.inject.Inject
 
+@Deprecated(message = "This class and its method are deprecated")
 class Exceptions @Inject constructor(
     private val context: Context
 ) {
+    @Deprecated(
+        message = "This method is deprecated, use the extension function Context.handleError instead",
+        replaceWith = ReplaceWith("context.handleError(code)"),
+    )
     fun handleError(code: Int): String {
         val errorMessage = when (code) {
             6 -> context.getString(R.string.no_friends)
@@ -21,6 +26,7 @@ class Exceptions @Inject constructor(
         return errorMessage
     }
 }
+
 //TODO mover todas as funcoes que extendem Context pra um arquivo a parte
 fun Context.handleError(code: Int): String {
     val errorMessage = when (code) {

@@ -17,25 +17,29 @@ class UserRepository @Inject constructor(
     private val userDataStoreManager: UserDataStoreManager,
     private val userDao: UserDao,
 ) {
+    @Deprecated("This method is deprecated.")
     suspend fun getUserProfile(): User? {
         return userDataStoreManager.getUserProfile()
     }
 
+    @Deprecated("This method is deprecated.")
     suspend fun saveUserProfile(user: User) {
         userDataStoreManager.saveUserProfile(user)
-        //TODO voltar a cachear
 //        cacheUserProfile(profile)
     }
 
+    @Deprecated("This method is deprecated.")
     suspend fun clearUserSession() {
         userDataStoreManager.clearUserSession()
         userDao.deleteUserProfile()
     }
 
+    @Deprecated("This method is deprecated.")
     suspend fun isUserLoggedIn(): Boolean {
         return userDataStoreManager.isUserLoggedIn()
     }
 
+    @Deprecated("This method is deprecated.")
     suspend fun authenticateMobile(
         username: String,
         password: String,
@@ -44,6 +48,7 @@ class UserRepository @Inject constructor(
         return apiRepository.authenticateMobile(username, password, method)
     }
 
+    @Deprecated("This method is deprecated.")
     suspend fun authenticateWeb(
         token: String,
         method: String,
@@ -51,18 +56,22 @@ class UserRepository @Inject constructor(
         return apiRepository.authenticateWeb(token, method)
     }
 
+    @Deprecated("This method is deprecated.")
     suspend fun getUserFriends(username: String): Resource<List<Friend>> {
         return apiRepository.getProfileFriends(username)
     }
 
+    @Deprecated("This method is deprecated.")
     suspend fun getUserInfo(user: User) {
         return apiRepository.getUserInfo(user)
     }
 
+    @Deprecated("This method is deprecated.")
     suspend fun getRecentTracks(user: User): Resource<Unit> {
         return apiRepository.getProfileRecentTracks(user)
     }
 
+    @Deprecated("This method is deprecated.")
     private suspend fun cacheUserProfile(user: User) {
         val userProfile = user.toEntity()
         userDao.insertUser(userProfile)
@@ -84,8 +93,7 @@ class UserRepository @Inject constructor(
 //            } else {
 //                val fallbackProfile = userDataStoreManager.getUserProfile()!!
 //                if (fallbackProfile.profileUrl != null) {
-//                    //TODO voltar a cachear
-////                    cacheUserProfile(fallbackProfile)
+//                    cacheUserProfile(fallbackProfile)
 //                    return@withContext fallbackProfile
 //                } else {
 //                    throw IllegalStateException("No user profile found")
@@ -99,10 +107,12 @@ class UserRepository @Inject constructor(
 //        userDao.insertRecentTracks(trackEntities)
 //    }
 
+    @Deprecated("This method is deprecated.")
     suspend fun getAppVersion(): Int {
         return userDataStoreManager.getAppVersion()
     }
 
+    @Deprecated("This method is deprecated.")
     suspend fun saveAppVersion(version: Int) {
         userDataStoreManager.saveAppVersion(version)
     }

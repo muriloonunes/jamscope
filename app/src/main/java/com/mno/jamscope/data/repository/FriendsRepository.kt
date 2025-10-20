@@ -17,14 +17,17 @@ class FriendsRepository @Inject constructor(
     private val friendsDao: FriendsDao,
     private val apiRepository: ApiRepository,
 ) {
+    @Deprecated("This method is deprecated.")
     suspend fun saveSortingType(sortingType: SortingType) {
         userDataStoreManager.saveSortingType(sortingType)
     }
 
+    @Deprecated("This method is deprecated.")
     suspend fun getSortingType(): SortingType {
         return userDataStoreManager.getSortingType()
     }
 
+    @Deprecated("This method is deprecated.")
     fun getFriendsFromDataStore(): Flow<List<Friend>> = flow {
         val profile = userDataStoreManager.getUserProfile()
         emit(profile?.friends ?: emptyList())
@@ -42,6 +45,7 @@ class FriendsRepository @Inject constructor(
 //        return friendsDao.getRecentTracksForUser(userUrl).map { it.toDomain() }
 //    }
 
+    @Deprecated("This method is deprecated.")
     suspend fun cacheFriends(users: List<Friend>) {
 //        val friends = users.map { it.toEntity() }
 //        friendsDao.insertUsers(friends)
@@ -53,10 +57,12 @@ class FriendsRepository @Inject constructor(
 //        friendsDao.insertRecentTracks(trackEntities)
 //    }
 
+    @Deprecated("This method is deprecated.")
     suspend fun getRecentTracks(friend: Friend) {
         return apiRepository.getFriendRecentTracks(friend)
     }
 
+    @Deprecated("This method is deprecated.")
     suspend fun deleteFriends() {
         friendsDao.deleteAllFriends()
     }
