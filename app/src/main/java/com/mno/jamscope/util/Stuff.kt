@@ -17,9 +17,8 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import com.mno.jamscope.R
-import com.mno.jamscope.data.model.Token
+import com.mno.jamscope.domain.model.Token
 import com.mno.jamscope.domain.model.Track
-import kotlinx.serialization.json.Json
 import java.io.BufferedReader
 import java.io.InputStreamReader
 
@@ -29,18 +28,12 @@ object Stuff {
     const val LAST_SECRET = Token.LAST_FM_SECRET
     const val REFRESHING_TIME = 90000L // 1.5 minutes
     const val EMAIL = "murideveloper@protonmail.com"
-    const val BASE_URL = "https://ws.audioscrobbler.com/2.0/?"
     const val AUTH_URL = "https://www.last.fm/api/auth"
     const val DEEPLINK_PROTOCOL_NAME = "jamscope"
-    const val FORMAT_JSON = "format=json"
     const val DEFAULT_PROFILE_IMAGE =
         "https://lastfm.freetls.fastly.net/i/u/64s/2a96cbd8b46e442fc41c2b86b821562f.png"
-
     const val GITHUB_RELEASES_LINK = "https://github.com/muriloonunes/jamscope/releases/tag/v"
-
     const val FROM_WIDGET = "FROM_WIDGET"
-    val JSON = Json { ignoreUnknownKeys = true }
-
     fun Context.readRawFile(
         @RawRes fileRes: Int,
         expectedFileName: String,

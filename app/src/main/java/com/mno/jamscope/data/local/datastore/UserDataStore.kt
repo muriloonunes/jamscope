@@ -4,6 +4,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
+import androidx.datastore.preferences.core.stringPreferencesKey
 import com.mno.jamscope.domain.model.User
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -19,7 +20,7 @@ class UserDataStore @Inject constructor(
     @param:Named("user") private val dataStore: DataStore<Preferences>,
 ) {
     private object Keys {
-        val PROFILE_JSON = PreferencesKeys.PROFILE_JSON
+        val PROFILE_JSON = stringPreferencesKey("profile_json")
     }
 
     suspend fun saveUserProfile(user: User) {

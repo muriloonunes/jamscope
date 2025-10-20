@@ -3,7 +3,6 @@ package com.mno.jamscope.di
 import android.app.Application
 import android.content.Context
 import androidx.work.WorkerFactory
-import com.mno.jamscope.data.remote.api.Exceptions
 import com.mno.jamscope.domain.usecase.friend.GetFriendRecentTracksUseCase
 import com.mno.jamscope.ui.navigator.DefaultNavigator
 import com.mno.jamscope.ui.navigator.Navigator
@@ -11,7 +10,6 @@ import com.mno.jamscope.worker.GenericWorkerFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
