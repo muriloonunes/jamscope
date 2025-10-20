@@ -10,11 +10,13 @@ import com.mno.jamscope.domain.usecase.login.CheckLoginUseCase
 import com.mno.jamscope.ui.navigator.Destination
 import com.mno.jamscope.ui.navigator.NavigationAction
 import com.mno.jamscope.ui.navigator.Navigator
+import com.mno.jamscope.ui.state.MainState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -26,32 +28,33 @@ class MainViewModel @Inject constructor(
     private val checkLoginUseCase: CheckLoginUseCase,
     private val checkAppVersionUseCase: CheckAppVersionUseCase,
 ) : ViewModel() {
-    private val _isLoading = MutableStateFlow(true)
-    val isLoading get() = _isLoading.asStateFlow()
-
-    private val _startDestination = MutableStateFlow<Destination?>(null)
-    val startDestination get() = _startDestination.asStateFlow()
-
+    private val _state = MutableStateFlow(MainState())
+    val state = _state.asStateFlow()
     private val _navActions = MutableSharedFlow<NavigationAction>()
     val navActions: SharedFlow<NavigationAction> = _navActions
 
-    private val _showChangelog = MutableStateFlow(false)
-    val showChangelog = _showChangelog.asStateFlow()
-
     init {
         viewModelScope.launch {
+            settingsRepository.getThemePreferenceFlow().collect { pref ->
+                _state.update { it.copy(themePreference = pref) }
+            }
+        }
+        viewModelScope.launch {
             val isLoggedIn = checkLoginUseCase()
-            _startDestination.value = if (isLoggedIn) {
-                Destination.AppRoute
-            } else {
-                Destination.LoginRoute
-            }
-            _isLoading.value = false
+            val startDestination = if (isLoggedIn) Destination.AppRoute else Destination.LoginRoute
+
             val versionCode = BuildConfig.VERSION_CODE
-            if (checkAppVersionUseCase(versionCode)) {
-                _showChangelog.value = isLoggedIn
-                saveAppVersion(versionCode)
+            val showChangelog = checkAppVersionUseCase(versionCode) && isLoggedIn
+
+            _state.update {
+                it.copy(
+                    startDestination = startDestination,
+                    isLoading = false,
+                    showChangelog = showChangelog
+                )
             }
+
+            if (showChangelog) saveAppVersion(versionCode)
         }
         viewModelScope.launch {
             navigator.navigationActions.collect { action ->
@@ -67,7 +70,11 @@ class MainViewModel @Inject constructor(
     }
 
     fun onDismissChangelog() {
-        _showChangelog.value = false
+        _state.update {
+            it.copy(
+                showChangelog = false
+            )
+        }
         val versionCode = BuildConfig.VERSION_CODE
         saveAppVersion(versionCode)
     }

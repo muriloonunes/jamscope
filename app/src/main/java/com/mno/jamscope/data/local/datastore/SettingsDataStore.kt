@@ -25,7 +25,6 @@ class SettingsDataStore @Inject constructor(
     private object Keys {
         val SORTING_TYPE = intPreferencesKey("sorting_type")
         val THEME = intPreferencesKey("theme")
-        val APP_OPENED = intPreferencesKey("app_opened")
         val APP_VERSION = intPreferencesKey("app_version")
         fun switchKey(key: String) = booleanPreferencesKey("switch_state_$key")
     }

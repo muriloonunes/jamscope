@@ -11,7 +11,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.Lifecycle
@@ -19,8 +18,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.compose.rememberNavController
-import com.mno.jamscope.features.settings.viewmodel.SettingsViewModel
 import com.mno.jamscope.ui.components.ChangelogDialog
+import com.mno.jamscope.ui.navigator.Destination
 import com.mno.jamscope.ui.navigator.NavigationAction
 import com.mno.jamscope.ui.navigator.Navigator
 import com.mno.jamscope.ui.navigator.RootHost
@@ -41,8 +40,6 @@ class MainActivity : ComponentActivity() {
 
     private val mainViewModel by viewModels<MainViewModel>()
 
-    private val settingsViewModel by viewModels<SettingsViewModel>()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         setupSplashScreen()
         enableEdgeToEdge()
@@ -50,14 +47,12 @@ class MainActivity : ComponentActivity() {
         handleWidgetIntent(intent)
 
         setContent {
-//            val appOpenedTimes by splashViewModel.appOpenedTimes.collectAsState()
-//            var showBottomSheet by remember { mutableStateOf(false) }
-            val settingsUiState by settingsViewModel.uiState.collectAsState()
-            val themePreference = settingsUiState.themePreference
-            val startDestination by mainViewModel.startDestination.collectAsState()
+            val mainUiState by mainViewModel.state.collectAsStateWithLifecycle()
+            val themePreference = mainUiState.themePreference
+            val startDestination = mainUiState.startDestination
             val navController = rememberNavController()
             val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
-            val showChangelog by mainViewModel.showChangelog.collectAsStateWithLifecycle()
+            val showChangelog = mainUiState.showChangelog
             JamscopeTheme(themePreference = themePreference) {
                 CompositionLocalProvider(
                     LocalThemePreference provides themePreference,
@@ -109,8 +104,8 @@ class MainActivity : ComponentActivity() {
         var keepSplashScreenOn = true
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                mainViewModel.isLoading.collect {
-                    keepSplashScreenOn = it
+                mainViewModel.state.collect {
+                    keepSplashScreenOn = it.isLoading
                 }
             }
         }
