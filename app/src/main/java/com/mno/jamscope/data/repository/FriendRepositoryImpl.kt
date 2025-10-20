@@ -2,11 +2,11 @@ package com.mno.jamscope.data.repository
 
 import android.content.Context
 import com.mno.jamscope.data.local.datastore.SettingsDataStore
-import com.mno.jamscope.data.local.datastore.UserDataStore
 import com.mno.jamscope.data.local.db.dao.FriendsDao
 import com.mno.jamscope.data.local.db.dao.TrackDao
 import com.mno.jamscope.data.local.db.mapper.toDomain
 import com.mno.jamscope.data.local.db.mapper.toEntity
+import com.mno.jamscope.data.local.db.mapper.toFriendEntity
 import com.mno.jamscope.data.remote.api.LastFmServiceApi
 import com.mno.jamscope.data.remote.api.handleError
 import com.mno.jamscope.data.remote.mapper.toTrack
@@ -23,7 +23,6 @@ import javax.inject.Inject
 
 class FriendRepositoryImpl @Inject constructor(
     private val serviceApi: LastFmServiceApi,
-    private val userDataStore: UserDataStore,
     private val settingsDataStore: SettingsDataStore,
     private val friendsDao: FriendsDao,
     private val trackDao: TrackDao,
@@ -46,7 +45,7 @@ class FriendRepositoryImpl @Inject constructor(
         return withContext(Dispatchers.IO) {
             val friendEntities = friendsDao.getFriends()
             friendEntities.map { friend ->
-                val tracks = trackDao.getUserTracks(friend.profileUrl)
+                val tracks = trackDao.getFriendTracks(friend.profileUrl)
                 friend.toDomain(tracks)
             }
         }
@@ -58,7 +57,7 @@ class FriendRepositoryImpl @Inject constructor(
             friendsDao.insertFriends(friendEntities)
 
             val allTracks = friends.flatMap { friend ->
-                friend.recentTracks.map { it.toEntity(friend.profileUrl) }
+                friend.recentTracks.map { it.toFriendEntity(friend.profileUrl) }
             }
             trackDao.insertTracks(allTracks)
         }

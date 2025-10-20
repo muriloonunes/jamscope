@@ -6,9 +6,10 @@ import com.mno.jamscope.data.remote.dto.TrackDto
 import com.mno.jamscope.domain.model.Friend
 import com.mno.jamscope.domain.model.Track
 import com.mno.jamscope.domain.model.User
-import java.time.Instant
+import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 fun ProfileDto.toUser(): User {
     return User(
@@ -48,9 +49,15 @@ fun TrackDto.toTrack(): Track {
     val largeUrl = image?.find { it.size == "large" }?.url ?: ""
     val extraLargeUrl = image?.find { it.size == "extralarge" }?.url ?: ""
     val date = dateInfo?.formattedDate?.let {
-        val instant = Instant.parse(it)
-        val zonedDateTime = instant.atZone(ZoneId.systemDefault())
-        zonedDateTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
+        val localDateTime = LocalDateTime.parse(
+            it,
+            DateTimeFormatter.ofPattern("dd MMM yyyy, HH:mm", Locale.ENGLISH)
+        )
+        val zonedDateTime = localDateTime.atZone(ZoneId.of("UTC"))
+            .withZoneSameInstant(ZoneId.systemDefault())
+        val isoFormattedDate =
+            zonedDateTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
+        isoFormattedDate
     }
 
     return Track(

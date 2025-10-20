@@ -4,7 +4,8 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mno.jamscope.domain.Resource
-import com.mno.jamscope.data.repository.UserRepository
+import com.mno.jamscope.domain.usecase.login.LoginUserUseCase
+import com.mno.jamscope.domain.usecase.user.SaveUserDataUseCase
 import com.mno.jamscope.features.login.state.LoginState
 import com.mno.jamscope.ui.navigator.Destination
 import com.mno.jamscope.ui.navigator.Navigator
@@ -18,8 +19,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val userRepository: UserRepository,
     private val navigator: Navigator,
+    private val loginUserUseCase: LoginUserUseCase,
+    private val saveUserDataUseCase: SaveUserDataUseCase,
 ) : ViewModel() {
     private val _state = MutableStateFlow(LoginState())
     val state = _state.asStateFlow()
@@ -46,13 +48,12 @@ class LoginViewModel @Inject constructor(
             val username = _state.value.username.trim()
             val password = _state.value.password.trim()
             when (val result =
-                userRepository.authenticateMobile(
+                loginUserUseCase(
                     username = username,
                     password = password,
-                    method = "getMobileSession"
                 )) {
                 is Resource.Success -> {
-                    userRepository.saveUserProfile(result.data)
+                    saveUserDataUseCase(result.data)
                     _state.update { it.copy(isLoading = false) }
                     navigate()
                 }

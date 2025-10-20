@@ -9,7 +9,7 @@ import androidx.work.WorkerFactory
 import com.mno.jamscope.data.local.datastore.SettingsDataStoreManager
 import com.mno.jamscope.data.local.datastore.UserDataStoreManager
 import com.mno.jamscope.data.local.db.dao.FriendsDao
-import com.mno.jamscope.data.local.db.dao.UserProfileDao
+import com.mno.jamscope.data.local.db.dao.UserDao
 import com.mno.jamscope.data.remote.api.AuthRequest
 import com.mno.jamscope.data.remote.api.Exceptions
 import com.mno.jamscope.data.remote.api.FriendRequest
@@ -18,6 +18,7 @@ import com.mno.jamscope.data.repository.ApiRepository
 import com.mno.jamscope.data.repository.FriendsRepository
 import com.mno.jamscope.data.repository.SettingsRepository
 import com.mno.jamscope.data.repository.UserRepository
+import com.mno.jamscope.domain.usecase.friend.GetFriendRecentTracksUseCase
 import com.mno.jamscope.ui.navigator.DefaultNavigator
 import com.mno.jamscope.ui.navigator.Navigator
 import com.mno.jamscope.worker.GenericWorkerFactory
@@ -29,7 +30,7 @@ import dagger.hilt.components.SingletonComponent
 import io.ktor.client.HttpClient
 import javax.inject.Singleton
 
-val Context.userDataStore: DataStore<Preferences> by preferencesDataStore(name = "user_data_store")
+val Context.userDataStore: DataStore<Preferences> by preferencesDataStore(name = "old_user_data_store")
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -78,9 +79,9 @@ object AppModule {
     fun provideUserRepository(
         dataStoreManager: UserDataStoreManager,
         apiRepository: ApiRepository,
-        userProfileDao: UserProfileDao,
+        userDao: UserDao,
     ): UserRepository {
-        return UserRepository(apiRepository, dataStoreManager, userProfileDao)
+        return UserRepository(apiRepository, dataStoreManager, userDao)
     }
 
     @Provides
@@ -95,9 +96,9 @@ object AppModule {
 
     @Provides
     fun provideWorkerFactory(
-        repository: FriendsRepository,
+        getFriendRecentTracksUseCase: GetFriendRecentTracksUseCase,
     ): WorkerFactory {
-        return GenericWorkerFactory(repository)
+        return GenericWorkerFactory(getFriendRecentTracksUseCase)
     }
 
     @Provides

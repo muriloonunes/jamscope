@@ -7,6 +7,7 @@ import com.mno.jamscope.data.local.db.dao.TrackDao
 import com.mno.jamscope.data.local.db.dao.UserDao
 import com.mno.jamscope.data.local.db.mapper.toDomain
 import com.mno.jamscope.data.local.db.mapper.toEntity
+import com.mno.jamscope.data.local.db.mapper.toUserEntity
 import com.mno.jamscope.data.remote.api.LastFmServiceApi
 import com.mno.jamscope.data.remote.api.handleError
 import com.mno.jamscope.data.remote.mapper.toFriend
@@ -116,7 +117,7 @@ class UserRepositoryImpl @Inject constructor(
         withContext(Dispatchers.IO) {
             userDataStore.saveUserProfile(user)
             userDao.insertUser(user.toEntity())
-            val trackEntities = user.recentTracks.map { it.toEntity(user.profileUrl) }
+            val trackEntities = user.recentTracks.map { it.toUserEntity(user.profileUrl) }
             trackDao.insertTracks(trackEntities)
         }
     }

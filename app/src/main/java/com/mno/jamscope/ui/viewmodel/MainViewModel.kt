@@ -4,8 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mno.jamscope.BuildConfig
 import com.mno.jamscope.data.flows.WidgetIntentBus
-import com.mno.jamscope.data.repository.ApiRepository
-import com.mno.jamscope.data.repository.UserRepository
+import com.mno.jamscope.domain.repository.SettingsRepository
+import com.mno.jamscope.domain.usecase.login.CheckAppVersionUseCase
+import com.mno.jamscope.domain.usecase.login.CheckLoginUseCase
 import com.mno.jamscope.ui.navigator.Destination
 import com.mno.jamscope.ui.navigator.NavigationAction
 import com.mno.jamscope.ui.navigator.Navigator
@@ -19,11 +20,11 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val userRepository: UserRepository,
-    private val apiRepository: ApiRepository,
+    private val settingsRepository: SettingsRepository,
     private val navigator: Navigator,
     private val widgetIntentBus: WidgetIntentBus,
-//    private val settingsRepository: SettingsRepository
+    private val checkLoginUseCase: CheckLoginUseCase,
+    private val checkAppVersionUseCase: CheckAppVersionUseCase,
 ) : ViewModel() {
     private val _isLoading = MutableStateFlow(true)
     val isLoading get() = _isLoading.asStateFlow()
@@ -37,34 +38,18 @@ class MainViewModel @Inject constructor(
     private val _showChangelog = MutableStateFlow(false)
     val showChangelog = _showChangelog.asStateFlow()
 
-//    private val _appOpenedTimes = MutableStateFlow(0)
-//    val appOpenedTimes: StateFlow<Int> = _appOpenedTimes
-
     init {
         viewModelScope.launch {
-            val isLoggedIn = userRepository.isUserLoggedIn()
-            if (isLoggedIn) {
-//                settingsRepository.incrementAppOpened()
-//                _appOpenedTimes.value = settingsRepository.getAppOpenedFlow()
-                val profile = userRepository.getUserProfile()
-                if (apiRepository.isStillAuthenticated(profile!!)) {
-                    _startDestination.value = Destination.AppRoute
-                    _isLoading.value = false
-                } else {
-                    _startDestination.value = Destination.LoginRoute
-                    _isLoading.value = false
-                }
+            val isLoggedIn = checkLoginUseCase()
+            _startDestination.value = if (isLoggedIn) {
+                Destination.AppRoute
             } else {
-                _startDestination.value = Destination.LoginRoute
+                Destination.LoginRoute
             }
             _isLoading.value = false
-            val appVersion = userRepository.getAppVersion()
             val versionCode = BuildConfig.VERSION_CODE
-            if ((appVersion < versionCode) && isLoggedIn) {
-                _showChangelog.value = true
-                saveAppVersion(versionCode)
-            } else if (appVersion < versionCode) {
-                _showChangelog.value = false
+            if (checkAppVersionUseCase(versionCode)) {
+                _showChangelog.value = isLoggedIn
                 saveAppVersion(versionCode)
             }
         }
@@ -89,7 +74,7 @@ class MainViewModel @Inject constructor(
 
     private fun saveAppVersion(version: Int) {
         viewModelScope.launch {
-            userRepository.saveAppVersion(version)
+            settingsRepository.saveAppVersion(version)
         }
     }
 }

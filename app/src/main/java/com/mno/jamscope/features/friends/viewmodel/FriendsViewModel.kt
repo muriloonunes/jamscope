@@ -1,16 +1,22 @@
 package com.mno.jamscope.features.friends.viewmodel
 
+import android.util.Log
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mno.jamscope.data.flows.LogoutEventBus
 import com.mno.jamscope.data.flows.WidgetIntentBus
-import com.mno.jamscope.data.repository.FriendsRepository
-import com.mno.jamscope.data.repository.SettingsRepository
-import com.mno.jamscope.data.repository.UserRepository
 import com.mno.jamscope.domain.Resource
 import com.mno.jamscope.domain.model.Friend
 import com.mno.jamscope.domain.model.Track
+import com.mno.jamscope.domain.repository.FriendRepository
+import com.mno.jamscope.domain.repository.SettingsRepository
+import com.mno.jamscope.domain.usecase.friend.GetFriendRecentTracksUseCase
+import com.mno.jamscope.domain.usecase.friend.GetFriendsFromLocalUseCase
+import com.mno.jamscope.domain.usecase.friend.SaveFriendsToLocalUseCase
+import com.mno.jamscope.domain.usecase.user.GetUserFriendsUseCase
+import com.mno.jamscope.domain.usecase.user.GetUserFromLocalUseCase
+import com.mno.jamscope.domain.usecase.user.SaveUserDataUseCase
 import com.mno.jamscope.features.settings.domain.model.SwitchState
 import com.mno.jamscope.ui.navigator.Destination
 import com.mno.jamscope.ui.navigator.Navigator
@@ -27,8 +33,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
@@ -37,12 +41,17 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FriendsViewModel @Inject constructor(
-    private val userRepository: UserRepository,
-    private val friendsRepository: FriendsRepository,
-    private val navigator: Navigator,
+    private val friendsRepository: FriendRepository,
     private val settingsRepository: SettingsRepository,
+    private val navigator: Navigator,
     private val logoutBus: LogoutEventBus,
     private val widgetIntentBus: WidgetIntentBus,
+    private val getUserFromLocalUseCase: GetUserFromLocalUseCase,
+    private val getUserFriendsUseCase: GetUserFriendsUseCase,
+    private val getFriendsFromLocalUseCase: GetFriendsFromLocalUseCase,
+    private val getFriendRecentTracksUseCase: GetFriendRecentTracksUseCase,
+    private val saveUserDataUseCase: SaveUserDataUseCase,
+    private val saveFriendsToLocalUseCase: SaveFriendsToLocalUseCase,
 ) : ViewModel() {
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing = _isRefreshing
@@ -122,13 +131,8 @@ class FriendsViewModel @Inject constructor(
 
     private fun loadCachedFriends() {
         viewModelScope.launch {
-            val cachedFriends = friendsRepository.getCachedFriends().firstOrNull()
-            if (cachedFriends.isNullOrEmpty()) {
-                val friendsDataStore = friendsRepository.getFriendsFromDataStore().first()
-                _friends.value = sortFriends(friendsDataStore, _sortingType.value)
-            } else {
-                _friends.value = sortFriends(cachedFriends, _sortingType.value)
-            }
+            val cachedFriends = getFriendsFromLocalUseCase()
+            _friends.value = sortFriends(cachedFriends, _sortingType.value)
         }
     }
 
@@ -136,21 +140,20 @@ class FriendsViewModel @Inject constructor(
         _isRefreshing.value = true
         _errorMessage.value = ""
         viewModelScope.launch {
-            val userProfile = userRepository.getUserProfile()
-            when (val result = userRepository.getUserFriends(userProfile!!.username)) {
+            val userProfile = getUserFromLocalUseCase()
+            when (val result = getUserFriendsUseCase(userProfile.username)) {
                 is Resource.Success -> {
                     val friends = result.data //this still has no 'recentTracks' data
-                    fetchAndProcessRecentTracks(friends)
                     val friendsWithTracks = fetchAndProcessRecentTracks(friends)
-                    userProfile.friends = friends
-                    userRepository.saveUserProfile(userProfile)
                     _friends.value = friendsWithTracks
                     _recentTracksMap.value =
                         friendsWithTracks.associate { it.profileUrl to it.recentTracks }
-                    //TODO voltar a cachear
-//                    friendsRepository.cacheFriends(friendsWithTracks)
 
                     _isRefreshing.value = false
+
+                    saveFriendsToLocalUseCase(friendsWithTracks)
+                    userProfile.friends = friends
+                    saveUserDataUseCase(userProfile)
                 }
 
                 is Resource.Error -> {
@@ -165,21 +168,30 @@ class FriendsViewModel @Inject constructor(
     private suspend fun fetchAndProcessRecentTracks(friends: List<Friend>): List<Friend> {
         return friends.map { friend ->
             viewModelScope.async(Dispatchers.IO) {
-                friendsRepository.getRecentTracks(friend)
-                //TODO voltar a cachear
-//                friendsRepository.cacheRecentTracks(
-//                    friend.profileUrl,
-//                    friend.recentTracks
-//                )
-                friend
+                when (val result = getFriendRecentTracksUseCase(friend.name)) {
+                    is Resource.Success -> {
+                        friend.copy(recentTracks = result.data)
+                    }
+
+                    is Resource.Error<*> -> {
+                        Log.e(
+                            "FriendsViewModel",
+                            "Error fetching tracks for ${friend.name}: ${result.message}"
+                        )
+                        _errorMessage.value = result.message
+                        _isRefreshing.value = false
+                        friend
+                    }
+                }
+
             }
         }.awaitAll()
     }
 
     fun onSortingTypeChanged(sortingType: SortingType) {
         viewModelScope.launch {
-            friendsRepository.saveSortingType(sortingType)
             _sortingType.value = sortingType
+            friendsRepository.saveSortingType(sortingType)
         }
     }
 

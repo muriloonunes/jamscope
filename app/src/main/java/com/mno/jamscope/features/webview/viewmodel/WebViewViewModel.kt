@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mno.jamscope.data.repository.UserRepository
+import com.mno.jamscope.domain.usecase.login.LoginWebUseCase
 import com.mno.jamscope.ui.navigator.Navigator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -13,14 +13,14 @@ import javax.inject.Inject
 @HiltViewModel
 class WebViewViewModel @Inject constructor(
     private val navigator: Navigator,
-    private val userRepository: UserRepository,
-    ) : ViewModel() {
+    private val loginWebUseCase: LoginWebUseCase,
+) : ViewModel() {
     fun handleCallbackUrl(url: String) {
         val uri = url.toUri()
         val token = uri.getQueryParameter("token")
         Log.d("WebViewViewModel", "handleCallbackUrl: $token")
         viewModelScope.launch {
-            userRepository.authenticateWeb(token = token?: "", method = "getSession")
+            loginWebUseCase(token = token?: "")
         }
     }
 

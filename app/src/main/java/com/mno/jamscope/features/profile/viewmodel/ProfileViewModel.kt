@@ -7,10 +7,13 @@ import androidx.lifecycle.viewModelScope
 import com.mno.jamscope.R
 import com.mno.jamscope.data.flows.LogoutEventBus
 import com.mno.jamscope.domain.Resource
-import com.mno.jamscope.data.repository.SettingsRepository
-import com.mno.jamscope.data.repository.UserRepository
 import com.mno.jamscope.domain.model.Track
 import com.mno.jamscope.domain.model.User
+import com.mno.jamscope.domain.repository.SettingsRepository
+import com.mno.jamscope.domain.usecase.user.GetRecentTracksUseCase
+import com.mno.jamscope.domain.usecase.user.GetUserFromLocalUseCase
+import com.mno.jamscope.domain.usecase.user.GetUserInfoFromApiUseCase
+import com.mno.jamscope.domain.usecase.user.SaveUserDataUseCase
 import com.mno.jamscope.features.settings.domain.model.SwitchState
 import com.mno.jamscope.util.Stuff
 import com.mno.jamscope.util.Stuff.openUrl
@@ -26,15 +29,18 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
-    private val userRepository: UserRepository,
-    @param:ApplicationContext private val context: Context,
     private val settingsRepository: SettingsRepository,
     private val logoutBus: LogoutEventBus,
+    private val getUserFromLocalUseCase: GetUserFromLocalUseCase,
+    private val getUserInfoFromApiUseCase: GetUserInfoFromApiUseCase,
+    private val getRecentTracksUseCase: GetRecentTracksUseCase,
+    private val saveUserDataUseCase: SaveUserDataUseCase,
+    @param:ApplicationContext private val context: Context,
 ) : ViewModel() {
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing = _isRefreshing
         .onStart {
-//            loadCachedProfile()
+            loadCachedProfile()
             if (shouldRefresh()) refreshProfile()
         }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
@@ -75,7 +81,7 @@ class ProfileViewModel @Inject constructor(
     private fun loadCachedProfile() {
         viewModelScope.launch {
             try {
-                val userProfile = userRepository.getCachedUserProfile()
+                val userProfile = getUserFromLocalUseCase()
                 _userProfile.value = userProfile
                 _recentTracks.value = userProfile.recentTracks
             } catch (e: IllegalStateException) {
@@ -90,18 +96,24 @@ class ProfileViewModel @Inject constructor(
         _isRefreshing.value = true
         _errorMessage.value = ""
         viewModelScope.launch {
-            val userProfile = userRepository.getUserProfile()
-            userRepository.getUserInfo(userProfile!!)
-            when (val result = userRepository.getRecentTracks(userProfile)) {
+            var userProfile = getUserFromLocalUseCase()
+            when (val result = getUserInfoFromApiUseCase(username = userProfile.username)) {
                 is Resource.Success -> {
-                    _userProfile.value = userProfile
-                    _recentTracks.value = userProfile.recentTracks
-                    //TODO voltar a cachear
-//                    userRepository.cacheRecentTracks(
-//                        userProfile.profileUrl,
-//                        userProfile.recentTracks
-//                    )
+                    userProfile = result.data
+                }
+                is Resource.Error -> {
+                    _errorMessage.value = result.message
                     _isRefreshing.value = false
+                }
+            }
+            when (val result = getRecentTracksUseCase(userProfile.username)) {
+                is Resource.Success -> {
+                    userProfile.recentTracks = result.data
+                    _userProfile.value = userProfile
+                    _recentTracks.value = result.data
+                    _isRefreshing.value = false
+
+                    saveUserDataUseCase(userProfile)
                 }
 
                 is Resource.Error -> {
@@ -110,7 +122,7 @@ class ProfileViewModel @Inject constructor(
                     _isRefreshing.value = false
                 }
             }
-            userRepository.saveUserProfile(userProfile)
+            saveUserDataUseCase(userProfile)
             lastUpdateTimestamp = System.currentTimeMillis()
         }
     }

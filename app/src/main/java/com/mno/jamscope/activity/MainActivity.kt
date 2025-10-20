@@ -24,9 +24,9 @@ import com.mno.jamscope.ui.components.ChangelogDialog
 import com.mno.jamscope.ui.navigator.NavigationAction
 import com.mno.jamscope.ui.navigator.Navigator
 import com.mno.jamscope.ui.navigator.RootHost
+import com.mno.jamscope.ui.theme.JamscopeTheme
 import com.mno.jamscope.ui.theme.LocalThemePreference
 import com.mno.jamscope.ui.theme.LocalWindowSizeClass
-import com.mno.jamscope.ui.theme.JamscopeTheme
 import com.mno.jamscope.ui.viewmodel.MainViewModel
 import com.mno.jamscope.util.Stuff
 import dagger.hilt.android.AndroidEntryPoint
@@ -64,12 +64,6 @@ class MainActivity : ComponentActivity() {
                     LocalWindowSizeClass provides windowSizeClass
                 ) {
                     Surface(color = MaterialTheme.colorScheme.background) {
-//                        LaunchedEffect(appOpenedTimes) {
-//                            if (appOpenedTimes == 10 && !showBottomSheet) {
-//                                delay(2000)
-//                                showBottomSheet = true
-//                            }
-//                        }
                         LaunchedEffect(Unit) {
                             mainViewModel.navActions.collect { action ->
                                 when (action) {
@@ -87,11 +81,6 @@ class MainActivity : ComponentActivity() {
                             }
                         }
                         startDestination?.let { RootHost(navController, it) }
-//                        if (showBottomSheet) {
-//                            RateAppBottomSheet(
-//                                onDismissRequest = { showBottomSheet = false }
-//                            )
-//                        }
                         if (showChangelog) {
                             ChangelogDialog {
                                 mainViewModel.onDismissChangelog()

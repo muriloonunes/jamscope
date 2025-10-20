@@ -1,15 +1,11 @@
 package com.mno.jamscope.data.repository
 
-import com.mno.jamscope.data.local.db.dao.UserProfileDao
-import com.mno.jamscope.data.local.mapper.toDomain
-import com.mno.jamscope.data.local.mapper.toEntity
-import com.mno.jamscope.domain.Resource
 import com.mno.jamscope.data.local.datastore.UserDataStoreManager
+import com.mno.jamscope.data.local.db.dao.UserDao
+import com.mno.jamscope.data.local.db.mapper.toEntity
+import com.mno.jamscope.domain.Resource
 import com.mno.jamscope.domain.model.Friend
-import com.mno.jamscope.domain.model.Track
 import com.mno.jamscope.domain.model.User
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @Deprecated(
@@ -19,7 +15,7 @@ import javax.inject.Inject
 class UserRepository @Inject constructor(
     private val apiRepository: ApiRepository,
     private val userDataStoreManager: UserDataStoreManager,
-    private val userProfileDao: UserProfileDao,
+    private val userDao: UserDao,
 ) {
     suspend fun getUserProfile(): User? {
         return userDataStoreManager.getUserProfile()
@@ -33,8 +29,7 @@ class UserRepository @Inject constructor(
 
     suspend fun clearUserSession() {
         userDataStoreManager.clearUserSession()
-        userProfileDao.deleteAllRecentTracks()
-        userProfileDao.deleteUserProfile()
+        userDao.deleteUserProfile()
     }
 
     suspend fun isUserLoggedIn(): Boolean {
@@ -70,40 +65,39 @@ class UserRepository @Inject constructor(
 
     private suspend fun cacheUserProfile(user: User) {
         val userProfile = user.toEntity()
-        userProfileDao.insertUserProfile(userProfile)
+        userDao.insertUser(userProfile)
     }
 
-    suspend fun getCachedUserProfile(): User {
-        return withContext(Dispatchers.IO) {
-            val userProfileEntity = userProfileDao.getUserProfile()
-            @Suppress("SENSELESS_COMPARISON")
-            /**
-             * this will be null if the user opens the app offline after an app update that changed the database version
-             * since the database version upgrade is destructive, user profile entity will not exist
-             * therefore pointing to null and causing a crash
-             */
-            if (userProfileEntity != null) {
-                val userUrl = userProfileEntity.url
-                val recentTracks = userProfileDao.getRecentTracksForUser(userUrl)
-                return@withContext userProfileEntity.toDomain(recentTracks)
-            } else {
-                val fallbackProfile = userDataStoreManager.getUserProfile()!!
-                if (fallbackProfile.profileUrl != null) {
-                    //TODO voltar a cachear
-//                    cacheUserProfile(fallbackProfile)
-                    return@withContext fallbackProfile
-                } else {
-                    throw IllegalStateException("No user profile found")
-                }
-            }
-        }
-    }
+//    suspend fun getCachedUserProfile(): User {
+//        return withContext(Dispatchers.IO) {
+//            val userProfileEntity = userDao.getUser()
+//            @Suppress("SENSELESS_COMPARISON")
+//            /**
+//             * this will be null if the user opens the app offline after an app update that changed the database version
+//             * since the database version upgrade is destructive, user profile entity will not exist
+//             * therefore pointing to null and causing a crash
+//             */
+//            if (userProfileEntity != null) {
+//                val userUrl = userProfileEntity.url
+//                val recentTracks = userDao.getRecentTracksForUser(userUrl)
+//                return@withContext userProfileEntity.toDomain(recentTracks)
+//            } else {
+//                val fallbackProfile = userDataStoreManager.getUserProfile()!!
+//                if (fallbackProfile.profileUrl != null) {
+//                    //TODO voltar a cachear
+////                    cacheUserProfile(fallbackProfile)
+//                    return@withContext fallbackProfile
+//                } else {
+//                    throw IllegalStateException("No user profile found")
+//                }
+//            }
+//        }
+//    }
 
-    suspend fun cacheRecentTracks(userUrl: String, tracks: List<Track>) {
-        val trackEntities = tracks.map { it.toEntity(userUrl) }
-        userProfileDao.deleteRecentTracksForUser(userUrl)
-        userProfileDao.insertRecentTracks(trackEntities)
-    }
+//    suspend fun cacheRecentTracks(userUrl: String, tracks: List<Track>) {
+//        val trackEntities = tracks.map { it.toEntity(userUrl) }
+//        userDao.insertRecentTracks(trackEntities)
+//    }
 
     suspend fun getAppVersion(): Int {
         return userDataStoreManager.getAppVersion()

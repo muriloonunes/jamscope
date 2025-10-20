@@ -4,11 +4,10 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mno.jamscope.data.flows.LogoutEventBus
-import com.mno.jamscope.data.repository.FriendsRepository
-import com.mno.jamscope.data.repository.SettingsRepository
-import com.mno.jamscope.data.repository.UserRepository
-import com.mno.jamscope.features.settings.domain.model.getPersonalizationSwitches
+import com.mno.jamscope.domain.repository.SettingsRepository
+import com.mno.jamscope.domain.usecase.user.LogoutUseCase
 import com.mno.jamscope.features.settings.domain.model.SwitchState
+import com.mno.jamscope.features.settings.domain.model.getPersonalizationSwitches
 import com.mno.jamscope.features.settings.state.SettingsUiState
 import com.mno.jamscope.ui.navigator.Destination
 import com.mno.jamscope.ui.navigator.Navigator
@@ -27,11 +26,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
-    private val userRepository: UserRepository,
     private val navigator: Navigator,
-    private val friendsRepository: FriendsRepository,
     private val settingsRepository: SettingsRepository,
     private val logoutBus: LogoutEventBus,
+    private val logoutUseCase: LogoutUseCase,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(SettingsUiState())
     val uiState: StateFlow<SettingsUiState> = _uiState
@@ -39,7 +37,7 @@ class SettingsViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             loadSwitchStates()
-            settingsRepository.themePreferenceFlow().collect { pref ->
+            settingsRepository.getThemePreferenceFlow().collect { pref ->
                 _uiState.update { it.copy(themePreference = pref) }
             }
         }
@@ -84,9 +82,7 @@ class SettingsViewModel @Inject constructor(
 
     fun logOutUser() {
         viewModelScope.launch {
-            userRepository.clearUserSession()
-            friendsRepository.deleteFriends()
-            settingsRepository.clearPrefs()
+            logoutUseCase()
             logoutBus.send()
             delay(500)
             navigateToLogin()
@@ -136,7 +132,7 @@ class SettingsViewModel @Inject constructor(
 
     fun setThemePreference(theme: Int) {
         viewModelScope.launch {
-            settingsRepository.saveThemePref(theme)
+            settingsRepository.saveThemePreference(theme)
             _uiState.update { it.copy(themePreference = theme) }
         }
     }

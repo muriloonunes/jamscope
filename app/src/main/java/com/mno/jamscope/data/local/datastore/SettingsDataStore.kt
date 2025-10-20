@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.intPreferencesKey
+import com.mno.jamscope.data.local.datastore.SettingsDataStore.Keys.switchKey
 import com.mno.jamscope.features.settings.domain.model.SwitchState
 import com.mno.jamscope.ui.theme.AppTheme
 import com.mno.jamscope.util.SortingType
@@ -43,13 +44,13 @@ class SettingsDataStore @Inject constructor(
 
     fun getSwitchState(key: String, initial: SwitchState): Flow<SwitchState> =
         dataStore.data.map { prefs ->
-            val value = prefs[Keys.switchKey(key)] ?: initial.value
+            val value = prefs[switchKey(key)] ?: initial.value
             SwitchState.fromValue(value)
         }
 
     suspend fun saveSwitchState(key: String, value: SwitchState) = withContext(Dispatchers.IO) {
         dataStore.edit { prefs ->
-            prefs[Keys.switchKey(key)] = value.value
+            prefs[switchKey(key)] = value.value
         }
     }
 
@@ -84,6 +85,8 @@ class SettingsDataStore @Inject constructor(
             prefs.remove(Keys.THEME)
             prefs.remove(Keys.SORTING_TYPE)
             prefs.remove(Keys.APP_VERSION)
+            prefs.remove(switchKey("card_background_color_toggle"))
+            prefs.remove(switchKey("playing_animation_toggle"))
         }
     }
 }
