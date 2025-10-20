@@ -2,13 +2,13 @@ package com.mno.jamscope.data.repository
 
 import android.content.Context
 import com.mno.jamscope.data.local.datastore.UserDataStore
-import com.mno.jamscope.data.remote.mapper.toUser
 import com.mno.jamscope.data.remote.api.LastFmServiceApi
-import com.mno.jamscope.domain.handleError
 import com.mno.jamscope.data.remote.dto.ProfileDto
 import com.mno.jamscope.data.remote.dto.SessionDto
+import com.mno.jamscope.data.remote.mapper.toUser
 import com.mno.jamscope.domain.Resource
 import com.mno.jamscope.domain.Resource.Error
+import com.mno.jamscope.domain.handleError
 import com.mno.jamscope.domain.model.User
 import com.mno.jamscope.domain.repository.LoginRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -52,13 +52,29 @@ class LoginRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun login(token: String) {
-        //TODO receber retorno e tratar erros
-        withContext(Dispatchers.IO) {
+    override suspend fun login(token: String): Resource<User> {
+        return withContext(Dispatchers.IO) {
             try {
-                serviceApi.getWebSession(token)
+                val sessionResponse = serviceApi.getWebSession(token)
+                val user = ProfileDto(
+                    username = sessionResponse.session.name,
+                    subscriber = sessionResponse.session.subscriber,
+                    session = SessionDto(key = sessionResponse.session.key),
+                    senha = "",
+                    largeImageUrl = "",
+                    extraLargeImageUrl = "",
+                    profileUrl = "",
+                    country = "",
+                    realname = "",
+                    playcount = 0
+                ).toUser()
+                Resource.Success(user)
+            } catch (e: UnresolvedAddressException) {
+                e.printStackTrace()
+                Error(context.handleError(666))
             } catch (e: Exception) {
                 e.printStackTrace()
+                Error(context.handleError(0))
             }
         }
     }

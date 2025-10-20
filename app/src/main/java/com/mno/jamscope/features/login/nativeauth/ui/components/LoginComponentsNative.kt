@@ -1,4 +1,4 @@
-package com.mno.jamscope.features.login.ui.components
+package com.mno.jamscope.features.login.nativeauth.ui.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -44,7 +44,7 @@ import com.mno.jamscope.ui.theme.LoginTypography
 import kotlin.Unit
 
 @Composable
-fun LoginHeader(
+fun LoginHeaderNative(
     modifier: Modifier,
     alignment: Alignment.Horizontal,
 ) {
@@ -54,7 +54,7 @@ fun LoginHeader(
     ) {
         Text(
             text = stringResource(R.string.welcome),
-            style = LoginTypography.headlineSmall
+            style = LoginTypography.headlineLarge
         )
 //        Spacer(Modifier.height(16.dp))
         Text(

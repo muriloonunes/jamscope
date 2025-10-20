@@ -1,4 +1,4 @@
-package com.mno.jamscope.features.login.ui
+package com.mno.jamscope.features.login.nativeauth.ui
 
 import android.content.Context
 import androidx.compose.foundation.layout.WindowInsets
@@ -12,12 +12,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowHeightSizeClass
 import androidx.window.core.layout.WindowWidthSizeClass
-import com.mno.jamscope.features.login.state.LoginState
+import com.mno.jamscope.features.login.state.LoginStateNative
 import com.mno.jamscope.ui.theme.LocalWindowSizeClass
 
 @Composable
 fun LoginScreen(
-    state: LoginState,
+    state: LoginStateNative,
     onUsernameChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
     openCreateAccount: (Context) -> Unit,
@@ -40,7 +40,7 @@ fun LoginScreen(
         contentWindowInsets = WindowInsets.safeDrawing
     ) { innerPadding ->
         if (telaHorizontal) {
-            LoginHorizontalScreen(
+            LoginHorizontalScreenNative(
                 modifier = Modifier
                     .padding(innerPadding)
                     .fillMaxSize()
@@ -58,7 +58,7 @@ fun LoginScreen(
                 context = context
             )
         } else {
-            LoginVerticalScreen(
+            LoginVerticalScreenNative(
                 modifier = Modifier
                     .padding(innerPadding)
                     .fillMaxSize()

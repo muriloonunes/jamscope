@@ -1,4 +1,4 @@
-package com.mno.jamscope.features.login.ui
+package com.mno.jamscope.features.login.nativeauth.ui
 
 import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
@@ -16,15 +16,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.mno.jamscope.features.login.ui.components.LoginActions
-import com.mno.jamscope.features.login.ui.components.LoginForm
-import com.mno.jamscope.features.login.ui.components.LoginHeader
+import com.mno.jamscope.features.login.nativeauth.ui.components.LoginActions
+import com.mno.jamscope.features.login.nativeauth.ui.components.LoginForm
+import com.mno.jamscope.features.login.nativeauth.ui.components.LoginHeaderNative
 import com.mno.jamscope.ui.components.ShowErrorMessage
 import com.mno.jamscope.ui.theme.JamscopePreviewTheme
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun LoginVerticalScreen(
+fun LoginVerticalScreenNative(
     modifier: Modifier,
     topSpacerHeight: Dp = 0.dp,
     onUsernameChange: (String) -> Unit,
@@ -45,7 +45,7 @@ fun LoginVerticalScreen(
         verticalArrangement = Arrangement.Top
     ) {
         Spacer(modifier = Modifier.height(topSpacerHeight))
-        LoginHeader(
+        LoginHeaderNative(
             modifier = Modifier
                 .fillMaxWidth(),
             alignment = Alignment.CenterHorizontally
@@ -82,7 +82,7 @@ fun LoginVerticalScreen(
 @Composable
 fun LoginVerticalScreenPreview() {
     JamscopePreviewTheme(true) {
-        LoginVerticalScreen(
+        LoginVerticalScreenNative(
             modifier = Modifier.fillMaxSize(),
             topSpacerHeight = 64.dp,
             onUsernameChange = {},

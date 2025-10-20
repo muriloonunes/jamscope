@@ -1,6 +1,6 @@
 package com.mno.jamscope.features.login.state
 
-data class LoginState(
+data class LoginStateNative(
     val username: String = "",
     val password: String = "",
     val errorMessage: String = "",

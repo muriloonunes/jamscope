@@ -1,4 +1,4 @@
-package com.mno.jamscope.features.login.ui
+package com.mno.jamscope.features.login.nativeauth.ui
 
 import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
@@ -12,14 +12,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.mno.jamscope.features.login.ui.components.LoginActions
-import com.mno.jamscope.features.login.ui.components.LoginForm
-import com.mno.jamscope.features.login.ui.components.LoginHeader
+import com.mno.jamscope.features.login.nativeauth.ui.components.LoginActions
+import com.mno.jamscope.features.login.nativeauth.ui.components.LoginForm
+import com.mno.jamscope.features.login.nativeauth.ui.components.LoginHeaderNative
 import com.mno.jamscope.ui.components.ShowErrorMessage
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun LoginHorizontalScreen(
+fun LoginHorizontalScreenNative(
     modifier: Modifier,
     onUsernameChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
@@ -38,7 +38,7 @@ fun LoginHorizontalScreen(
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.Top,
     ) {
-        LoginHeader(
+        LoginHeaderNative(
             modifier = Modifier
                 .weight(0.5f),
             alignment = Alignment.Start

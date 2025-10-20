@@ -1,5 +1,6 @@
 package com.mno.jamscope.ui.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mno.jamscope.BuildConfig
@@ -53,8 +54,8 @@ class MainViewModel @Inject constructor(
                     showChangelog = showChangelog
                 )
             }
-
-            if (showChangelog) saveAppVersion(versionCode)
+            Log.d("MainViewModel", "isLoggedIn: $isLoggedIn, showChangelog: $showChangelog")
+            saveAppVersion(versionCode)
         }
         viewModelScope.launch {
             navigator.navigationActions.collect { action ->

@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.mno.jamscope.domain.Resource
 import com.mno.jamscope.domain.usecase.login.LoginUserUseCase
 import com.mno.jamscope.domain.usecase.user.SaveUserDataUseCase
-import com.mno.jamscope.features.login.state.LoginState
+import com.mno.jamscope.features.login.state.LoginStateNative
 import com.mno.jamscope.ui.navigator.Destination
 import com.mno.jamscope.ui.navigator.Navigator
 import com.mno.jamscope.domain.openUrl
@@ -18,12 +18,12 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class LoginViewModel @Inject constructor(
+class NativeLoginViewModel @Inject constructor(
     private val navigator: Navigator,
     private val loginUserUseCase: LoginUserUseCase,
     private val saveUserDataUseCase: SaveUserDataUseCase,
 ) : ViewModel() {
-    private val _state = MutableStateFlow(LoginState())
+    private val _state = MutableStateFlow(LoginStateNative())
     val state = _state.asStateFlow()
 
     fun onUsernameChange(newUsername: String) {

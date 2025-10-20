@@ -26,6 +26,11 @@ val LoginTypography = Typography(
     headlineSmall = TextStyle(
         fontFamily = LexendGigaFamily,
         fontWeight = FontWeight.Normal,
+        fontSize = 24.sp
+    ),
+    headlineLarge = TextStyle(
+        fontFamily = LexendGigaFamily,
+        fontWeight = FontWeight.Normal,
         fontSize = 32.sp
     ),
     bodyLarge = TextStyle(

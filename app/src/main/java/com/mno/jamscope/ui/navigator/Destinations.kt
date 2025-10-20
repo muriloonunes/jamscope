@@ -6,9 +6,11 @@ sealed interface Destination {
     @Serializable
     data object LoginRoute : Destination
     @Serializable
-    data object LoginScreen : Destination
+    data object LoginScreenNative : Destination
     @Serializable
-    data object WebLoginScreen : Destination
+    data object LoginScreenWeb : Destination
+    @Serializable
+    data object LastFmWebLoginScreen : Destination
     @Serializable
     data object AppRoute : Destination
     @Serializable

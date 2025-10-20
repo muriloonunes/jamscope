@@ -1,6 +1,5 @@
 package com.mno.jamscope.data.remote.api
 
-import android.util.Log
 import com.mno.jamscope.data.remote.dto.ApiResponseDto
 import com.mno.jamscope.data.remote.dto.RecentTracksResponseDto
 import com.mno.jamscope.data.remote.dto.SessionResponseDto
@@ -11,7 +10,6 @@ import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.statement.bodyAsText
-import io.ktor.http.isSuccess
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
@@ -35,21 +33,16 @@ class LastFmServiceApiImpl @Inject constructor(
         return json.decodeFromString(response.bodyAsText())
     }
 
-    override suspend fun getWebSession(token: String) {
-        //TODO adicionar retorno
+    override suspend fun getWebSession(token: String): SessionResponseDto {
         val method = ApiMethods.AUTH_WEB
         val apiSig = generateWebApiSig(token, method)
-        val response = client.post {
+        val response = client.get {
             parameter("method", method)
             parameter("api_key", Stuff.LAST_KEY)
             parameter("token", token)
             parameter("api_sig", apiSig)
         }
-        if (!response.status.isSuccess()) {
-            Log.e("ApiRequest", "autenticarWeb: ${response.bodyAsText()}")
-        } else {
-            Log.d("ApiRequest", "autenticarWebSuccess: ${response.bodyAsText()}")
-        }
+        return json.decodeFromString(response.bodyAsText())
     }
 
     override suspend fun isStillAuthenticated(

@@ -23,7 +23,7 @@ fun generateWebApiSig(
 ): String {
     val apiSignature =
         "api_key${Stuff.LAST_KEY}" +
-                "methodauth.$method" +
+                "method$method" +
                 "token$token" +
                 Stuff.LAST_SECRET
 

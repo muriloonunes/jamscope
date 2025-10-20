@@ -7,7 +7,7 @@ import com.mno.jamscope.data.remote.dto.UserFriendsResponseDto
 
 interface LastFmServiceApi {
     suspend fun getMobileSession(username: String, password: String): SessionResponseDto
-    suspend fun getWebSession(token: String)
+    suspend fun getWebSession(token: String): SessionResponseDto
     suspend fun isStillAuthenticated(
         username: String,
         password: String,

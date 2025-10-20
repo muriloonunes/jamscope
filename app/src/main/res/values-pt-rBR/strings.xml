@@ -2,6 +2,7 @@
 <resources>
     <string name="app_name">Jamscope</string>
     <string name="welcome">Bem-vindo!</string>
+    <string name="welcome_to_jamscope">Bem-vindo ao Jamscope!</string>
     <string name="login_please">Faça login no last.fm para continuar</string>
     <string name="login">Login</string>
     <string name="back">Voltar</string>

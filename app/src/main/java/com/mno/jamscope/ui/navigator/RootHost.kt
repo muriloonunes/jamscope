@@ -8,6 +8,7 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -18,13 +19,15 @@ import androidx.navigation.navigation
 import androidx.navigation.toRoute
 import androidx.window.core.layout.WindowWidthSizeClass
 import com.mno.jamscope.R
-import com.mno.jamscope.features.login.ui.LoginScreen
-import com.mno.jamscope.features.login.viewmodel.LoginViewModel
+import com.mno.jamscope.features.login.nativeauth.ui.LoginScreen
+import com.mno.jamscope.features.login.viewmodel.NativeLoginViewModel
+import com.mno.jamscope.features.login.webauth.ui.LoginTelaWeb
+import com.mno.jamscope.features.login.webauth.ui.WebLoginWrapper
+import com.mno.jamscope.features.login.webauth.viewmodel.WebLoginViewModel
 import com.mno.jamscope.features.settings.ui.AboutScreen
 import com.mno.jamscope.features.settings.ui.LoadLibrariesLicenseScreen
 import com.mno.jamscope.features.settings.viewmodel.SettingsViewModel
 import com.mno.jamscope.features.webview.ui.WebViewLoader
-import com.mno.jamscope.features.webview.viewmodel.WebViewViewModel
 import com.mno.jamscope.ui.screen.JamHomeRail
 import com.mno.jamscope.ui.screen.JamHomeScaffold
 import com.mno.jamscope.ui.theme.LocalWindowSizeClass
@@ -58,10 +61,10 @@ fun RootHost(
         }
     ) {
         navigation<Destination.LoginRoute>(
-            startDestination = Destination.LoginScreen,
+            startDestination = Destination.LoginScreenWeb,
         ) {
-            composable<Destination.LoginScreen> {
-                val loginViewModel: LoginViewModel = hiltViewModel()
+            composable<Destination.LoginScreenNative> {
+                val loginViewModel: NativeLoginViewModel = hiltViewModel()
                 val state by loginViewModel.state.collectAsStateWithLifecycle()
                 LoginScreen(
                     state = state,
@@ -72,22 +75,31 @@ fun RootHost(
                     onPasswordVisibilityChange = { loginViewModel.onPasswordVisibilityChange() }
                 )
             }
-            composable<Destination.WebLoginScreen> {
-                val webViewModel: WebViewViewModel = hiltViewModel()
+            composable<Destination.LoginScreenWeb> { navBackStackEntry ->
+                val parentEntry = remember(navBackStackEntry) {
+                    navController.getBackStackEntry(Destination.LoginRoute)
+                }
+                val webViewModel: WebLoginViewModel = hiltViewModel(parentEntry)
+                LoginTelaWeb(
+                    onLoginClick = {
+                        webViewModel.navigateToWebView()
+                    }
+                )
+            }
+            composable<Destination.LastFmWebLoginScreen> { navBackStackEntry ->
+                val parentEntry = remember(navBackStackEntry) {
+                    navController.getBackStackEntry(Destination.LoginRoute)
+                }
+                val webViewModel: WebLoginViewModel = hiltViewModel(parentEntry)
                 val urlBuilder = URLBuilder(Stuff.AUTH_URL)
                 urlBuilder.set {
                     parameters.append("api_key", Stuff.LAST_KEY)
                     parameters.append("cb", "${Stuff.DEEPLINK_PROTOCOL_NAME}://auth")
                 }
-                WebViewLoader(
-                    onNavigateBack = { webViewModel.navigateBack() },
-                    title = stringResource(R.string.login),
+                WebLoginWrapper(
                     url = urlBuilder.buildString(),
-                    allowedHost = "last.fm",
-                    callbackScheme = "${Stuff.DEEPLINK_PROTOCOL_NAME}://auth",
-                    onCallbackDetected = {
-                        webViewModel.handleCallbackUrl(it)
-                    },
+                    onNavigateBack = { webViewModel.navigateBack() },
+                    onCallbackDetected = { webViewModel.handleCallbackUrl(it) }
                 )
             }
         }
@@ -113,7 +125,7 @@ fun RootHost(
                 ProfileScreenCaller()
             }
             composable<Destination.SuggestFeatureScreen> {
-                val webViewModel: WebViewViewModel = hiltViewModel()
+                val webViewModel: WebLoginViewModel = hiltViewModel()
                 WebViewLoader(
                     onNavigateBack = { webViewModel.navigateBack() },
                     title = stringResource(R.string.suggest_feature_setting),
