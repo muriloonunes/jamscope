@@ -12,9 +12,9 @@ import com.mno.jamscope.features.settings.state.SettingsUiState
 import com.mno.jamscope.ui.navigator.Destination
 import com.mno.jamscope.ui.navigator.Navigator
 import com.mno.jamscope.ui.navigator.ScreenType
-import com.mno.jamscope.util.Stuff.openUrl
-import com.mno.jamscope.util.Stuff.sendMail
-import com.mno.jamscope.util.Stuff.sendReportMail
+import com.mno.jamscope.domain.openUrl
+import com.mno.jamscope.domain.sendMail
+import com.mno.jamscope.domain.sendReportMail
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow

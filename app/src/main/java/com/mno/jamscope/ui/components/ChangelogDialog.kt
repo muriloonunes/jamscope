@@ -22,7 +22,7 @@ import androidx.compose.ui.text.withStyle
 import com.mno.jamscope.BuildConfig
 import com.mno.jamscope.R
 import com.mno.jamscope.util.Stuff.GITHUB_RELEASES_LINK
-import com.mno.jamscope.util.Stuff.readRawFile
+import com.mno.jamscope.domain.readRawFile
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

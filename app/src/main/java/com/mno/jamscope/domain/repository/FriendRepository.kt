@@ -3,7 +3,7 @@ package com.mno.jamscope.domain.repository
 import com.mno.jamscope.domain.Resource
 import com.mno.jamscope.domain.model.Friend
 import com.mno.jamscope.domain.model.Track
-import com.mno.jamscope.util.SortingType
+import com.mno.jamscope.features.friends.ui.SortingType
 
 interface FriendRepository {
     suspend fun getRecentTracks(username: String): Resource<List<Track>>

@@ -57,7 +57,6 @@ class LastFmServiceApiImpl @Inject constructor(
         password: String,
         currentSessionKey: String,
     ): SessionResponseDto {
-        //TODO mudar retorno pra sessionresponse e fazer a verificacao no repository
         val method = ApiMethods.AUTH_MOBILE
         val apiSig = generateMobileApiSig(username, password, method)
         val response = client.post {

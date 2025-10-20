@@ -26,7 +26,7 @@ import com.mikepenz.aboutlibraries.ui.compose.android.rememberLibraries
 import com.mikepenz.aboutlibraries.ui.compose.m3.LibrariesContainer
 import com.mno.jamscope.R
 import com.mno.jamscope.ui.navigator.ScreenType
-import com.mno.jamscope.util.Stuff.readRawFile
+import com.mno.jamscope.domain.readRawFile
 import my.nanihadesuka.compose.LazyColumnScrollbar
 import my.nanihadesuka.compose.ScrollbarSettings
 

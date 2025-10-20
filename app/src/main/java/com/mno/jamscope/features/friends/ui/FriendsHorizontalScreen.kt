@@ -17,7 +17,6 @@ import com.mno.jamscope.features.friends.ui.components.FriendCard
 import com.mno.jamscope.ui.components.ShowErrorMessage
 import com.mno.jamscope.ui.components.SortingLazyRow
 import com.mno.jamscope.ui.components.animations.highlightIf
-import com.mno.jamscope.util.SortingType
 
 @Composable
 fun FriendsHorizontalScreen(

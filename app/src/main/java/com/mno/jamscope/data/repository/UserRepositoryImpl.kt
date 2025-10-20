@@ -9,7 +9,7 @@ import com.mno.jamscope.data.local.db.mapper.toDomain
 import com.mno.jamscope.data.local.db.mapper.toEntity
 import com.mno.jamscope.data.local.db.mapper.toUserEntity
 import com.mno.jamscope.data.remote.api.LastFmServiceApi
-import com.mno.jamscope.data.remote.api.handleError
+import com.mno.jamscope.domain.handleError
 import com.mno.jamscope.data.remote.mapper.toFriend
 import com.mno.jamscope.data.remote.mapper.toTrack
 import com.mno.jamscope.domain.Resource

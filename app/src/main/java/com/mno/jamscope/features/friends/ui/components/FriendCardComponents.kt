@@ -59,7 +59,7 @@ import com.mno.jamscope.ui.components.FullscreenImage
 import com.mno.jamscope.ui.components.LastProBadge
 import com.mno.jamscope.ui.components.LoadTrackInfo
 import com.mno.jamscope.ui.theme.LocalThemePreference
-import com.mno.jamscope.util.Stuff.openUrl
+import com.mno.jamscope.domain.openUrl
 import com.mno.jamscope.util.forwardingPainter
 import com.mno.jamscope.util.getCountryFlag
 import com.mno.jamscope.util.getLocalizedCountryName

@@ -22,7 +22,7 @@ import com.mno.jamscope.ui.navigator.Destination
 import com.mno.jamscope.ui.navigator.Navigator
 import com.mno.jamscope.ui.theme.AppTheme
 import com.mno.jamscope.ui.theme.ThemeAttributes
-import com.mno.jamscope.util.SortingType
+import com.mno.jamscope.features.friends.ui.SortingType
 import com.mno.jamscope.util.Stuff
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers

@@ -34,7 +34,7 @@ import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.mno.jamscope.R
-import com.mno.jamscope.util.SortingType
+import com.mno.jamscope.features.friends.ui.SortingType
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable

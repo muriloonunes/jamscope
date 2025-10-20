@@ -33,7 +33,7 @@ import coil3.compose.AsyncImage
 import com.mno.jamscope.R
 import com.mno.jamscope.domain.model.Track
 import com.mno.jamscope.ui.components.animations.NowPlayingAnimation
-import com.mno.jamscope.util.Stuff.searchMusicIntent
+import com.mno.jamscope.domain.searchMusicIntent
 import com.mno.jamscope.util.dateStringFormatter
 import com.mno.jamscope.util.forwardingPainter
 

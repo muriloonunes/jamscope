@@ -2,7 +2,7 @@ package com.mno.jamscope.features.friends.state
 
 import com.mno.jamscope.domain.model.Friend
 import com.mno.jamscope.domain.model.Track
-import com.mno.jamscope.util.SortingType
+import com.mno.jamscope.features.friends.ui.SortingType
 
 data class FriendsState(
     val isRefreshing: Boolean = false,

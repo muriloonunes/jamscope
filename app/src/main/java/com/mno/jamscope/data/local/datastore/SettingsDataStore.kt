@@ -9,7 +9,7 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import com.mno.jamscope.data.local.datastore.SettingsDataStore.Keys.switchKey
 import com.mno.jamscope.features.settings.domain.model.SwitchState
 import com.mno.jamscope.ui.theme.AppTheme
-import com.mno.jamscope.util.SortingType
+import com.mno.jamscope.features.friends.ui.SortingType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch

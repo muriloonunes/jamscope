@@ -8,14 +8,14 @@ import com.mno.jamscope.data.local.db.mapper.toDomain
 import com.mno.jamscope.data.local.db.mapper.toEntity
 import com.mno.jamscope.data.local.db.mapper.toFriendEntity
 import com.mno.jamscope.data.remote.api.LastFmServiceApi
-import com.mno.jamscope.data.remote.api.handleError
+import com.mno.jamscope.domain.handleError
 import com.mno.jamscope.data.remote.mapper.toTrack
 import com.mno.jamscope.domain.Resource
 import com.mno.jamscope.domain.Resource.Error
 import com.mno.jamscope.domain.model.Friend
 import com.mno.jamscope.domain.model.Track
 import com.mno.jamscope.domain.repository.FriendRepository
-import com.mno.jamscope.util.SortingType
+import com.mno.jamscope.features.friends.ui.SortingType
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

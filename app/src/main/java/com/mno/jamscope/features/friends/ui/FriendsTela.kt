@@ -14,7 +14,6 @@ import com.mno.jamscope.domain.model.Friend
 import com.mno.jamscope.domain.model.Track
 import com.mno.jamscope.features.friends.ui.components.topBarHeight
 import com.mno.jamscope.ui.screen.JamPullToRefresh
-import com.mno.jamscope.util.SortingType
 
 @OptIn(ExperimentalFoundationApi::class)
 @ExperimentalMaterial3Api

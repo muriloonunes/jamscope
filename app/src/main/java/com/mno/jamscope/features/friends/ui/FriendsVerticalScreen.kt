@@ -26,7 +26,6 @@ import com.mno.jamscope.ui.components.ShowErrorMessage
 import com.mno.jamscope.ui.components.SortingLazyRow
 import com.mno.jamscope.ui.components.animations.highlightIf
 import com.mno.jamscope.ui.components.bottomBarPadding
-import com.mno.jamscope.util.SortingType
 
 @Composable
 fun FriendsVerticalScreen(

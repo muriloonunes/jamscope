@@ -9,7 +9,7 @@ import com.mno.jamscope.domain.usecase.user.SaveUserDataUseCase
 import com.mno.jamscope.features.login.state.LoginState
 import com.mno.jamscope.ui.navigator.Destination
 import com.mno.jamscope.ui.navigator.Navigator
-import com.mno.jamscope.util.Stuff.openUrl
+import com.mno.jamscope.domain.openUrl
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

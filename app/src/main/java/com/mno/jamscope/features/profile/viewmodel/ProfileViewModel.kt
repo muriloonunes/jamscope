@@ -9,6 +9,7 @@ import com.mno.jamscope.data.flows.LogoutEventBus
 import com.mno.jamscope.domain.Resource
 import com.mno.jamscope.domain.model.Track
 import com.mno.jamscope.domain.model.User
+import com.mno.jamscope.domain.openUrl
 import com.mno.jamscope.domain.repository.SettingsRepository
 import com.mno.jamscope.domain.usecase.user.GetRecentTracksUseCase
 import com.mno.jamscope.domain.usecase.user.GetUserFromLocalUseCase
@@ -16,7 +17,6 @@ import com.mno.jamscope.domain.usecase.user.GetUserInfoFromApiUseCase
 import com.mno.jamscope.domain.usecase.user.SaveUserDataUseCase
 import com.mno.jamscope.features.settings.domain.model.SwitchState
 import com.mno.jamscope.util.Stuff
-import com.mno.jamscope.util.Stuff.openUrl
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -101,6 +101,7 @@ class ProfileViewModel @Inject constructor(
                 is Resource.Success -> {
                     userProfile = result.data
                 }
+
                 is Resource.Error -> {
                     _errorMessage.value = result.message
                     _isRefreshing.value = false
