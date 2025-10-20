@@ -9,15 +9,14 @@ import com.mno.jamscope.data.local.db.mapper.toDomain
 import com.mno.jamscope.data.local.db.mapper.toEntity
 import com.mno.jamscope.data.local.db.mapper.toUserEntity
 import com.mno.jamscope.data.remote.api.LastFmServiceApi
-import com.mno.jamscope.domain.handleError
 import com.mno.jamscope.data.remote.mapper.toFriend
 import com.mno.jamscope.data.remote.mapper.toTrack
 import com.mno.jamscope.domain.Resource
 import com.mno.jamscope.domain.Resource.Error
+import com.mno.jamscope.domain.handleError
 import com.mno.jamscope.domain.model.Friend
 import com.mno.jamscope.domain.model.Track
 import com.mno.jamscope.domain.model.User
-import com.mno.jamscope.domain.model.mergeWith
 import com.mno.jamscope.domain.repository.UserRepository
 import com.mno.jamscope.util.Stuff
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -62,9 +61,20 @@ class UserRepositoryImpl @Inject constructor(
                 )
 
                 val currentUser = getUser()
-                val mergedUser = currentUser.mergeWith(apiUser)
+                val mergedUser = currentUser.copy(
+                    subscriber = apiUser.subscriber,
+                    largeImageUrl = apiUser.largeImageUrl,
+                    extraLargeImageUrl = apiUser.extraLargeImageUrl,
+                    profileUrl = apiUser.profileUrl,
+                    country = apiUser.country,
+                    realName = apiUser.realName,
+                    playcount = apiUser.playcount,
+                )
 
                 Resource.Success(mergedUser)
+            } catch (e: UnresolvedAddressException) {
+                e.printStackTrace()
+                Error(context.handleError(666))
             } catch (e: Exception) {
                 e.printStackTrace()
                 Error(context.handleError(0))
@@ -94,6 +104,9 @@ class UserRepositoryImpl @Inject constructor(
                 val response = serviceApi.getRecentTracks(username, limit = 100)
                 val tracks = response.recenttracks.track.map { it.toTrack() }
                 Resource.Success(tracks)
+            } catch (e: UnresolvedAddressException) {
+                e.printStackTrace()
+                Error(context.handleError(666))
             } catch (e: Exception) {
                 e.printStackTrace()
                 Error(context.handleError(0))
