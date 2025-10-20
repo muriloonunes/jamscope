@@ -16,7 +16,6 @@ import com.mno.jamscope.domain.usecase.friend.GetFriendsFromLocalUseCase
 import com.mno.jamscope.domain.usecase.friend.SaveFriendsToLocalUseCase
 import com.mno.jamscope.domain.usecase.user.GetUserFriendsUseCase
 import com.mno.jamscope.domain.usecase.user.GetUserFromLocalUseCase
-import com.mno.jamscope.domain.usecase.user.SaveUserDataUseCase
 import com.mno.jamscope.features.settings.domain.model.SwitchState
 import com.mno.jamscope.ui.navigator.Destination
 import com.mno.jamscope.ui.navigator.Navigator
@@ -50,7 +49,6 @@ class FriendsViewModel @Inject constructor(
     private val getUserFriendsUseCase: GetUserFriendsUseCase,
     private val getFriendsFromLocalUseCase: GetFriendsFromLocalUseCase,
     private val getFriendRecentTracksUseCase: GetFriendRecentTracksUseCase,
-    private val saveUserDataUseCase: SaveUserDataUseCase,
     private val saveFriendsToLocalUseCase: SaveFriendsToLocalUseCase,
 ) : ViewModel() {
     private val _isRefreshing = MutableStateFlow(false)
@@ -152,8 +150,6 @@ class FriendsViewModel @Inject constructor(
                     _isRefreshing.value = false
 
                     saveFriendsToLocalUseCase(friendsWithTracks)
-                    userProfile.friends = friends
-                    saveUserDataUseCase(userProfile)
                 }
 
                 is Resource.Error -> {

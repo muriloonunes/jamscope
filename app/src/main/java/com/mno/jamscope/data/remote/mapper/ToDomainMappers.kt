@@ -23,8 +23,6 @@ fun ProfileDto.toUser(): User {
         country = country ?: "",
         realName = realname,
         playcount = playcount ?: 0,
-        friends = friends?.map { it.toFriend() } ?: emptyList(),
-        recentTracks = recentTracks?.track?.map { it.toTrack() } ?: emptyList()
     )
 }
 
