@@ -2,7 +2,9 @@ package com.mno.jamscope.features.webview.ui
 
 import android.annotation.SuppressLint
 import android.view.ViewGroup
+import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
+import android.webkit.WebResourceResponse
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.compose.foundation.layout.padding
@@ -77,6 +79,43 @@ fun WebViewLoader(
 
                             return false
                         }
+
+                        override fun onReceivedError(
+                            view: WebView,
+                            request: WebResourceRequest,
+                            error: WebResourceError,
+                        ) {
+                            if (request.isForMainFrame) {
+                                val safeMsg = error.description
+                                    ?.toString()
+                                    ?.replace("<", "&lt;")
+                                    ?.replace(">", "&gt;")
+                                    ?: "Erro desconhecido"
+                                view.loadDataWithBaseURL(
+                                    "about:blank",
+                                    createErrorString(safeMsg),
+                                    "text/html",
+                                    "utf-8",
+                                    null
+                                )
+                            }
+                        }
+
+                        override fun onReceivedHttpError(
+                            view: WebView,
+                            request: WebResourceRequest,
+                            errorResponse: WebResourceResponse,
+                        ) {
+                            if (request.isForMainFrame) {
+                                view.loadDataWithBaseURL(
+                                    "about:blank",
+                                    createErrorString("HTTP ${errorResponse.statusCode}"),
+                                    "text/html",
+                                    "utf-8",
+                                    null
+                                )
+                            }
+                        }
                     }
                 }
             }, update = {
@@ -84,4 +123,8 @@ fun WebViewLoader(
             }, modifier = Modifier.padding(innerPadding)
         )
     }
+}
+
+private fun createErrorString(errorMessage: String): String {
+    return "<html><body><div align=\"center\">$errorMessage</div></body></html>"
 }
