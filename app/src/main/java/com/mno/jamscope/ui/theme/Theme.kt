@@ -280,10 +280,8 @@ fun JamscopeTheme(
         }
     }
 
-
     MaterialExpressiveTheme(
         colorScheme = colorScheme,
-        typography = Typography,
         motionScheme = MotionScheme.expressive(),
         content = content
     )

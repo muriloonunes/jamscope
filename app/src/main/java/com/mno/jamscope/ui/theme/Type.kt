@@ -44,8 +44,3 @@ val LoginTypography = Typography(
         fontSize = 12.sp
     )
 )
-
-// Set of Material typography styles to start with
-val Typography = Typography()
-
-val AppTypography = Typography()
