@@ -22,11 +22,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.mikepenz.aboutlibraries.ui.compose.android.rememberLibraries
+import com.mikepenz.aboutlibraries.ui.compose.android.produceLibraries
 import com.mikepenz.aboutlibraries.ui.compose.m3.LibrariesContainer
 import com.mno.jamscope.R
-import com.mno.jamscope.ui.navigator.ScreenType
 import com.mno.jamscope.domain.readRawFile
+import com.mno.jamscope.ui.navigator.ScreenType
 import my.nanihadesuka.compose.LazyColumnScrollbar
 import my.nanihadesuka.compose.ScrollbarSettings
 
@@ -63,7 +63,7 @@ fun LoadLibrariesLicenseScreen(
     ) { innerPadding ->
         when (screenType) {
             ScreenType.LIBRARIES -> {
-                val libraries by rememberLibraries(R.raw.aboutlibraries)
+                val libraries by produceLibraries(R.raw.aboutlibraries)
                 LibrariesContainer(
                     modifier = Modifier
                         .padding(innerPadding)
