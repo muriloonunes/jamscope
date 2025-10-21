@@ -19,7 +19,7 @@ import androidx.navigation.navigation
 import androidx.navigation.toRoute
 import androidx.window.core.layout.WindowWidthSizeClass
 import com.mno.jamscope.R
-import com.mno.jamscope.features.login.nativeauth.ui.LoginScreen
+import com.mno.jamscope.features.login.nativeauth.ui.LoginTelaNative
 import com.mno.jamscope.features.login.viewmodel.NativeLoginViewModel
 import com.mno.jamscope.features.login.webauth.ui.LoginTelaWeb
 import com.mno.jamscope.features.login.webauth.ui.WebLoginWrapper
@@ -66,7 +66,7 @@ fun RootHost(
             composable<Destination.LoginScreenNative> {
                 val loginViewModel: NativeLoginViewModel = hiltViewModel()
                 val state by loginViewModel.state.collectAsStateWithLifecycle()
-                LoginScreen(
+                LoginTelaNative(
                     state = state,
                     onLoginClick = { loginViewModel.login() },
                     onPasswordChange = { loginViewModel.onPasswordChange(it) },

@@ -16,7 +16,7 @@ import com.mno.jamscope.features.login.state.LoginStateNative
 import com.mno.jamscope.ui.theme.LocalWindowSizeClass
 
 @Composable
-fun LoginScreen(
+fun LoginTelaNative(
     state: LoginStateNative,
     onUsernameChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,

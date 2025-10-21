@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import com.mno.jamscope.features.login.webauth.ui.components.LoginHeaderWeb
 import com.mno.jamscope.features.login.webauth.ui.components.LoginWebWelcomeAnimation
@@ -23,10 +24,11 @@ fun LoginVerticalScreenWeb(
         LoginHeaderWeb(
             modifier = Modifier
                 .fillMaxWidth(),
-            alignment = Alignment.CenterHorizontally
+            alignment = Alignment.CenterHorizontally,
+            textAlign = TextAlign.Center
         )
         LoginWebWelcomeAnimation(
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f),
         )
     }
 }

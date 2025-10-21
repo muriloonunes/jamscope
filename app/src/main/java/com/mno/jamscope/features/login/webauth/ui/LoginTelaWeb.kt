@@ -29,42 +29,45 @@ fun LoginTelaWeb(
 
     val telaHorizontal = windowsWidth == WindowWidthSizeClass.EXPANDED &&
             windowsHeight != WindowHeightSizeClass.MEDIUM
+
     Scaffold(
         contentWindowInsets = WindowInsets.safeDrawing,
         bottomBar = {
-            Surface(
-                shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
-                color = MaterialTheme.colorScheme.surfaceContainer,
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
-                Row(
+            if (!telaHorizontal) {
+                Surface(
+                    shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
+                    color = MaterialTheme.colorScheme.surfaceContainer,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp)
-                        .padding(bottom = 16.dp),
-                    horizontalArrangement = Arrangement.End,
-                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    LoginWebFab { onLoginClick() }
-
-//                    LoginWebSplitButton(
-//                        onLoginClick = {
-//                            onLoginClick()
-//                        }
-//                    )
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                            .padding(bottom = 16.dp),
+                        horizontalArrangement = Arrangement.End,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        LoginWebFab { onLoginClick() }
+                    }
                 }
             }
         }
     ) { innerPadding ->
-        LoginVerticalScreenWeb(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize()
-                .padding(16.dp)
-        )
-        //TODO implementar tela horizontal
-        if (!telaHorizontal) {
+        if (telaHorizontal) {
+            LoginHorizontalScreenWeb(
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .fillMaxSize(),
+                onLoginClick = { onLoginClick() }
+            )
+        } else {
+            LoginVerticalScreenWeb(
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .fillMaxSize()
+                    .padding(16.dp)
+            )
         }
     }
 }
