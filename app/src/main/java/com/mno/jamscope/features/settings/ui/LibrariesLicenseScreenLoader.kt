@@ -63,7 +63,7 @@ fun LoadLibrariesLicenseScreen(
     ) { innerPadding ->
         when (screenType) {
             ScreenType.LIBRARIES -> {
-                val libraries by produceLibraries(R.raw.aboutlibraries)
+                val libraries by produceLibraries()
                 LibrariesContainer(
                     modifier = Modifier
                         .padding(innerPadding)

@@ -7,7 +7,7 @@ plugins {
     id("dagger.hilt.android.plugin")
     id("com.google.gms.google-services")
     id("com.google.firebase.crashlytics")
-    id("com.mikepenz.aboutlibraries.plugin")
+    id("com.mikepenz.aboutlibraries.plugin.android")
     id("androidx.room")
 }
 
@@ -98,13 +98,14 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.ui.google.fonts)
+    implementation(libs.androidx.adaptive)
+    implementation(libs.androidx.compose.materialWindow)
 
     // Material
     implementation(libs.androidx.material3)
     implementation(libs.material)
     implementation(libs.androidx.material)
     implementation(libs.androidx.material.icons.extended)
-    implementation(libs.androidx.adaptive)
 
     // Navigation
     implementation(libs.androidx.navigation.compose)

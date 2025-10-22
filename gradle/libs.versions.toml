@@ -12,17 +12,17 @@ lifecycleRuntimeKtx = "2.9.4"
 mockk = "1.14.6"
 navigationCompose = "2.9.5"
 recyclerview = "1.4.0"
-roomRuntime = "2.8.2"
-workRuntimeKtx = "2.10.5"
+roomRuntime = "2.8.3"
+workRuntimeKtx = "2.11.0"
 materialComponent = "1.14.0-alpha05"
 
 # Compose
-adaptive = "1.1.0"
-composeBom = "2025.10.00"
+adaptive = "1.2.0"
+composeBom = "2025.10.01"
 material3 = "1.5.0-alpha06"
-runtimeLivedata = "1.9.3"
-uiTestJunit4Android = "1.9.3"
-google-fonts = "1.9.3"
+runtimeLivedata = "1.9.4"
+uiTestJunit4Android = "1.9.4"
+google-fonts = "1.9.4"
 
 # Coil
 coilCompose = "3.3.0"
@@ -88,6 +88,7 @@ androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", versi
 androidx-material = { module = "androidx.compose.material:material" } # Part of Compose BOM
 androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended" } # Part of Compose BOM
 androidx-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "material3" }
+androidx-compose-materialWindow = { module = "androidx.compose.material3:material3-window-size-class" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 androidx-runtime-livedata = { group = "androidx.compose.runtime", name = "runtime-livedata", version.ref = "runtimeLivedata" }
 androidx-ui = { group = "androidx.compose.ui", name = "ui" } # Part of Compose BOM
