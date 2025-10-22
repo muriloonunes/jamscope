@@ -17,7 +17,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import androidx.navigation.toRoute
-import androidx.window.core.layout.WindowWidthSizeClass
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import com.mno.jamscope.R
 import com.mno.jamscope.features.login.nativeauth.ui.LoginTelaNative
 import com.mno.jamscope.features.login.viewmodel.NativeLoginViewModel
@@ -107,9 +107,9 @@ fun RootHost(
             startDestination = Destination.FriendsScreen
         ) {
             composable<Destination.FriendsScreen> {
-                val windowWidthSizeClass = LocalWindowSizeClass.current.windowWidthSizeClass
+                val windowWidthSizeClass = LocalWindowSizeClass.current.widthSizeClass
                 when (windowWidthSizeClass) {
-                    WindowWidthSizeClass.COMPACT -> {
+                    WindowWidthSizeClass.Compact -> {
                         JamHomeScaffold()
                     }
 

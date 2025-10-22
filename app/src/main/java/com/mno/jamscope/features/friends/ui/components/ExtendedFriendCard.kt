@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -25,7 +26,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import androidx.window.core.layout.WindowHeightSizeClass
 import com.google.android.material.color.MaterialColors
 import com.mno.jamscope.domain.model.Friend
 import com.mno.jamscope.ui.theme.LocalWindowSizeClass
@@ -44,9 +44,9 @@ fun ExtendedFriendCard(
         MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f).toArgb()
     )
     val windowSizeClass = LocalWindowSizeClass.current
-    val windowHeight = windowSizeClass.windowHeightSizeClass
+    val windowHeight = windowSizeClass.heightSizeClass
     val cardModifier = when (windowHeight) {
-        WindowHeightSizeClass.COMPACT -> Modifier
+        WindowHeightSizeClass.Compact -> Modifier
             .fillMaxHeight(0.9f)
             .fillMaxWidth(0.7f)
 
@@ -69,7 +69,7 @@ fun ExtendedFriendCard(
             )
         ) {
             when (windowHeight) {
-                WindowHeightSizeClass.MEDIUM, WindowHeightSizeClass.EXPANDED -> {
+                WindowHeightSizeClass.Medium, WindowHeightSizeClass.Expanded -> {
                     Column {
                         FriendExtendedCardHeader(
                             friend = friend,
@@ -85,7 +85,7 @@ fun ExtendedFriendCard(
                     }
                 }
 
-                WindowHeightSizeClass.COMPACT -> {
+                WindowHeightSizeClass.Compact -> {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center

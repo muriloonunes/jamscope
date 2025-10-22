@@ -5,11 +5,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.window.core.layout.WindowSizeClass
-import androidx.window.core.layout.WindowWidthSizeClass
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import com.mno.jamscope.domain.model.Friend
 import com.mno.jamscope.domain.model.Track
 import com.mno.jamscope.features.friends.ui.components.topBarHeight
@@ -36,7 +36,7 @@ fun FriendsTela(
     gridState: LazyGridState = LazyGridState(),
     windowSizeClass: WindowSizeClass,
 ) {
-    val windowWidth = windowSizeClass.windowWidthSizeClass
+    val windowWidth = windowSizeClass.widthSizeClass
 
     JamPullToRefresh(
         isRefreshing = isRefreshing,
@@ -44,7 +44,7 @@ fun FriendsTela(
         padding = topBarHeight
     ) {
         when (windowWidth) {
-            WindowWidthSizeClass.COMPACT -> {
+            WindowWidthSizeClass.Compact -> {
                 FriendsVerticalScreen(
                     listState = listState,
                     modifier = Modifier
@@ -63,7 +63,7 @@ fun FriendsTela(
                 )
             }
 
-            WindowWidthSizeClass.EXPANDED, WindowWidthSizeClass.MEDIUM -> {
+            WindowWidthSizeClass.Expanded, WindowWidthSizeClass.Compact -> {
                 FriendsHorizontalScreen(
                     modifier = Modifier
                         .fillMaxSize(),

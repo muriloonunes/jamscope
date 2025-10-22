@@ -15,7 +15,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.core.graphics.BlendModeColorFilterCompat
 import androidx.core.graphics.BlendModeCompat
-import androidx.window.core.layout.WindowWidthSizeClass
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import com.airbnb.lottie.LottieProperty
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
@@ -34,8 +34,8 @@ fun LoginWebWelcomeAnimation(
         modifier = modifier,
         contentAlignment = Alignment.Center,
     ) {
-        val windowWidth = LocalWindowSizeClass.current.windowWidthSizeClass
-        val telaLarga = windowWidth == WindowWidthSizeClass.EXPANDED
+        val windowWidth = LocalWindowSizeClass.current.widthSizeClass
+        val telaLarga = windowWidth == WindowWidthSizeClass.Expanded
         val imageWidth = if (telaLarga) maxWidth * 0.8f else maxWidth
         val lottieSize = if (telaLarga) imageWidth * 0.35f else imageWidth * 0.6f
         val yOffset = if (telaLarga) maxHeight * -0.36f else maxHeight * -0.25f

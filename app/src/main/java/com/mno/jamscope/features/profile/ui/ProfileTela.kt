@@ -19,6 +19,7 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -36,8 +37,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
-import androidx.window.core.layout.WindowHeightSizeClass
-import androidx.window.core.layout.WindowSizeClass
+import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
 import com.mno.jamscope.R
 import com.mno.jamscope.domain.model.Track
 import com.mno.jamscope.domain.model.User
@@ -64,7 +64,7 @@ fun ProfileTela(
 ) {
     val context = LocalContext.current
     val density = LocalDensity.current
-    val windowHeight = windowSizeClass.windowHeightSizeClass
+    val windowHeight = windowSizeClass.heightSizeClass
     val coroutineScope = rememberCoroutineScope()
 
     var imagePfp by remember { mutableStateOf<Any?>(R.drawable.baseline_account_circle_24) }
@@ -153,7 +153,7 @@ fun ProfileTela(
         enabled = topBarHeight.value == maxTopBarHeightPx
     ) {
         when (windowHeight) {
-            WindowHeightSizeClass.MEDIUM, WindowHeightSizeClass.EXPANDED -> {
+            WindowHeightSizeClass.Medium, WindowHeightSizeClass.Expanded -> {
                 //phones/portrait mode
                 val currentTopBarHeightDp = with(density) { topBarHeight.value.toDp() }
                 Box(
@@ -197,7 +197,7 @@ fun ProfileTela(
                 }
             }
 
-            WindowHeightSizeClass.COMPACT -> {
+            WindowHeightSizeClass.Compact -> {
                 //tablets/landscape mode
                 Row(modifier = Modifier.fillMaxSize()) {
                     ProfileHeaderSection(

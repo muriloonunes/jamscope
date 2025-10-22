@@ -28,6 +28,8 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
+import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -49,17 +51,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.unit.dp
-import androidx.window.core.layout.WindowHeightSizeClass
-import androidx.window.core.layout.WindowSizeClass
 import coil3.compose.AsyncImage
 import com.mno.jamscope.R
 import com.mno.jamscope.domain.model.Friend
 import com.mno.jamscope.domain.model.Track
+import com.mno.jamscope.domain.openUrl
 import com.mno.jamscope.ui.components.FullscreenImage
 import com.mno.jamscope.ui.components.LastProBadge
 import com.mno.jamscope.ui.components.LoadTrackInfo
 import com.mno.jamscope.ui.theme.LocalThemePreference
-import com.mno.jamscope.domain.openUrl
 import com.mno.jamscope.util.forwardingPainter
 import com.mno.jamscope.util.getCountryFlag
 import com.mno.jamscope.util.getLocalizedCountryName
@@ -236,9 +236,9 @@ fun FriendExtendedCardHeader(
     friend: Friend,
     windowSizeClass: WindowSizeClass,
 ) {
-    val windowHeight = windowSizeClass.windowHeightSizeClass
+    val windowHeight = windowSizeClass.heightSizeClass
     when (windowHeight) {
-        WindowHeightSizeClass.COMPACT -> {
+        WindowHeightSizeClass.Compact -> {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = modifier
@@ -255,7 +255,7 @@ fun FriendExtendedCardHeader(
             }
         }
 
-        WindowHeightSizeClass.EXPANDED, WindowHeightSizeClass.MEDIUM -> {
+        WindowHeightSizeClass.Expanded, WindowHeightSizeClass.Medium -> {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = modifier

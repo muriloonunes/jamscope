@@ -10,8 +10,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.window.core.layout.WindowHeightSizeClass
-import androidx.window.core.layout.WindowWidthSizeClass
+import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import com.mno.jamscope.features.login.state.LoginStateNative
 import com.mno.jamscope.ui.theme.LocalWindowSizeClass
 
@@ -25,15 +25,15 @@ fun LoginTelaNative(
     onLoginClick: () -> Unit,
 ) {
     val context = LocalContext.current
-    val windowsWidth = LocalWindowSizeClass.current.windowWidthSizeClass
-    val windowsHeight = LocalWindowSizeClass.current.windowHeightSizeClass
+    val windowsWidth = LocalWindowSizeClass.current.widthSizeClass
+    val windowsHeight = LocalWindowSizeClass.current.heightSizeClass
 
-    val telaHorizontal = windowsWidth == WindowWidthSizeClass.EXPANDED &&
-            windowsHeight != WindowHeightSizeClass.MEDIUM
+    val telaHorizontal = windowsWidth == WindowWidthSizeClass.Expanded &&
+            windowsHeight != WindowHeightSizeClass.Medium
 
     val topSpacerHeight = if (
-        (windowsWidth == WindowWidthSizeClass.EXPANDED && windowsHeight == WindowHeightSizeClass.MEDIUM) ||
-        windowsWidth == WindowWidthSizeClass.MEDIUM
+        (windowsWidth == WindowWidthSizeClass.Expanded && windowsHeight == WindowHeightSizeClass.Medium) ||
+        windowsWidth == WindowWidthSizeClass.Medium
     ) 128.dp else 32.dp
 
     Scaffold(

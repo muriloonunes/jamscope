@@ -30,8 +30,8 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.window.core.layout.WindowHeightSizeClass
-import androidx.window.core.layout.WindowWidthSizeClass
+import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import com.mno.jamscope.R
 import com.mno.jamscope.features.settings.state.SettingsUiState
 import com.mno.jamscope.features.settings.ui.components.SettingDialogRow
@@ -65,8 +65,8 @@ fun SettingsTela(
 
     val showLogOutDialog = uiState.showLogOutDialog
     val showThemeDialog = uiState.showThemeDialog
-    val windowHeight = windowSizeClass.windowHeightSizeClass
-    val windowWidth = windowSizeClass.windowWidthSizeClass
+    val windowHeight = windowSizeClass.heightSizeClass
+    val windowWidth = windowSizeClass.widthSizeClass
 
     val sectionTiles = listOf(
         R.string.personalization_setting_title,
@@ -76,7 +76,7 @@ fun SettingsTela(
 
     val settingsScreenContent: @Composable (Modifier) -> Unit = { modifier ->
         when (windowWidth) {
-            WindowWidthSizeClass.COMPACT -> {
+            WindowWidthSizeClass.Compact -> {
                 SettingsVerticalScreen(
                     modifier = modifier,
                     themePreference = themePreference,
@@ -92,7 +92,7 @@ fun SettingsTela(
                     onAboutClick = { onAboutClick() }
                 )
             }
-            WindowWidthSizeClass.EXPANDED, WindowWidthSizeClass.MEDIUM -> {
+            WindowWidthSizeClass.Expanded, WindowWidthSizeClass.Medium -> {
                 SettingsHorizontalScreen(
                     modifier = modifier,
                     tiles = sectionTiles,
@@ -118,7 +118,7 @@ fun SettingsTela(
         SettingsScaffold(
             onNavigateBack = { onNavigateBack() }
         ) { innerPadding ->
-            val contentModifier = if (windowWidth != WindowWidthSizeClass.COMPACT && windowHeight != WindowHeightSizeClass.COMPACT) {
+            val contentModifier = if (windowWidth != WindowWidthSizeClass.Compact && windowHeight != WindowHeightSizeClass.Compact) {
                 Modifier.padding(innerPadding).padding(horizontal = 16.dp)
             } else {
                 Modifier.padding(innerPadding)
@@ -126,7 +126,7 @@ fun SettingsTela(
             settingsScreenContent(contentModifier)
         }
     } else {
-        if (windowWidth != WindowWidthSizeClass.COMPACT && windowHeight != WindowHeightSizeClass.COMPACT) {
+        if (windowWidth != WindowWidthSizeClass.Compact && windowHeight != WindowHeightSizeClass.Compact) {
             Box(modifier = Modifier.fillMaxSize()) {
                 settingsScreenContent(Modifier.padding(horizontal = 16.dp))
             }

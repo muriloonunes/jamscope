@@ -5,14 +5,14 @@ import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.window.core.layout.WindowSizeClass
-import androidx.window.core.layout.WindowWidthSizeClass
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import com.mno.jamscope.features.friends.ui.FriendsTela
 import com.mno.jamscope.features.friends.viewmodel.FriendsViewModel
 import com.mno.jamscope.features.profile.ui.ProfileTela
@@ -75,7 +75,7 @@ fun FriendsScreenCaller(
                 val index = friends.indexOfFirst { it.name == name }
                 if (index != -1) {
                     try {
-                        if (windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.COMPACT) {
+                        if (windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact) {
                             listState.animateScrollToItem(index)
                         } else {
                             gridState.animateScrollToItem(index)

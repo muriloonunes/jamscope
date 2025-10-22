@@ -8,7 +8,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -31,6 +32,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
@@ -50,7 +52,7 @@ class MainActivity : ComponentActivity() {
             val themePreference = mainUiState.themePreference
             val startDestination = mainUiState.startDestination
             val navController = rememberNavController()
-            val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
+            val windowSizeClass = calculateWindowSizeClass(this)
             val showChangelog = mainUiState.showChangelog
             JamscopeTheme(themePreference = themePreference) {
                 CompositionLocalProvider(
