@@ -12,7 +12,6 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -42,7 +41,7 @@ fun SortToggleButton(
     sortType: SortingType,
     currentSortingType: SortingType,
     onSortingTypeChanged: (SortingType) -> Unit,
-    shapes: ToggleButtonShapes = ToggleButtonDefaults.shapesFor(ButtonDefaults.MinHeight),
+    shapes: ToggleButtonShapes,
 ) {
     OutlinedToggleButton(
         modifier = Modifier.semantics { role = Role.RadioButton }

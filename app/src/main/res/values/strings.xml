@@ -9,7 +9,8 @@
     <string name="password">Password</string>
     <string name="password_visibilty">Password visibility</string>
     <string name="invalid_user_password">Invalid username or password</string>
-    <string name="connection_error">You are not connected to the internet</string>
+    <string name="you_are_not_connected_error">You are not connected to the internet</string>
+    <string name="connection_error">Connection failed. Please try again.</string>
     <string name="unknown_error">Unknown error! Please report or try again later</string>
     <string name="too_many_requests">Too many requests! Try again later</string>
     <string name="server_error">Internal server error. Try again later</string>

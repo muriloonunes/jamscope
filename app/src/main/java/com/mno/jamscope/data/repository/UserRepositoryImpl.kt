@@ -20,6 +20,7 @@ import com.mno.jamscope.domain.model.User
 import com.mno.jamscope.domain.repository.UserRepository
 import com.mno.jamscope.util.Stuff
 import dagger.hilt.android.qualifiers.ApplicationContext
+import io.ktor.client.network.sockets.ConnectTimeoutException
 import io.ktor.client.plugins.HttpRequestTimeoutException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -73,6 +74,9 @@ class UserRepositoryImpl @Inject constructor(
                 )
 
                 Resource.Success(mergedUser)
+            } catch (e: ConnectTimeoutException) {
+                e.printStackTrace()
+                Error(context.handleError(525))
             } catch (e: UnresolvedAddressException) {
                 e.printStackTrace()
                 Error(context.handleError(666))
@@ -92,6 +96,9 @@ class UserRepositoryImpl @Inject constructor(
                 val response = serviceApi.getUserFriends(username)
                 val friends = response.friends.user.map { it.toFriend() }
                 Resource.Success(friends)
+            } catch (e: ConnectTimeoutException) {
+                e.printStackTrace()
+                Error(context.handleError(525))
             } catch (e: UnresolvedAddressException) {
                 e.printStackTrace()
                 Error(context.handleError(666))
@@ -111,6 +118,9 @@ class UserRepositoryImpl @Inject constructor(
                 val response = serviceApi.getRecentTracks(username, limit = 100)
                 val tracks = response.recenttracks.track.map { it.toTrack() }
                 Resource.Success(tracks)
+            } catch (e: ConnectTimeoutException) {
+                e.printStackTrace()
+                Error(context.handleError(525))
             } catch (e: HttpRequestTimeoutException) {
                 e.printStackTrace()
                 Error(context.handleError(504))

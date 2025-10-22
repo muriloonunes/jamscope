@@ -12,6 +12,7 @@ import com.mno.jamscope.domain.handleError
 import com.mno.jamscope.domain.model.User
 import com.mno.jamscope.domain.repository.LoginRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
+import io.ktor.client.network.sockets.ConnectTimeoutException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.nio.channels.UnresolvedAddressException
@@ -69,6 +70,9 @@ class LoginRepositoryImpl @Inject constructor(
                     playcount = 0
                 ).toUser()
                 Resource.Success(user)
+            } catch (e: ConnectTimeoutException) {
+                e.printStackTrace()
+                Error(context.handleError(525))
             } catch (e: UnresolvedAddressException) {
                 e.printStackTrace()
                 Error(context.handleError(666))

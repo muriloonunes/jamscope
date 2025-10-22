@@ -196,8 +196,14 @@ class FriendsViewModel @Inject constructor(
             SortingType.DEFAULT -> friends
             SortingType.ALPHABETICAL -> friends.sortedBy { (it.realName.ifEmpty { it.name }).lowercase() }
             SortingType.RECENTLY_PLAYED -> friends.sortedWith(
-                compareByDescending<Friend> { it.recentTracks.firstOrNull()?.date == null }
-                    .thenByDescending { it.recentTracks.firstOrNull()?.date }
+                compareBy<Friend> {
+                    val firstTrack = it.recentTracks.firstOrNull()
+                    when {
+                        firstTrack == null -> 3
+                        firstTrack.date == null -> 1
+                        else -> 2
+                    }
+                }.thenByDescending { it.recentTracks.firstOrNull()?.date }
             )
         }
     }

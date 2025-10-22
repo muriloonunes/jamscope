@@ -17,6 +17,7 @@ import com.mno.jamscope.domain.model.Track
 import com.mno.jamscope.domain.repository.FriendRepository
 import com.mno.jamscope.features.friends.ui.SortingType
 import dagger.hilt.android.qualifiers.ApplicationContext
+import io.ktor.client.network.sockets.ConnectTimeoutException
 import io.ktor.client.plugins.HttpRequestTimeoutException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -36,6 +37,9 @@ class FriendRepositoryImpl @Inject constructor(
                 val response = serviceApi.getRecentTracks(username)
                 val tracks = response.recenttracks.track.map { it.toTrack() }
                 Resource.Success(tracks)
+            } catch (e: ConnectTimeoutException) {
+                e.printStackTrace()
+                Error(context.handleError(525))
             } catch (e: HttpRequestTimeoutException) {
                 e.printStackTrace()
                 Error(context.handleError(504))

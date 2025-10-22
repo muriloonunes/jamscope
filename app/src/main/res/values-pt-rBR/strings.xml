@@ -10,7 +10,8 @@
     <string name="password">Senha</string>
     <string name="password_visibilty">Visibilidade da senha</string>
     <string name="invalid_user_password">Usuário ou senha inválido!</string>
-    <string name="connection_error">Você não está conectado à internet</string>
+    <string name="you_are_not_connected_error">Você não está conectado à internet</string>
+    <string name="connection_error">Connection failed. Please try again.</string>
     <string name="unknown_error">Erro desconhecido! Por favor, reporte ou tente de novo mais tarde</string>
     <string name="too_many_requests">Muitas solicitações! Tente novamente mais tarde</string>
     <string name="server_error">Erro interno no servidor. Tente novamente mais tarde</string>

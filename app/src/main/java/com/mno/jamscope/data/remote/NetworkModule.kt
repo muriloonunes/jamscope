@@ -7,8 +7,10 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import io.ktor.client.HttpClient
+import io.ktor.client.plugins.HttpResponseValidator
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
+import io.ktor.client.statement.bodyAsText
 import io.ktor.http.URLProtocol
 import io.ktor.http.encodedPath
 import io.ktor.serialization.kotlinx.json.json
@@ -44,6 +46,16 @@ object NetworkModule {
             }
             install(ContentNegotiation) {
                 json(json)
+            }
+            expectSuccess = true
+            HttpResponseValidator {
+                validateResponse { response ->
+                    val statusCode = response.status.value
+                    if (statusCode !in 200..299) {
+                        val errorBody = response.bodyAsText()
+                        println("HTTP Error: $statusCode - $errorBody")
+                    }
+                }
             }
         }
     }

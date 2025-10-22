@@ -17,6 +17,7 @@ import javax.inject.Inject
 import javax.inject.Named
 
 class UserDataStore @Inject constructor(
+    private val json: Json,
     @param:Named("user") private val dataStore: DataStore<Preferences>,
 ) {
     private object Keys {
@@ -35,7 +36,7 @@ class UserDataStore @Inject constructor(
         return dataStore.data.catch {
             emit(emptyPreferences())
         }.map { prefs ->
-            prefs[Keys.PROFILE_JSON]?.let { Json.decodeFromString<User>(it) }
+            prefs[Keys.PROFILE_JSON]?.let { json.decodeFromString<User>(it) }
         }
     }
 
