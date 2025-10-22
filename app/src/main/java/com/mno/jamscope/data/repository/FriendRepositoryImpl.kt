@@ -8,17 +8,19 @@ import com.mno.jamscope.data.local.db.mapper.toDomain
 import com.mno.jamscope.data.local.db.mapper.toEntity
 import com.mno.jamscope.data.local.db.mapper.toFriendEntity
 import com.mno.jamscope.data.remote.api.LastFmServiceApi
-import com.mno.jamscope.domain.handleError
 import com.mno.jamscope.data.remote.mapper.toTrack
 import com.mno.jamscope.domain.Resource
 import com.mno.jamscope.domain.Resource.Error
+import com.mno.jamscope.domain.handleError
 import com.mno.jamscope.domain.model.Friend
 import com.mno.jamscope.domain.model.Track
 import com.mno.jamscope.domain.repository.FriendRepository
 import com.mno.jamscope.features.friends.ui.SortingType
 import dagger.hilt.android.qualifiers.ApplicationContext
+import io.ktor.client.plugins.HttpRequestTimeoutException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.nio.channels.UnresolvedAddressException
 import javax.inject.Inject
 
 class FriendRepositoryImpl @Inject constructor(
@@ -34,6 +36,12 @@ class FriendRepositoryImpl @Inject constructor(
                 val response = serviceApi.getRecentTracks(username)
                 val tracks = response.recenttracks.track.map { it.toTrack() }
                 Resource.Success(tracks)
+            } catch (e: HttpRequestTimeoutException) {
+                e.printStackTrace()
+                Error(context.handleError(504))
+            } catch (e: UnresolvedAddressException) {
+                e.printStackTrace()
+                Error(context.handleError(666))
             } catch (e: Exception) {
                 e.printStackTrace()
                 Error(context.handleError(0))

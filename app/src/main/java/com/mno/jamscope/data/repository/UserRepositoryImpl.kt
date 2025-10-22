@@ -20,6 +20,7 @@ import com.mno.jamscope.domain.model.User
 import com.mno.jamscope.domain.repository.UserRepository
 import com.mno.jamscope.util.Stuff
 import dagger.hilt.android.qualifiers.ApplicationContext
+import io.ktor.client.plugins.HttpRequestTimeoutException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.nio.channels.UnresolvedAddressException
@@ -75,6 +76,9 @@ class UserRepositoryImpl @Inject constructor(
             } catch (e: UnresolvedAddressException) {
                 e.printStackTrace()
                 Error(context.handleError(666))
+            } catch (e: HttpRequestTimeoutException) {
+                e.printStackTrace()
+                Error(context.handleError(504))
             } catch (e: Exception) {
                 e.printStackTrace()
                 Error(context.handleError(0))
@@ -91,6 +95,9 @@ class UserRepositoryImpl @Inject constructor(
             } catch (e: UnresolvedAddressException) {
                 e.printStackTrace()
                 Error(context.handleError(666))
+            } catch (e: HttpRequestTimeoutException) {
+                e.printStackTrace()
+                Error(context.handleError(504))
             } catch (e: Exception) {
                 e.printStackTrace()
                 Error(context.handleError(999))
@@ -104,6 +111,9 @@ class UserRepositoryImpl @Inject constructor(
                 val response = serviceApi.getRecentTracks(username, limit = 100)
                 val tracks = response.recenttracks.track.map { it.toTrack() }
                 Resource.Success(tracks)
+            } catch (e: HttpRequestTimeoutException) {
+                e.printStackTrace()
+                Error(context.handleError(504))
             } catch (e: UnresolvedAddressException) {
                 e.printStackTrace()
                 Error(context.handleError(666))

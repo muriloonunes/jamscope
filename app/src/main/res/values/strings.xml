@@ -127,4 +127,5 @@
     <string name="contact">Contact</string>
     <string name="see_code_github">Check out the code on GitHub</string>
     <string name="see_license">License</string>
+    <string name="connection_timeout">The connection took too long. Check your internet connection and try again</string>
 </resources>

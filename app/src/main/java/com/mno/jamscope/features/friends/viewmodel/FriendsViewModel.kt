@@ -169,7 +169,7 @@ class FriendsViewModel @Inject constructor(
                         friend.copy(recentTracks = result.data)
                     }
 
-                    is Resource.Error<*> -> {
+                    is Resource.Error -> {
                         Log.e(
                             "FriendsViewModel",
                             "Error fetching tracks for ${friend.name}: ${result.message}"

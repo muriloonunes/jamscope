@@ -26,6 +26,7 @@ fun Context.handleError(code: Int): String {
         403 -> getString(R.string.invalid_user_password)
         429 -> getString(R.string.too_many_requests)
         500 -> getString(R.string.server_error)
+        504 -> getString(R.string.connection_timeout)
         666 -> getString(R.string.connection_error)
         999 -> getString(R.string.fail_fetch_friend)
         else -> getString(R.string.unknown_error)
