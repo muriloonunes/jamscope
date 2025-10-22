@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -35,6 +34,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,10 +42,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mno.jamscope.R
-import com.mno.jamscope.ui.theme.JamscopePreviewTheme
+import com.mno.jamscope.features.settings.ui.components.AboutScreenHorizontal
+import com.mno.jamscope.features.settings.ui.components.AboutScreenVertical
+import com.mno.jamscope.ui.theme.LocalWindowSizeClass
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -58,6 +59,8 @@ fun AboutScreen(
     onSeeLicenseClick: () -> Unit,
 ) {
     val context = LocalContext.current
+    val windowSizeClass = LocalWindowSizeClass.current
+    val windowWidth = windowSizeClass.widthSizeClass
     Scaffold(
         contentWindowInsets = WindowInsets.safeDrawing,
         topBar = {
@@ -82,188 +85,35 @@ fun AboutScreen(
                 )
             )
         }) { innerPadding ->
-        LazyColumn(
-            modifier = Modifier
-                .padding(innerPadding),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            item {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(
-                            color = MaterialTheme.colorScheme.surfaceContainerLowest,
-                            shape = RoundedCornerShape(bottomStart = 28.dp, bottomEnd = 28.dp)
-                        )
-                        .padding(bottom = 8.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
-
-                    val versionName =
-                        packageInfo?.versionName ?: stringResource(id = R.string.unknown)
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_launcher_monochrome),
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(172.dp)
-                    )
-                    Text(
-                        text = stringResource(id = R.string.app_name),
-                        style = MaterialTheme.typography.headlineMedium,
-                        color = MaterialTheme.colorScheme.primary,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Box(
-                        modifier = Modifier.background(
-                            color = MaterialTheme.colorScheme.tertiaryContainer,
-                            shape = RoundedCornerShape(10.dp)
-                        )
-                    ) {
-                        Text(
-                            text = stringResource(id = R.string.version, versionName),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onTertiaryContainer,
-                            modifier = Modifier.padding(
-                                horizontal = 12.dp,
-                                vertical = 4.dp
-                            )
-                        )
-                    }
-                }
+        val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+        val versionName =
+            packageInfo?.versionName ?: stringResource(id = R.string.unknown)
+        when (windowWidth) {
+            WindowWidthSizeClass.Compact -> {
+                AboutScreenVertical(
+                    modifier = Modifier.padding(innerPadding),
+                    versionName = versionName,
+                    onGithubProfileClick = { onGithubProfileClick(context) },
+                    onMailClick = { onMailClick(context) },
+                    onGithubProjectClick = { onGithubProfileClick(context) },
+                    onBugReportClick = { onBugReportClick(context) },
+                    onSeeLicenseClick = { onSeeLicenseClick() }
+                )
             }
 
-            item {
-                AboutCard {
-                    Text(
-                        text = stringResource(R.string.thanks_for_using),
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Spacer(Modifier.height(4.dp))
-                    Text(
-                        text = stringResource(R.string.about_app),
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
-            }
-
-            item {
-                AboutCard {
-                    Text(
-                        text = stringResource(R.string.made_by),
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        Text(
-                            text = "Murilo Nunes",
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.weight(1f)
-                        )
-                        IconButton(
-                            onClick = { onGithubProfileClick(context) },
-                            colors = IconButtonDefaults.iconButtonColors(
-                                containerColor = MaterialTheme.colorScheme.primary
-                            ),
-                            modifier = Modifier.size(32.dp),
-                        ) {
-                            Icon(
-                                painter = painterResource(R.drawable.github),
-                                contentDescription = "GitHub",
-                                tint = MaterialTheme.colorScheme.surfaceContainerLow,
-                                modifier = Modifier
-                                    .size(24.dp)
-                            )
-                        }
-                        IconButton(
-                            onClick = { onMailClick(context) },
-                            colors = IconButtonDefaults.iconButtonColors(
-                                containerColor = MaterialTheme.colorScheme.primary
-                            ),
-                            modifier = Modifier.size(32.dp),
-//                            shapes = IconButtonShapes(
-//                                shape = RoundedPolygon.star(
-//                                    numVerticesPerRadius = 8,
-//                                    innerRadius = 0.50f,
-//                                    rounding = CornerRounding(radius = 0.25f)
-//                                ).toShape(),
-//                                pressedShape = CircleShape
-//                            )
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Mail,
-                                contentDescription = "Mail",
-                                tint = MaterialTheme.colorScheme.surfaceContainerLow,
-                                modifier = Modifier
-                                    .size(24.dp)
-                            )
-                        }
-                    }
-                }
-            }
-
-            item {
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
-                ) {
-                    Button(
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = ButtonDefaults.squareShape,
-                        contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
-                        onClick = { onGithubProjectClick(context) }
-                    ) {
-                        Icon(
-                            Icons.Default.Code,
-                            contentDescription = null,
-                            modifier = Modifier.size(ButtonDefaults.IconSize),
-                        )
-                        Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-                        Text(text = stringResource(R.string.see_code_github))
-                    }
-
-                    Button(
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = ButtonDefaults.squareShape,
-                        contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
-                        onClick = { onBugReportClick(context) }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.ReportProblem,
-                            contentDescription = null,
-                            modifier = Modifier.size(ButtonDefaults.IconSize),
-                        )
-                        Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-                        Text(text = stringResource(R.string.report_bug_setting))
-                    }
-
-                    OutlinedButton(
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = ButtonDefaults.squareShape,
-                        contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
-                        onClick = { onSeeLicenseClick() }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Description,
-                            contentDescription = null,
-                            modifier = Modifier.size(ButtonDefaults.IconSize),
-                        )
-                        Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-                        Text(text = stringResource(R.string.see_license))
-                    }
-                }
+            WindowWidthSizeClass.Medium, WindowWidthSizeClass.Expanded -> {
+                AboutScreenHorizontal(
+                    modifier = Modifier.padding(innerPadding),
+                    versionName = versionName,
+                    onGithubProfileClick = { onGithubProfileClick(context) },
+                    onMailClick = { onMailClick(context) },
+                    onGithubProjectClick = { onGithubProjectClick(context) },
+                    onBugReportClick = { onBugReportClick(context) },
+                    onSeeLicenseClick = onSeeLicenseClick
+                )
             }
         }
+        println(innerPadding)
     }
 }
 
@@ -286,19 +136,180 @@ private fun AboutCard(
     }
 }
 
-
-@Preview
 @Composable
-private fun AboutScreenPreview() {
-    JamscopePreviewTheme(true) {
-        AboutScreen(
-            onNavigateBack = {},
-            onGithubProjectClick = {},
-            onMailClick = {},
-            onBugReportClick = { },
-            onSeeLicenseClick = { },
-            onGithubProfileClick = { }
+fun AppInfoHeader(
+    versionName: String,
+    modifier: Modifier = Modifier,
+    verticalArrangement: Arrangement.Vertical = Arrangement.Top,
+) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = verticalArrangement
+    ) {
+        Icon(
+            painter = painterResource(id = R.drawable.ic_launcher_monochrome),
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.size(172.dp)
         )
+        Text(
+            text = stringResource(id = R.string.app_name),
+            style = MaterialTheme.typography.headlineMedium,
+            color = MaterialTheme.colorScheme.primary,
+            fontWeight = FontWeight.Bold
+        )
+        Spacer(Modifier.height(8.dp))
+
+        Box(
+            modifier = Modifier.background(
+                color = MaterialTheme.colorScheme.tertiaryContainer,
+                shape = RoundedCornerShape(10.dp)
+            )
+        ) {
+            Text(
+                text = stringResource(id = R.string.version, versionName),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onTertiaryContainer,
+                modifier = Modifier.padding(
+                    horizontal = 12.dp,
+                    vertical = 4.dp
+                )
+            )
+        }
+    }
+}
+
+@Composable
+fun AppDescriptionCard() {
+    AboutCard {
+        Text(
+            text = stringResource(R.string.thanks_for_using),
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onSurface,
+            fontWeight = FontWeight.Bold
+        )
+        Spacer(Modifier.height(4.dp))
+        Text(
+            text = stringResource(R.string.about_app),
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+    }
+}
+
+@Composable
+fun AuthorCard(
+    onGithubProfileClick: () -> Unit,
+    onMailClick: () -> Unit,
+) {
+    AboutCard {
+        Text(
+            text = stringResource(R.string.made_by),
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onSurface
+        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Text(
+                text = "Murilo Nunes",
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.weight(1f)
+            )
+            IconButton(
+                onClick = onGithubProfileClick,
+                colors = IconButtonDefaults.iconButtonColors(
+                    containerColor = MaterialTheme.colorScheme.primary
+                ),
+                modifier = Modifier.size(32.dp),
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.github),
+                    contentDescription = "GitHub",
+                    tint = MaterialTheme.colorScheme.surfaceContainerLow,
+                    modifier = Modifier.size(24.dp)
+                )
+            }
+            IconButton(
+                onClick = onMailClick,
+                colors = IconButtonDefaults.iconButtonColors(
+                    containerColor = MaterialTheme.colorScheme.primary
+                ),
+                modifier = Modifier.size(32.dp),
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Mail,
+                    contentDescription = "Mail",
+                    tint = MaterialTheme.colorScheme.surfaceContainerLow,
+                    modifier = Modifier.size(24.dp)
+                )
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+fun ActionButtons(
+    onGithubProjectClick: () -> Unit,
+    onBugReportClick: () -> Unit,
+    onSeeLicenseClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp)
+    ) {
+        Button(
+            modifier = Modifier.fillMaxWidth(),
+            shape = ButtonDefaults.squareShape,
+            contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
+            onClick = onGithubProjectClick
+        ) {
+            Icon(
+                Icons.Default.Code,
+                contentDescription = null,
+                modifier = Modifier.size(ButtonDefaults.IconSize),
+            )
+            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+            Text(text = stringResource(R.string.see_code_github))
+        }
+
+        Button(
+            modifier = Modifier.fillMaxWidth(),
+            shape = ButtonDefaults.squareShape,
+            contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
+            onClick = onBugReportClick
+        ) {
+            Icon(
+                imageVector = Icons.Default.ReportProblem,
+                contentDescription = null,
+                modifier = Modifier.size(ButtonDefaults.IconSize),
+            )
+            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+            Text(text = stringResource(R.string.report_bug_setting))
+        }
+
+        OutlinedButton(
+            modifier = Modifier.fillMaxWidth(),
+            shape = ButtonDefaults.squareShape,
+            contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
+            onClick = onSeeLicenseClick
+        ) {
+            Icon(
+                imageVector = Icons.Default.Description,
+                contentDescription = null,
+                modifier = Modifier.size(ButtonDefaults.IconSize),
+            )
+            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+            Text(text = stringResource(R.string.see_license))
+        }
     }
 }
 
