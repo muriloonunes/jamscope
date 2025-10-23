@@ -1,22 +1,29 @@
 # Jamscope 🎵
 <p align="center">
-  <img src="app/src/main/res/drawable/app_icon.png" alt="app icon" />
+  <img src="app/src/main/res/drawable/app_icon.png" alt="app icon" height="125"/>
 </p>
 
 Jamscope is an open-source Android application built with Kotlin and Jetpack Compose. It connects to
 your [Last.fm](https://www.last.fm) account and lets you track what your friends are listening to —
 right from the app's home screen or even your home screen through a widget.
 
-<div style="display: flex; flex-direction: row; align-items: flex-start;">
-  <img src="screenshots/home_screen.png" alt="home screen" height="2400" style="margin-right: 10px;" />
-  <img src="screenshots/recent_tracks_screen.png" alt="friends' recent tracks" height="2400" style="margin-right: 10px;" />
-
-  <div style="display: flex; flex-direction: column;">
-    <img src="screenshots/widget_small.png" alt="small widget" height="373" style="margin-bottom: 20px;" />
-    <img src="screenshots/widget_large.png" alt="large widget" height="670" />
-    <img src="screenshots/group_widget.png" alt="group of friends widget" height="1013" />
-  </div>
-</div>
+<p align="center">
+  <table>
+    <tr>
+      <td>
+        <img src="screenshots/home_screen.png" alt="home screen" height="800">
+      </td>
+      <td>
+        <img src="screenshots/recent_tracks_screen.png" alt="friends' recent tracks" height="800">
+      </td>
+      <td>
+        <img src="screenshots/widget_small.png" alt="small widget" height="125"><br>
+        <img src="screenshots/widget_large.png" alt="large widget" height="350"><br>
+        <img src="screenshots/group_widget.png" alt="group of friends widget" height="350">
+      </td>
+    </tr>
+  </table>
+</p>
 
 ## 📲 Download
 
