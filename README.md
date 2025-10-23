@@ -1,6 +1,6 @@
 # Jamscope 🎵
 <p align="center">
-  <img src="app/src/main/res/drawable/app_icon.png" alt="app icon" height="125"/>
+  <img src="app/src/main/res/drawable/app_icon_rounded.png" alt="app icon" height="250"/>
 </p>
 
 Jamscope is an open-source Android application built with Kotlin and Jetpack Compose. It connects to
@@ -8,21 +8,13 @@ your [Last.fm](https://www.last.fm) account and lets you track what your friends
 right from the app's home screen or even your home screen through a widget.
 
 <p align="center">
-  <table>
-    <tr>
-      <td>
-        <img src="screenshots/home_screen.png" alt="home screen" height="800">
-      </td>
-      <td>
-        <img src="screenshots/recent_tracks_screen.png" alt="friends' recent tracks" height="800">
-      </td>
-      <td>
-        <img src="screenshots/widget_small.png" alt="small widget" height="125"><br>
-        <img src="screenshots/widget_large.png" alt="large widget" height="350"><br>
-        <img src="screenshots/group_widget.png" alt="group of friends widget" height="350">
-      </td>
-    </tr>
-  </table>
+  <img src="screenshots/home_screen.png" alt="home screen" width="48%" height="50%" style="margin-right: 1%;">
+  <img src="screenshots/recent_tracks_screen.png" alt="recent tracks" width="48%" height= "50%">
+</p>
+
+<p align="center">
+  <img src="screenshots/both_widgets.png" alt="small widget" width="48%" height="50%" style="margin-right: 1%;">
+  <img src="screenshots/group_widget.png" alt="group widget" width="48%" height="50%">
 </p>
 
 ## 📲 Download
@@ -74,7 +66,7 @@ This project is licensed under the [GNU General Public License v3.0](LICENSE.txt
    git clone https://github.com/muriloonunes/jamscope.git
    ```
 2. Open the project in Android Studio.
-3. Go to `app/src/main/java/com/mno/jamscope/data/model` and create a file Token.kt
+3. Go to `app/src/main/java/com/mno/jamscope/data/model` and create a file named `Token.kt`
     ```kotlin
     object Token {
         const val LAST_FM_API_KEY = ""
