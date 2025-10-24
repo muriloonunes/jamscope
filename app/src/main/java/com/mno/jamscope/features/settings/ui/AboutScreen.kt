@@ -113,7 +113,6 @@ fun AboutScreen(
                 )
             }
         }
-        println(innerPadding)
     }
 }
 
@@ -148,7 +147,7 @@ fun AppInfoHeader(
         verticalArrangement = verticalArrangement
     ) {
         Icon(
-            painter = painterResource(id = R.drawable.ic_launcher_monochrome),
+            painter = painterResource(id = R.drawable.app_icon_filled_black),
             contentDescription = null,
             tint = MaterialTheme.colorScheme.primary,
             modifier = Modifier.size(172.dp)

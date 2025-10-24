@@ -1,5 +1,6 @@
 package com.mno.jamscope.ui.navigator
 
+import androidx.annotation.Keep
 import kotlinx.serialization.Serializable
 
 sealed interface Destination {
@@ -28,6 +29,7 @@ sealed interface Destination {
 }
 
 @Serializable
+@Keep
 enum class ScreenType {
     LIBRARIES,
     LICENSE

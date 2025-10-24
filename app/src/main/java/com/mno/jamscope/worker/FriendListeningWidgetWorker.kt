@@ -9,6 +9,7 @@ import androidx.glance.appwidget.state.getAppWidgetState
 import androidx.glance.appwidget.state.updateAppWidgetState
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import com.mno.jamscope.domain.Resource
 import com.mno.jamscope.domain.model.Friend
 import com.mno.jamscope.domain.usecase.friend.GetFriendRecentTracksUseCase
 import com.mno.jamscope.features.widgets.WidgetDataStoreManager
@@ -39,8 +40,17 @@ class FriendListeningWidgetWorker(
                     continue
                 }
 
-                getFriendRecentTracksUseCase(friend.name)
-                updateWidgetState(glanceId, friend)
+                val updatedFriend = when (val result = getFriendRecentTracksUseCase(friend.name)) {
+                    is Resource.Success -> {
+                        friend.copy(recentTracks = result.data)
+                    }
+
+                    is Resource.Error -> {
+                        Log.e("FriendListeningWidgetWorker", "Erro: ${result.message}")
+                        continue
+                    }
+                }
+                updateWidgetState(glanceId, updatedFriend)
             }
             return Result.success()
         } catch (e: Exception) {

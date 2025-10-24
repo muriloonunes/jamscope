@@ -179,7 +179,6 @@ class FriendsViewModel @Inject constructor(
                         friend
                     }
                 }
-
             }
         }.awaitAll()
     }

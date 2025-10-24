@@ -22,6 +22,7 @@
 
 -keepattributes SourceFile,LineNumberTable
 -keep class com.google.firebase.crashlytics.** { *; }
+-keep enum com.mno.jamscope.ui.navigator.ScreenType { *; }
 -dontwarn java.awt.Component
 -dontwarn java.awt.GraphicsEnvironment
 -dontwarn java.awt.HeadlessException
