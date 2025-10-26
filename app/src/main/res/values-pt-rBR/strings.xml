@@ -127,4 +127,5 @@
     <string name="see_code_github">Veja o código no GitHub</string>
     <string name="see_license">Licença</string>
     <string name="connection_timeout">A conexão demorou demais. Verifique sua conexão com a internet e tente novamente.</string>
+    <string name="show_changelog">Mostrar changelog</string>
 </resources>

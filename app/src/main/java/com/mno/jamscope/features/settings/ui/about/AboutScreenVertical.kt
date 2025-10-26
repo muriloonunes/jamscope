@@ -1,4 +1,4 @@
-package com.mno.jamscope.features.settings.ui.components
+package com.mno.jamscope.features.settings.ui.about
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -9,11 +9,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.mno.jamscope.features.settings.ui.ActionButtons
-import com.mno.jamscope.features.settings.ui.AppDescriptionCard
-import com.mno.jamscope.features.settings.ui.AppInfoHeader
-import com.mno.jamscope.features.settings.ui.AuthorCard
+import com.mno.jamscope.ui.theme.JamscopePreviewTheme
 
 @Composable
 fun AboutScreenVertical(
@@ -24,6 +22,7 @@ fun AboutScreenVertical(
     onGithubProjectClick: () -> Unit,
     onBugReportClick: () -> Unit,
     onSeeLicenseClick: () -> Unit,
+    onShowChangelogClick: () -> Unit,
 ) {
     LazyColumn(
         modifier = modifier,
@@ -32,6 +31,7 @@ fun AboutScreenVertical(
         item {
             AppInfoHeader(
                 versionName = versionName,
+                onShowChangelogClick = onShowChangelogClick,
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(
@@ -58,5 +58,21 @@ fun AboutScreenVertical(
                 modifier = Modifier.padding(bottom = 16.dp)
             )
         }
+    }
+}
+
+@Preview
+@Composable
+private fun AboutScreenVerticalPreview() {
+    JamscopePreviewTheme {
+        AboutScreenVertical(
+            versionName = "1.0.0",
+            onGithubProfileClick = {},
+            onMailClick = {},
+            onGithubProjectClick = {},
+            onBugReportClick = {},
+            onSeeLicenseClick = {},
+            onShowChangelogClick = {}
+        )
     }
 }

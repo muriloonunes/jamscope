@@ -1,9 +1,9 @@
-package com.mno.jamscope.features.settings.ui
+package com.mno.jamscope.features.settings.ui.about
 
 import android.content.Context
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -13,9 +13,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Code
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Mail
@@ -44,23 +46,27 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.mno.jamscope.R
-import com.mno.jamscope.features.settings.ui.components.AboutScreenHorizontal
-import com.mno.jamscope.features.settings.ui.components.AboutScreenVertical
+import com.mno.jamscope.features.settings.state.SettingsUiState
+import com.mno.jamscope.ui.components.ChangelogDialog
 import com.mno.jamscope.ui.theme.LocalWindowSizeClass
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AboutScreen(
+    uiState: SettingsUiState,
     onNavigateBack: () -> Unit,
     onGithubProfileClick: (Context) -> Unit,
     onMailClick: (Context) -> Unit,
     onGithubProjectClick: (Context) -> Unit,
     onBugReportClick: (Context) -> Unit,
     onSeeLicenseClick: () -> Unit,
+    onShowChangelogClick: () -> Unit,
+    onHideChangelogDialog: () -> Unit,
 ) {
     val context = LocalContext.current
     val windowSizeClass = LocalWindowSizeClass.current
     val windowWidth = windowSizeClass.widthSizeClass
+    val showChangelogDialog = uiState.showChangelogDialog
     Scaffold(
         contentWindowInsets = WindowInsets.safeDrawing,
         topBar = {
@@ -97,7 +103,8 @@ fun AboutScreen(
                     onMailClick = { onMailClick(context) },
                     onGithubProjectClick = { onGithubProfileClick(context) },
                     onBugReportClick = { onBugReportClick(context) },
-                    onSeeLicenseClick = { onSeeLicenseClick() }
+                    onSeeLicenseClick = { onSeeLicenseClick() },
+                    onShowChangelogClick = { onShowChangelogClick() },
                 )
             }
 
@@ -109,9 +116,15 @@ fun AboutScreen(
                     onMailClick = { onMailClick(context) },
                     onGithubProjectClick = { onGithubProjectClick(context) },
                     onBugReportClick = { onBugReportClick(context) },
-                    onSeeLicenseClick = onSeeLicenseClick
+                    onSeeLicenseClick = onSeeLicenseClick,
+                    onShowChangelogClick = { onShowChangelogClick() },
                 )
             }
+        }
+    }
+    if (showChangelogDialog) {
+        ChangelogDialog {
+            onHideChangelogDialog()
         }
     }
 }
@@ -140,6 +153,7 @@ fun AppInfoHeader(
     versionName: String,
     modifier: Modifier = Modifier,
     verticalArrangement: Arrangement.Vertical = Arrangement.Top,
+    onShowChangelogClick: () -> Unit,
 ) {
     Column(
         modifier = modifier,
@@ -160,21 +174,33 @@ fun AppInfoHeader(
         )
         Spacer(Modifier.height(8.dp))
 
-        Box(
-            modifier = Modifier.background(
-                color = MaterialTheme.colorScheme.tertiaryContainer,
-                shape = RoundedCornerShape(10.dp)
-            )
+        Row(
+            modifier = Modifier
+                .background(
+                    color = MaterialTheme.colorScheme.tertiaryContainer,
+                    shape = RoundedCornerShape(10.dp)
+                )
+                .clickable {
+                    onShowChangelogClick()
+                },
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 text = stringResource(id = R.string.version, versionName),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onTertiaryContainer,
-                modifier = Modifier.padding(
-                    horizontal = 12.dp,
-                    vertical = 4.dp
-                )
+                modifier = Modifier
+                    .padding(vertical = 4.dp)
+                    .padding(start = 8.dp, end = 4.dp)
             )
+            Icon(
+                Icons.AutoMirrored.Rounded.KeyboardArrowRight,
+                tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                contentDescription = stringResource(id = R.string.show_changelog),
+                modifier = Modifier
+                    .size(13.dp)
+            )
+            Spacer(Modifier.width(8.dp))
         }
     }
 }

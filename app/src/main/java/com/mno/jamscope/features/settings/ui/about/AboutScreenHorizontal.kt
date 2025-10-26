@@ -1,4 +1,4 @@
-package com.mno.jamscope.features.settings.ui.components
+package com.mno.jamscope.features.settings.ui.about
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -13,10 +13,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.mno.jamscope.features.settings.ui.ActionButtons
-import com.mno.jamscope.features.settings.ui.AppDescriptionCard
-import com.mno.jamscope.features.settings.ui.AppInfoHeader
-import com.mno.jamscope.features.settings.ui.AuthorCard
 
 @Composable
 fun AboutScreenHorizontal(
@@ -27,30 +23,28 @@ fun AboutScreenHorizontal(
     onGithubProjectClick: () -> Unit,
     onBugReportClick: () -> Unit,
     onSeeLicenseClick: () -> Unit,
+    onShowChangelogClick: () -> Unit,
 ) {
     Row(
         modifier = modifier.fillMaxSize()
     ) {
-        // Painel Esquerdo: Informações do App
         AppInfoHeader(
             versionName = versionName,
-            verticalArrangement = Arrangement.Center, // Centraliza verticalmente
+            verticalArrangement = Arrangement.Center,
+            onShowChangelogClick = onShowChangelogClick,
             modifier = Modifier
-                .weight(1f) // Ocupa metade da largura
+                .weight(1f)
                 .fillMaxHeight()
                 .background(
                     color = MaterialTheme.colorScheme.surfaceContainerLowest,
-                    // Muda o shape para arredondar a lateral
                     shape = RoundedCornerShape(topEnd = 28.dp, bottomEnd = 28.dp)
                 )
                 .padding(horizontal = 16.dp)
         )
 
-        // Painel Direito: Cards e Botões
         LazyColumn(
-            modifier = Modifier.weight(1f), // Ocupa a outra metade
+            modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.spacedBy(16.dp),
-            // Adiciona padding para os cards não colarem nas bordas
             contentPadding = PaddingValues(vertical = 16.dp)
         ) {
             item {
