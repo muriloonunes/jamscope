@@ -57,14 +57,15 @@ class LoginRepositoryImpl @Inject constructor(
         return withContext(Dispatchers.IO) {
             try {
                 val sessionResponse = serviceApi.getWebSession(token)
+                val username = sessionResponse.session.name
                 val user = ProfileDto(
-                    username = sessionResponse.session.name,
+                    username = username,
                     subscriber = sessionResponse.session.subscriber,
                     session = SessionDto(key = sessionResponse.session.key),
+                    profileUrl = "https://www.last.fm/user/$username",
                     senha = "",
                     largeImageUrl = "",
                     extraLargeImageUrl = "",
-                    profileUrl = "",
                     country = "",
                     realname = "",
                     playcount = 0

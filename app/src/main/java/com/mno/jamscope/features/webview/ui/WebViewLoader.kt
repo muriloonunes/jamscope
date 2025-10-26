@@ -1,6 +1,7 @@
 package com.mno.jamscope.features.webview.ui
 
 import android.annotation.SuppressLint
+import android.util.Log
 import android.view.ViewGroup
 import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
@@ -86,6 +87,7 @@ fun WebViewLoader(
                             error: WebResourceError,
                         ) {
                             if (request.isForMainFrame) {
+                                Log.e("WebView", error.description.toString())
                                 val safeMsg = error.description
                                     ?.toString()
                                     ?.replace("<", "&lt;")
@@ -107,6 +109,7 @@ fun WebViewLoader(
                             errorResponse: WebResourceResponse,
                         ) {
                             if (request.isForMainFrame) {
+                                Log.e("WebView", errorResponse.reasonPhrase.toString())
                                 view.loadDataWithBaseURL(
                                     "about:blank",
                                     createErrorString("HTTP ${errorResponse.statusCode}"),

@@ -1,4 +1,4 @@
-package com.mno.jamscope.features.settings.ui
+package com.mno.jamscope.features.settings.ui.libraries
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets

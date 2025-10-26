@@ -14,5 +14,5 @@ data class User(
     val country: String,
     val realName: String,
     val playcount: Long,
-    var recentTracks: List<Track> = emptyList()
+    val recentTracks: List<Track> = emptyList()
 )

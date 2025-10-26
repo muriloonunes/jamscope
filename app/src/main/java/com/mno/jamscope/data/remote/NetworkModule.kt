@@ -1,5 +1,6 @@
 package com.mno.jamscope.data.remote
 
+import android.util.Log
 import com.mno.jamscope.data.remote.api.LastFmServiceApi
 import com.mno.jamscope.data.remote.api.LastFmServiceApiImpl
 import dagger.Module
@@ -53,7 +54,7 @@ object NetworkModule {
                     val statusCode = response.status.value
                     if (statusCode !in 200..299) {
                         val errorBody = response.bodyAsText()
-                        println("HTTP Error: $statusCode - $errorBody")
+                        Log.e("HTTP Error","$statusCode - $errorBody")
                     }
                 }
             }

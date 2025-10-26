@@ -83,7 +83,6 @@ class SettingsDataStore @Inject constructor(
         dataStore.edit { prefs ->
             prefs.remove(Keys.THEME)
             prefs.remove(Keys.SORTING_TYPE)
-            prefs.remove(Keys.APP_VERSION)
             prefs.remove(switchKey("card_background_color_toggle"))
             prefs.remove(switchKey("playing_animation_toggle"))
         }

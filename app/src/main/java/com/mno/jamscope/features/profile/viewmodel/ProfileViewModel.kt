@@ -5,7 +5,6 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mno.jamscope.R
-import com.mno.jamscope.data.flows.LogoutEventBus
 import com.mno.jamscope.domain.Resource
 import com.mno.jamscope.domain.model.Track
 import com.mno.jamscope.domain.model.User
@@ -30,7 +29,6 @@ import javax.inject.Inject
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     private val settingsRepository: SettingsRepository,
-    private val logoutBus: LogoutEventBus,
     private val getUserFromLocalUseCase: GetUserFromLocalUseCase,
     private val getUserInfoFromApiUseCase: GetUserInfoFromApiUseCase,
     private val getRecentTracksUseCase: GetRecentTracksUseCase,
@@ -60,11 +58,6 @@ class ProfileViewModel @Inject constructor(
     private var lastUpdateTimestamp: Long = 0L
 
     init {
-        viewModelScope.launch {
-            logoutBus.logoutEvents.collect {
-                resetLastUpdateTimestamp()
-            }
-        }
         viewModelScope.launch {
             settingsRepository.getSwitchState("playing_animation_toggle", SwitchState.On)
                 .collect { state ->
@@ -109,7 +102,8 @@ class ProfileViewModel @Inject constructor(
             }
             when (val result = getRecentTracksUseCase(userProfile.username)) {
                 is Resource.Success -> {
-                    userProfile.recentTracks = result.data
+                    userProfile.copy(recentTracks = result.data)
+//                    userProfile.recentTracks = result.data
                     _userProfile.value = userProfile
                     _recentTracks.value = result.data
                     _isRefreshing.value = false
@@ -137,9 +131,5 @@ class ProfileViewModel @Inject constructor(
 
     fun shouldRefresh(): Boolean {
         return System.currentTimeMillis() - lastUpdateTimestamp > Stuff.REFRESHING_TIME
-    }
-
-    private fun resetLastUpdateTimestamp() {
-        lastUpdateTimestamp = 0L
     }
 }

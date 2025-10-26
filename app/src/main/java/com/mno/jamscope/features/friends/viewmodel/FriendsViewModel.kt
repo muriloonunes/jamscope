@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mno.jamscope.data.flows.LogoutEventBus
 import com.mno.jamscope.data.flows.WidgetIntentBus
 import com.mno.jamscope.domain.Resource
 import com.mno.jamscope.domain.model.Friend
@@ -16,12 +15,12 @@ import com.mno.jamscope.domain.usecase.friend.GetFriendsFromLocalUseCase
 import com.mno.jamscope.domain.usecase.friend.SaveFriendsToLocalUseCase
 import com.mno.jamscope.domain.usecase.user.GetUserFriendsUseCase
 import com.mno.jamscope.domain.usecase.user.GetUserFromLocalUseCase
+import com.mno.jamscope.features.friends.ui.SortingType
 import com.mno.jamscope.features.settings.domain.model.SwitchState
 import com.mno.jamscope.ui.navigator.Destination
 import com.mno.jamscope.ui.navigator.Navigator
 import com.mno.jamscope.ui.theme.AppTheme
 import com.mno.jamscope.ui.theme.ThemeAttributes
-import com.mno.jamscope.features.friends.ui.SortingType
 import com.mno.jamscope.util.Stuff
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -43,7 +42,6 @@ class FriendsViewModel @Inject constructor(
     private val friendsRepository: FriendRepository,
     private val settingsRepository: SettingsRepository,
     private val navigator: Navigator,
-    private val logoutBus: LogoutEventBus,
     private val widgetIntentBus: WidgetIntentBus,
     private val getUserFromLocalUseCase: GetUserFromLocalUseCase,
     private val getUserFriendsUseCase: GetUserFriendsUseCase,
@@ -92,11 +90,6 @@ class FriendsViewModel @Inject constructor(
     private var lastUpdateTimestamp: Long = 0L
 
     init {
-        viewModelScope.launch {
-            logoutBus.logoutEvents.collect {
-                resetLastUpdateTimestamp()
-            }
-        }
         viewModelScope.launch {
             _sortingType.value = friendsRepository.getSortingType()
         }
@@ -229,9 +222,5 @@ class FriendsViewModel @Inject constructor(
         viewModelScope.launch {
             navigator.navigate(Destination.SettingsScreen)
         }
-    }
-
-    private fun resetLastUpdateTimestamp() {
-        lastUpdateTimestamp = 0L
     }
 }

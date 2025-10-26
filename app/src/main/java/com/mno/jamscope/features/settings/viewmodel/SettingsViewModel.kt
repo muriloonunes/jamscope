@@ -3,7 +3,6 @@ package com.mno.jamscope.features.settings.viewmodel
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mno.jamscope.data.flows.LogoutEventBus
 import com.mno.jamscope.domain.repository.SettingsRepository
 import com.mno.jamscope.domain.usecase.user.LogoutUseCase
 import com.mno.jamscope.features.settings.domain.model.SwitchState
@@ -28,7 +27,6 @@ import javax.inject.Inject
 class SettingsViewModel @Inject constructor(
     private val navigator: Navigator,
     private val settingsRepository: SettingsRepository,
-    private val logoutBus: LogoutEventBus,
     private val logoutUseCase: LogoutUseCase,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(SettingsUiState())
@@ -80,10 +78,18 @@ class SettingsViewModel @Inject constructor(
         _uiState.update { it.copy(showLogOutDialog = false) }
     }
 
+    fun showChangelogDialog() {
+        _uiState.update { it.copy(showChangelogDialog = true) }
+    }
+
+    fun hideChangelogDialog() {
+        _uiState.update { it.copy(showChangelogDialog = false) }
+    }
+
     fun logOutUser() {
         viewModelScope.launch {
             logoutUseCase()
-            logoutBus.send()
+//            logoutBus.send()
             delay(500)
             navigateToLogin()
         }

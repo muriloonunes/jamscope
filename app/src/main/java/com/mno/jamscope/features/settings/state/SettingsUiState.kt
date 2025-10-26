@@ -8,5 +8,6 @@ data class SettingsUiState(
     val switchStates: Map<String, SwitchState> = emptyMap(),
     val selectedTile: Int = R.string.personalization_setting_title,
     val showThemeDialog: Boolean = false,
-    val showLogOutDialog: Boolean = false
+    val showLogOutDialog: Boolean = false,
+    val showChangelogDialog: Boolean = false,
 )

@@ -39,8 +39,6 @@ class WebLoginViewModel @Inject constructor(
     fun handleCallbackUrl(url: String) {
         val uri = url.toUri()
         val token = uri.getQueryParameter("token")
-        Log.d("WebViewViewModel", "url: $uri")
-        Log.d("WebViewViewModel", "token: $token")
         viewModelScope.launch {
             when (val result = loginWebUseCase(token = token ?: "")) {
                 is Resource.Success -> {
@@ -97,8 +95,6 @@ class WebLoginViewModel @Inject constructor(
                 clearHistory()
                 clearFormData()
             }
-
-            Log.d("WebViewCleanup", "WebView data cleared.")
         } catch (e: Exception) {
             Log.e("WebViewCleanup", "Failed to clear WebView data", e)
         }

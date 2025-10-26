@@ -6,7 +6,9 @@ import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.res.stringResource
@@ -17,15 +19,14 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import androidx.navigation.toRoute
-import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import com.mno.jamscope.R
 import com.mno.jamscope.features.login.nativeauth.ui.LoginTelaNative
 import com.mno.jamscope.features.login.viewmodel.NativeLoginViewModel
 import com.mno.jamscope.features.login.webauth.ui.LoginTelaWeb
 import com.mno.jamscope.features.login.webauth.ui.WebLoginWrapper
 import com.mno.jamscope.features.login.webauth.viewmodel.WebLoginViewModel
-import com.mno.jamscope.features.settings.ui.AboutScreen
-import com.mno.jamscope.features.settings.ui.LoadLibrariesLicenseScreen
+import com.mno.jamscope.features.settings.ui.about.AboutScreen
+import com.mno.jamscope.features.settings.ui.libraries.LoadLibrariesLicenseScreen
 import com.mno.jamscope.features.settings.viewmodel.SettingsViewModel
 import com.mno.jamscope.features.webview.ui.WebViewLoader
 import com.mno.jamscope.ui.screen.JamHomeRail
@@ -142,7 +143,9 @@ fun RootHost(
             }
             composable<Destination.AboutScreen> {
                 val settingsViewModel: SettingsViewModel = hiltViewModel()
+                val state by settingsViewModel.uiState.collectAsState()
                 AboutScreen(
+                    uiState = state,
                     onNavigateBack = { settingsViewModel.navigateBack() },
                     onBugReportClick = { settingsViewModel.sendBugReportMail(it) },
                     onGithubProfileClick = { settingsViewModel.openGithubProfile(it) },
@@ -152,7 +155,13 @@ fun RootHost(
                         settingsViewModel.navigateToLibrariesLicenseScreen(
                             ScreenType.LICENSE
                         )
-                    }
+                    },
+                    onShowChangelogClick = {
+                        settingsViewModel.showChangelogDialog()
+                    },
+                    onHideChangelogDialog = {
+                        settingsViewModel.hideChangelogDialog()
+                    },
                 )
             }
         }
