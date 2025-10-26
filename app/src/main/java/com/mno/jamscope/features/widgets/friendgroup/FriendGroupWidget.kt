@@ -55,6 +55,7 @@ import coil3.toBitmap
 import com.mno.jamscope.R
 import com.mno.jamscope.domain.model.Friend
 import com.mno.jamscope.features.widgets.WidgetDataStoreManager
+import com.mno.jamscope.features.widgets.singlefriend.clickableWidget
 import com.mno.jamscope.features.widgets.theme.JamscopeWidgetTheme
 import com.mno.jamscope.util.Stuff
 import com.mno.jamscope.util.dateStringFormatter
@@ -69,7 +70,8 @@ class FriendGroupWidget : GlanceAppWidget() {
             val friendsList = WidgetDataStoreManager.getFriendsGroup(currentState())
             JamscopeWidgetTheme {
                 Box(
-                    modifier = GlanceModifier.background(GlanceTheme.colors.surface)
+                    modifier = GlanceModifier
+                        .background(GlanceTheme.colors.surface)
                         .cornerRadius(Stuff.WIDGET_CORNER_RADIUS)
                 ) {
                     LazyColumn(
@@ -97,8 +99,12 @@ class FriendGroupWidget : GlanceAppWidget() {
             imageBitmap = loadBitmap(friend.largeImageUrl, context)
         }
         Row(
-            modifier = GlanceModifier.fillMaxSize().background(GlanceTheme.colors.surface)
-                .padding(8.dp), verticalAlignment = Alignment.CenterVertically
+            modifier = GlanceModifier
+                .fillMaxSize()
+                .background(GlanceTheme.colors.surface)
+                .padding(8.dp)
+                .clickableWidget(friend.name),
+            verticalAlignment = Alignment.CenterVertically
         ) {
             ProfileImage(friend, imageBitmap)
             FriendInfo(friend, textStyle, context)
