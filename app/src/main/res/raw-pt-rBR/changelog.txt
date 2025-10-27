@@ -1,5 +1,6 @@
-- Novo design pro widget grande
-- (Espero que) O widget grande agora funciona como deveria
-- Novo design para ordenar a lista de amigos
-- Nova fonte na tela de login
-- A barra superior na tela do "perfil" agora encolhe/aumenta, a depender da rolagem
+- Nova barra de navegação flutuante
+- Tela de configurações redesenhada
+- O widget de grupo de amigos agora é clicável também
+- Nova tela "Sobre o app", com informações detalhadas
+- O login foi totalmente reformulado, e agora oferece uma nova experiência de entrada
+- Melhor desempenho e tratamento de erros em todo o app

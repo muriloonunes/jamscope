@@ -1,3 +1,5 @@
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -19,12 +21,26 @@ android {
         applicationId = "com.mno.jamscope"
         minSdk = 26
         targetSdk = 36
-        versionCode = 13
-        versionName = "1.2.1"
+        versionCode = 14
+        versionName = "1.3.0"
 
         vectorDrawables.useSupportLibrary = true
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    signingConfigs {
+        create("release") {
+            val releaseStoreFile: String = gradleLocalProperties(rootDir, providers).getProperty("RELEASE_STORE_FILE")
+            val releaseStorePassword = gradleLocalProperties(rootDir, providers).getProperty("RELEASE_STORE_PASSWORD")
+            val releaseKeyAlias = gradleLocalProperties(rootDir, providers).getProperty("RELEASE_KEY_ALIAS")
+            val releaseKeyPassword = gradleLocalProperties(rootDir, providers).getProperty("RELEASE_KEY_PASSWORD")
+
+            storeFile = File(releaseStoreFile)
+            storePassword = releaseStorePassword
+            keyAlias = releaseKeyAlias
+            keyPassword = releaseKeyPassword
+        }
     }
 
     buildTypes {
@@ -36,12 +52,11 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = signingConfigs.getByName("release")
         }
         debug {
             applicationIdSuffix = ".debug"
             isDebuggable = true
-            resValue("string", "app_name", "DJamscope")
         }
     }
     compileOptions {

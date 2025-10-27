@@ -1,5 +1,6 @@
-- New large widget design
-- (Hopefully) The large widget now works as intended
-- New design to sort the friends list
-- New font on the login screen
-- The top bar on the "profile" screen now shrinks/increases depending on scrolling
+- New floating navigation bar
+- Redesigned settings screen
+- The friend group widget is now clickable
+- New "About the app" screen with detailed information
+- Completely revamped login with a new sign-in experience
+- Improved performance and error handling throughout the app
