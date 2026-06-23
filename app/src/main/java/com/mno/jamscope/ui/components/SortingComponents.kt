@@ -56,8 +56,6 @@ fun SortToggleButton(
                 contentDescription = "Selected",
                 modifier = Modifier.size(FilterChipDefaults.IconSize)
             )
-        } else {
-            null
         }
         Spacer(Modifier.size(ToggleButtonDefaults.IconSpacing))
         Text(
