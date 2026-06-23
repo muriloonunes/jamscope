@@ -15,7 +15,7 @@ plugins {
 
 android {
     namespace = "com.mno.jamscope"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.mno.jamscope"
