@@ -1,8 +1,8 @@
 import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     kotlin("plugin.serialization") version "2.1.20"
     id("com.google.devtools.ksp")
@@ -63,26 +63,26 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-    kotlinOptions {
-        jvmTarget = "17"
-    }
     buildFeatures {
         compose = true
         viewBinding = true
         buildConfig = true
     }
-    room {
-        schemaDirectory("$projectDir/schemas")
-    }
-    //https://issuetracker.google.com/issues/430526759#comment9
-    kotlin {
-        compilerOptions {
-            freeCompilerArgs.add("-Xlambdas=class")
-        }
+}
+
+room {
+    schemaDirectory("$projectDir/schemas")
+}
+
+kotlin {
+    compilerOptions {
+        freeCompilerArgs.add("-Xlambdas=class")
+        jvmTarget = JvmTarget.JVM_17
     }
 }
 
 tasks.register<Copy>("copyLicenseToRaw") {
+    description = "Add the txt license file to the build apk"
     from(rootProject.file("LICENSE.txt"))
     into("src/main/res/raw")
     rename("LICENSE.txt", "gpl_license.txt")
@@ -150,6 +150,8 @@ dependencies {
     implementation(libs.androidx.hilt.navigation.compose)
     ksp(libs.hilt.compiler)
     ksp(libs.hilt.android.compiler)
+    //todo: remover isso quando o dagger/hilt tiver suporte a jvm 2.4
+    ksp("org.jetbrains.kotlin:kotlin-metadata-jvm:2.4.0")
     implementation(libs.androidx.hilt.work)
 
     // Tests
@@ -198,4 +200,6 @@ dependencies {
     //About Libraries
     implementation(libs.aboutlibraries.core)
     implementation(libs.aboutlibraries.compose.m3) // material 3
+
+
 }
