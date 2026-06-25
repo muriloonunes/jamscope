@@ -56,23 +56,13 @@ class UserDataStore @Inject constructor(
                 val decryptedBytes = Crypto.decrypt(encryptedBytes)
                 val oldUser = json.decodeFromString<User>(decryptedBytes.decodeToString())
 
-                migrateUserProfile(oldUser)
-
                 oldUser
             } catch (_: Exception) {
                 null
             }
         }
     }
-    @Deprecated("Usado apenas para migração do DataStore. Remover na proxima release.")
-    // TODO: Remover este método após migração completa e usar dataStore.edit no metodo getUserProfileFlow
-    private suspend fun migrateUserProfile(user: User) {
-        withContext(Dispatchers.IO) {
-            dataStore.edit { prefs ->
-                prefs[Keys.PROFILE_JSON] = json.encodeToString(user)
-            }
-        }
-    }
+
 
     suspend fun getUserProfile(): User? =
         getUserProfileFlow().firstOrNull()
