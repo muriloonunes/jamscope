@@ -24,6 +24,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.mikepenz.aboutlibraries.ui.compose.android.produceLibraries
 import com.mikepenz.aboutlibraries.ui.compose.m3.LibrariesContainer
+import com.mikepenz.aboutlibraries.ui.compose.variant.LibraryBadges
 import com.mno.jamscope.R
 import com.mno.jamscope.domain.readRawFile
 import com.mno.jamscope.ui.navigator.ScreenType
@@ -68,7 +69,7 @@ fun LoadLibrariesLicenseScreen(
                     modifier = Modifier
                         .padding(innerPadding)
                         .fillMaxSize(),
-                    showVersion = true,
+                    badges = LibraryBadges(version = true),
                     libraries = libraries
                 )
             }
