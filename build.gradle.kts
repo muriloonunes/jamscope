@@ -6,6 +6,13 @@ plugins {
     id("com.google.devtools.ksp") version "2.3.9" apply false
     id("com.google.gms.google-services") version "4.4.4" apply false
     id("com.google.firebase.crashlytics") version "3.0.6" apply false
-    id("com.mikepenz.aboutlibraries.plugin.android") version "13.1.0" apply false
-    id("androidx.room") version "2.8.3" apply false
+    id("com.mikepenz.aboutlibraries.plugin.android") version "15.0.0" apply false
+    id("androidx.room") version "2.8.4" apply false
+    id("com.autonomousapps.dependency-analysis") version "3.16.0"
+}
+
+buildscript {
+    dependencies {
+        classpath("org.jetbrains.kotlin:kotlin-metadata-jvm:2.4.0")
+    }
 }

@@ -11,6 +11,7 @@ plugins {
     id("com.google.firebase.crashlytics")
     id("com.mikepenz.aboutlibraries.plugin.android")
     id("androidx.room")
+    id("com.autonomousapps.dependency-analysis")
 }
 
 android {
@@ -31,10 +32,14 @@ android {
 
     signingConfigs {
         create("release") {
-            val releaseStoreFile: String = gradleLocalProperties(rootDir, providers).getProperty("RELEASE_STORE_FILE")
-            val releaseStorePassword = gradleLocalProperties(rootDir, providers).getProperty("RELEASE_STORE_PASSWORD")
-            val releaseKeyAlias = gradleLocalProperties(rootDir, providers).getProperty("RELEASE_KEY_ALIAS")
-            val releaseKeyPassword = gradleLocalProperties(rootDir, providers).getProperty("RELEASE_KEY_PASSWORD")
+            val releaseStoreFile: String =
+                gradleLocalProperties(rootDir, providers).getProperty("RELEASE_STORE_FILE")
+            val releaseStorePassword =
+                gradleLocalProperties(rootDir, providers).getProperty("RELEASE_STORE_PASSWORD")
+            val releaseKeyAlias =
+                gradleLocalProperties(rootDir, providers).getProperty("RELEASE_KEY_ALIAS")
+            val releaseKeyPassword =
+                gradleLocalProperties(rootDir, providers).getProperty("RELEASE_KEY_PASSWORD")
 
             storeFile = File(releaseStoreFile)
             storePassword = releaseStorePassword
@@ -93,113 +98,135 @@ tasks.named("preBuild") {
 }
 
 dependencies {
-    // Android Core
+    // Android Core & Utils
     implementation(libs.androidx.core)
-    implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.core.splashscreen)
-    implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.activity)
+    implementation(libs.androidx.fragment)
+    implementation(libs.androidx.annotation)
+    implementation(libs.guava)
+    implementation(libs.okio)
 
     // Android Lifecycle
-    implementation(libs.androidx.runtime.livedata)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.lifecycle.common)
+    implementation(libs.androidx.lifecycle.livedata.core)
+    implementation(libs.androidx.lifecycle.runtime)
+    implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.lifecycle.viewmodel.savedstate)
 
-    // Android UI
+    // DataStore
+    implementation(libs.androidx.datastore.core)
+    implementation(libs.androidx.datastore.preferences)
+    implementation(libs.androidx.datastore.preferences.core)
+
+    // Android UI / Compose Core
     implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.ui)
-    implementation(libs.androidx.recyclerview)
-    implementation(libs.androidx.ui.graphics)
-    implementation(libs.androidx.ui.tooling.preview)
+    implementation(libs.androidx.compose.animation)
+    implementation(libs.androidx.compose.animation.core)
+    implementation(libs.androidx.compose.foundation)
+    implementation(libs.androidx.compose.foundation.layout)
+    implementation(libs.androidx.compose.runtime)
+    implementation(libs.androidx.compose.runtime.saveable)
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.ui.geometry)
+    implementation(libs.androidx.compose.ui.graphics)
+    implementation(libs.androidx.compose.ui.text)
+    implementation(libs.androidx.compose.ui.unit)
+    implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.activity.compose)
-    implementation(libs.androidx.ui.google.fonts)
-    implementation(libs.androidx.adaptive)
-    implementation(libs.androidx.compose.materialWindow)
+    implementation(libs.androidx.compose.ui.google.fonts)
+    implementation(libs.androidx.recyclerview)
+    implementation(libs.lazycolumnscrollbar)
 
     // Material
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.compose.materialWindow)
     implementation(libs.material)
-    implementation(libs.androidx.material)
-    implementation(libs.androidx.material.icons.extended)
+    implementation(libs.androidx.compose.material.icons.core)
+    implementation(libs.androidx.compose.material.icons.extended)
 
     // Navigation
+    implementation(libs.androidx.navigation.common)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.navigation.runtime)
 
-    // JSON Serialization
+    // JSON Serialization & Coroutines
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.serialization.core)
     implementation(libs.kotlinx.serialization.json)
+    runtimeOnly(libs.kotlin.reflect)
 
-    // Image Loading
+    // Image Loading (Coil, Glide & Zoomable)
     implementation(libs.coil.compose)
-    implementation(libs.coil3.coil)
-    implementation(libs.coil.gif)
+    implementation(libs.coil.core)
     implementation(libs.coil.network.okhttp)
+    implementation(libs.coil3.coil)
+    runtimeOnly(libs.coil.gif)
     implementation(libs.glide)
+    implementation(libs.zoomable)
+    implementation(libs.zoomable.image)
     implementation(libs.zoomable.image.coil3)
 
     // Ktor Network
     implementation(libs.ktor.client.core)
     implementation(libs.ktor.client.cio)
-    implementation(libs.ktor.client.json)
     implementation(libs.ktor.client.serialization)
     implementation(libs.ktor.client.content.negotiation)
+    implementation(libs.ktor.http)
+    implementation(libs.ktor.serialization)
     implementation(libs.ktor.serialization.kotlinx.json)
-    implementation(libs.ktor.server.content.negotiation)
+    runtimeOnly(libs.ktor.server.core)
 
-    // Hilt (Dependency Injection)
+    // Hilt & Dependency Injection
+    implementation(libs.dagger)
     implementation(libs.hilt.android)
-    implementation(libs.androidx.hilt.navigation.compose)
+    implementation(libs.hilt.core)
+    implementation(libs.androidx.hilt.lifecycle.viewmodel.compose)
+    implementation(libs.javax.inject)
     ksp(libs.hilt.compiler)
     ksp(libs.hilt.android.compiler)
     //todo: remover isso quando o dagger/hilt tiver suporte a jvm 2.4
     ksp("org.jetbrains.kotlin:kotlin-metadata-jvm:2.4.0")
-    implementation(libs.androidx.hilt.work)
 
-    // Tests
-    testImplementation(libs.junit)
-    testImplementation(libs.mockk)
-    testImplementation(libs.kotlinx.coroutines.test)
-    testImplementation(libs.ktor.client.mock)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.ui.test.junit4)
-    androidTestImplementation(libs.androidx.ui.test.junit4.android)
-    debugImplementation(libs.androidx.ui.tooling)
-    debugImplementation(libs.androidx.ui.test.manifest)
-
-    //Lottie animations
-    implementation(libs.lottie.compose)
-
-    //Room
+    // Room & SQLite
+    implementation(libs.androidx.room.common)
     implementation(libs.androidx.room.runtime)
-    implementation(libs.androidx.room.ktx)
+    implementation(libs.androidx.sqlite)
     ksp(libs.androidx.room.compiler)
 
-    //Glance compose widgets
+    // WorkManager
+    implementation(libs.androidx.work.runtime)
+
+    // Lottie Animations
+    implementation(libs.lottie)
+    implementation(libs.lottie.compose)
+
+    // Glance Compose Widgets
+    implementation(libs.androidx.glance)
     implementation(libs.androidx.glance.appwidget)
     implementation(libs.androidx.glance.material3)
-    implementation(libs.androidx.glance.material)
-    implementation(libs.androidx.glance)
-    implementation(libs.androidx.glance.appwidget.preview)
-    implementation(libs.androidx.glance.preview)
 
-    //Work
-    implementation(libs.androidx.work.runtime.ktx)
-
-    //Scrollbar
-    implementation(libs.lazycolumnscrollbar)
-
-    //Firebase
+    // Firebase
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.crashlytics)
     implementation(libs.firebase.analytics)
 
-    //LeakCanary (Analyze memory leaks)
-    debugImplementation(libs.leakcanary.android)
-
-    //About Libraries
+    // About Libraries
+    implementation(libs.aboutlibraries.compose.core)
+    implementation(libs.aboutlibraries.compose.m3)
     implementation(libs.aboutlibraries.core)
-    implementation(libs.aboutlibraries.compose.m3) // material 3
 
+    // Tests
+    testImplementation(libs.mockk)
+    testImplementation(libs.kotlinx.coroutines.test)
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestRuntimeOnly(libs.androidx.test.core)
+    androidTestRuntimeOnly(libs.androidx.test.runner)
+    debugImplementation(libs.androidx.compose.ui.tooling)
+    debugRuntimeOnly(libs.androidx.ui.test.manifest)
 
+    // LeakCanary
+    debugRuntimeOnly(libs.leakcanary.android)
 }
